@@ -1,5 +1,6 @@
-<h1 align="center">ug-project<h1>
-<p align="center">CMS Tool for building personalised data-driven dashboards</p>
+# ug-project
+
+> CMS Tool for building personalised data-driven dashboards
 
 ## Running locally
 
