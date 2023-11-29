@@ -1,0 +1,34 @@
+{
+  "name": "ug-project",
+  "description": "CMS tool for building personalised data-driven dashboards",
+  "version": "0.1.0",
+  "private": true,
+  "author": "Anurag Rawat",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rawat9/ug-project"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "14.0.3",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "20.10.0",
+    "@types/react": "18.2.39",
+    "@types/react-dom": "18.2.17",
+    "autoprefixer": "10.0.1",
+    "eslint": "8.54.0",
+    "eslint-config-next": "14.0.3",
+    "postcss": "8.4.31",
+    "prettier": "^3.1.0",
+    "tailwindcss": "3.3.0",
+    "typescript": "5.3.2"
+  }
+}
