@@ -1,10 +1,22 @@
-# ug-project
+<h1 align="center">ug-project<h1>
+<p align="center">CMS Tool for building personalised data-driven dashboards</p>
 
-> CMS Tool for building personalised data-driven dashboards
+## Running locally
 
-## Getting Started
+1. Clone the project:
 
-First, run the development server:
+```bash
+git clone https://github.com/rawat9/ug-project.git
+cd ug-project
+```
+
+2. Install dependencies using pnpm:
+
+```bash
+pnpm install
+```
+
+3. Start the development server
 
 ```bash
 pnpm dev
