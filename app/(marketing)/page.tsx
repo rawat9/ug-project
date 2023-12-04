@@ -19,7 +19,7 @@ function Feature({ title, description, icon }: FeatureProps) {
   )
 }
 
-export default function Home() {
+export default function HomePage() {
   return (
     <>
       <section className="max-w-5xl mx-auto px-4 py-28 space-y-6">
