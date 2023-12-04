@@ -4,8 +4,7 @@ import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
-import { Github } from '@/icons'
-import { ChevronLeft } from '@/icons/ChevronLeft'
+import { Github, ChevronLeft } from '@/icons'
 
 export const metadata: Metadata = {
   title: 'Login',
