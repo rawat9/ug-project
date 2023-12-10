@@ -22,8 +22,8 @@ function Feature({ title, description, icon }: FeatureProps) {
 export default function HomePage() {
   return (
     <>
-      <section className="max-w-5xl mx-auto px-4 py-28 space-y-6">
-        <div className="max-w-lg mb-24">
+      <div className="max-w-5xl mx-auto px-4 py-28 space-y-6">
+        <section className="max-w-lg mb-24">
           <h1 className="font-extrabold text-5xl leading-tight mb-5">
             Build dashboards in seconds!
           </h1>
@@ -48,10 +48,10 @@ export default function HomePage() {
               <Github className="w-4 h-4 ml-2" />
             </Link>
           </div>
-        </div>
+        </section>
 
         <h2 className="font-semibold text-xl">Features</h2>
-        <div className="grid grid-cols-[repeat(auto-fit,_minmax(250px,_1fr))] gap-4">
+        <section className="grid grid-cols-[repeat(auto-fit,_minmax(250px,_1fr))] gap-4">
           <Feature
             title="Data Integration"
             description="Connect to the data sources of your choice"
@@ -69,8 +69,8 @@ export default function HomePage() {
             description="Share dashboards securely and collaborate with team members"
             icon={<Collaborate className="w-12 h-12" />}
           />
-        </div>
-      </section>
+        </section>
+      </div>
     </>
   )
 }
