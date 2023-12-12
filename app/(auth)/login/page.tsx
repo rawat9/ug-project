@@ -1,3 +1,5 @@
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Metadata } from 'next'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
@@ -5,6 +7,8 @@ import { buttonVariants } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Github, ChevronLeft } from '@/icons'
+import { useForm } from 'react-hook-form'
+import createSupabaseServerClient from '@/lib/supabase/server'
 
 export const metadata: Metadata = {
   title: 'Login',
@@ -48,9 +52,31 @@ export default function LoginPage() {
 }
 
 function LoginForm() {
+  const authSchema = z.object({
+    email: z.string().email(),
+  })
+
+  type FormData = z.infer<typeof authSchema>
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: zodResolver(authSchema),
+  })
+
+  async function onSubmit(data: FormData) {
+    const client = await createSupabaseServerClient()
+    client.auth.signInWithOtp({
+      email: data.email,
+      // options: { shouldCreateUser: false },
+    })
+  }
+
   return (
     <div className="grid gap-6">
-      <form>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-2">
           <div className="grid gap-1">
             <Label className="sr-only" htmlFor="email">
@@ -64,7 +90,7 @@ function LoginForm() {
               autoComplete="email"
               autoCorrect="off"
               //   disabled={isLoading || isGitHubLoading}
-              //   {...register('email')}
+              {...register('email')}
             />
             {/* {errors?.email && (
               <p className="px-1 text-xs text-red-600">
