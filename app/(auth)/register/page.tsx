@@ -1,6 +1,6 @@
 import { AuthForm } from '@/components/authForm'
 import { buttonVariants } from '@/components/ui/button'
-import { Dashboard, Github } from '@/icons'
+import { Dashboard } from '@/icons'
 import { cn } from '@/lib/utils'
 import { Metadata } from 'next'
 import Link from 'next/link'
@@ -16,7 +16,7 @@ export default function RegisterPage() {
   return (
     <div className="container grid h-screen w-screen flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
       <Link
-        href="/login"
+        href={'/login'}
         className={cn(
           buttonVariants({ variant: 'secondary' }),
           'absolute right-4 top-4 md:right-8 md:top-8',

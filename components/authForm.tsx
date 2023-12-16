@@ -1,7 +1,6 @@
 'use client'
 
 import { z } from 'zod'
-import createSupabaseServerClient from '@/lib/supabase/server'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { Label } from '@/components/ui/label'
@@ -11,6 +10,7 @@ import { buttonVariants } from './ui/button'
 import { cn } from '@/lib/utils'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import signInWithOtp from '@/lib/supabase/actions'
 
 export function AuthForm() {
   const authSchema = z.object({
@@ -31,16 +31,16 @@ export function AuthForm() {
   async function onSubmit(formData: FormData) {
     setIsLoading(true)
 
-    const supabase = await createSupabaseServerClient()
-    const { data, error } = await supabase.auth.signInWithOtp({
+    const { data, error } = await signInWithOtp({
       email: formData.email,
-      // options: { shouldCreateUser: false },
+      options: {
+        shouldCreateUser: false,
+      },
     })
-
     setIsLoading(false)
 
     if (error) {
-      return toast.error('Your request has failed. Please try again.')
+      return toast.error('Your request has been failed. Please try again.')
     }
 
     toast.success('Check your email for the magic link!')
