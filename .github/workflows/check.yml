@@ -25,5 +25,7 @@ jobs:
         run: pnpm install
       - name: Lint check
         run: pnpm lint
+      - name: Format check
+        run: pnpm prettier
       - name: Unit tests
         run: pnpm test

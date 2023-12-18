@@ -20,7 +20,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest"
+    "test": "jest",
+    "format": "prettier --write \"**/*.{ts,tsx}\"",
+    "e2e:headless": "playwright test",
+    "e2e:ui": "playwright test --ui",
+    "e2e:show-report": "playwright show-report"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "1.0.4",
@@ -37,6 +41,7 @@
     "tailwindcss-animate": "1.0.7"
   },
   "devDependencies": {
+    "@playwright/test": "1.40.1",
     "@testing-library/jest-dom": "6.1.5",
     "@testing-library/react": "14.1.2",
     "@types/jest": "29.5.11",
