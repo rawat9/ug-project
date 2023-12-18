@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
-import { Github, ChevronLeft } from '@/icons'
+import { ChevronLeft, Github } from '@/icons'
 
 export const metadata: Metadata = {
   title: 'Login',
@@ -34,7 +34,7 @@ export default function LoginPage() {
           </p>
         </div>
         <LoginForm />
-        <p className="px-8 text-center text-sm text-muted-foreground">
+        <p className="text-muted-foreground px-8 text-center text-sm">
           <Link
             href="/register"
             className="hover:text-brand underline underline-offset-4"

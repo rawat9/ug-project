@@ -10,20 +10,20 @@ export default function MarketingLayout({ children }: MarketingLayoutProps) {
   return (
     <div className="flex min-h-screen flex-col">
       <header className="border-b">
-        <div className="flex max-w-screen-lg px-4 mx-auto h-16 items-center justify-between">
+        <div className="mx-auto flex h-16 max-w-screen-lg items-center justify-between px-4">
           <Link
             href="/"
-            className={'font-bold text-xl flex items-center gap-2'}
+            className={'flex items-center gap-2 text-xl font-bold'}
           >
             DashCMS
-            <Dashboard className="w-5 h-5" />
+            <Dashboard className="h-5 w-5" />
           </Link>
           <Link
             href={'/login'}
             className={buttonVariants({ variant: 'default' })}
           >
             Login
-            <Login className="w-4 h-4 ml-2" />
+            <Login className="ml-2 h-4 w-4" />
           </Link>
         </div>
       </header>
