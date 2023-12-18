@@ -1,0 +1,29 @@
+name: Check
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - run: echo "node_version=$(cat .github/nodejs.version)" >> $GITHUB_ENV
+      - name: Use Node.js ${{ env.node_version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: "${{ env.node_version }}"
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm install
+      - name: Lint check
+        run: pnpm lint
+      - name: Unit tests
+        run: pnpm test
