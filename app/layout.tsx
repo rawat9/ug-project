@@ -19,7 +19,7 @@ export default function RootLayout({
       <body className={GeistSans.className} suppressHydrationWarning={true}>
         {children}
         <Analytics />
-        <Toaster />
+        <Toaster position={'top-right'} closeButton={true} richColors={true} />
       </body>
     </html>
   )

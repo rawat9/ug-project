@@ -1,5 +1,5 @@
 import { buttonVariants } from '@/components/ui/button'
-import { Collaborate, Github, Widgets, Data } from '@/icons'
+import { Collaborate, Data, Github, Widgets } from '@/icons'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
 
@@ -27,13 +27,13 @@ export default function HomePage() {
           <h1 className="font-extrabold text-5xl leading-tight mb-5">
             Build dashboards in seconds!
           </h1>
-          <p className="text-lg text-slate-600 text-muted-foreground sm:leading-8">
+          <p className="text-lg text-slate-600 sm:leading-8">
             Empower Your Insights, Customize Your View: Your Data, Your
             Dashboards
           </p>
           <div className="space-y-4">
             <Link
-              href="/login"
+              href={'/auth/login'}
               className={cn(buttonVariants({ size: 'sm' }), 'mr-2')}
             >
               Get Started
