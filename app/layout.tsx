@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Analytics } from '@vercel/analytics/react'
 import { GeistSans } from 'geist/font/sans'
 import '@/styles/globals.css'
+import { Toaster } from 'sonner'
 
 export const metadata: Metadata = {
   title: 'CMS Tool',
@@ -18,6 +19,7 @@ export default function RootLayout({
       <body className={GeistSans.className} suppressHydrationWarning={true}>
         {children}
         <Analytics />
+        <Toaster position={'top-right'} closeButton={true} richColors={true} />
       </body>
     </html>
   )
