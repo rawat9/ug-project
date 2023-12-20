@@ -5,7 +5,7 @@ import { Label } from './ui/label'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
 import { Spinner } from '@/icons'
-import { signIn } from '@/lib/actions'
+import { auth } from '@/lib/actions'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
@@ -27,6 +27,7 @@ export function AuthForm() {
   })
 
   async function onSubmit(formData: FormData) {
+    const { signIn } = await auth()
     const { error } = await signIn({
       email: formData.email,
     })

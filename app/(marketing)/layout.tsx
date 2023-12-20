@@ -19,7 +19,7 @@ export default function MarketingLayout({ children }: MarketingLayoutProps) {
             <Dashboard className="h-5 w-5" />
           </Link>
           <Link
-            href={'/login'}
+            href={'/auth/login'}
             className={buttonVariants({ variant: 'default' })}
           >
             Login
