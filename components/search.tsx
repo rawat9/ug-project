@@ -3,13 +3,14 @@
 import { Search as SearchIcon } from '@/icons'
 import { Input } from '@/components/ui/input'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useDebouncedCallback } from 'use-debounce'
 
 export function Search() {
   const searchParams = useSearchParams()
   const pathname = usePathname()
   const { replace } = useRouter()
 
-  function handleSearch(term: string) {
+  const handleSearch = useDebouncedCallback((term: string) => {
     const params = new URLSearchParams(searchParams)
     if (term) {
       params.set('query', term)
@@ -17,7 +18,7 @@ export function Search() {
       params.delete('query')
     }
     replace(`${pathname}?${params.toString()}`)
-  }
+  }, 300)
 
   return (
     <div className="relative flex flex-1 flex-shrink-0">
@@ -26,7 +27,7 @@ export function Search() {
         className="pl-10"
         type="search"
         placeholder="Search..."
-        onChange={(e) => handleSearch(e.target.value)}
+        onChange={(e) => handleSearch(e.target.value.trim())}
         defaultValue={searchParams.get('query')?.toString()}
       />
     </div>
