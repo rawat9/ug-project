@@ -24,7 +24,8 @@
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "e2e:headless": "playwright test",
     "e2e:ui": "playwright test --ui",
-    "e2e:show-report": "playwright show-report"
+    "e2e:show-report": "playwright show-report",
+    "supabase:update-types": "npx supabase gen types typescript --project-id $PROJECT_REF --schema public > types/database.ts "
   },
   "dependencies": {
     "@hookform/resolvers": "3.3.2",
