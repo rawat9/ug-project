@@ -4,9 +4,21 @@ const createJestConfig = nextJest({
   dir: './',
 })
 
-/** @type {import("jest").Config} */
+/** @type {import('jest').Config} */
 const config = {
   coverageProvider: 'v8',
+  collectCoverage: true,
+  collectCoverageFrom: [
+    '**/*.{ts,tsx}',
+    '!**/node_modules/**',
+    '!**/__tests__/**',
+    '!**/.*/**',
+    '!**/*.config.*',
+    '!**/coverage/**',
+    '!next-env.d.ts',
+  ],
+  coverageDirectory: './coverage',
+  coverageReporters: ['json'],
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testPathIgnorePatterns: ['<rootDir>/e2e'],
