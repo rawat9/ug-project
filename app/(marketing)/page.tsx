@@ -13,18 +13,18 @@ function Feature({ title, description, icon }: FeatureProps) {
   return (
     <div className="rounded-lg border p-6 hover:shadow-md">
       {icon}
-      <h4 className="font-semibold mb-4 mt-2">{title}</h4>
+      <h4 className="mb-4 mt-2 font-semibold">{title}</h4>
       <p className="text-sm">{description}</p>
     </div>
   )
 }
 
-export default function HomePage() {
+export default function Page() {
   return (
     <>
-      <div className="max-w-5xl mx-auto px-4 py-28 space-y-6">
-        <section className="max-w-lg mb-24">
-          <h1 className="font-extrabold text-5xl leading-tight mb-5">
+      <div className="mx-auto max-w-5xl space-y-6 px-4 py-28">
+        <section className="mb-24 max-w-lg">
+          <h1 className="mb-5 text-5xl font-extrabold leading-tight">
             Build dashboards in seconds!
           </h1>
           <p className="text-lg text-slate-600 sm:leading-8">
@@ -33,7 +33,7 @@ export default function HomePage() {
           </p>
           <div className="space-y-4">
             <Link
-              href={'/auth/login'}
+              href={'/dashboard'}
               className={cn(buttonVariants({ size: 'sm' }), 'mr-2')}
             >
               Get Started
@@ -45,29 +45,29 @@ export default function HomePage() {
               className={buttonVariants({ variant: 'outline', size: 'sm' })}
             >
               GitHub
-              <Github className="w-4 h-4 ml-2" />
+              <Github className="ml-2 h-4 w-4" />
             </Link>
           </div>
         </section>
 
-        <h2 className="font-semibold text-xl">Features</h2>
+        <h2 className="text-xl font-semibold">Features</h2>
         <section className="grid grid-cols-[repeat(auto-fit,_minmax(250px,_1fr))] gap-4">
           <Feature
             title="Data Integration"
             description="Connect to the data sources of your choice"
-            icon={<Data className="w-12 h-12" />}
+            icon={<Data className="h-12 w-12" />}
           />
 
           <Feature
             title="Templates and Widgets"
             description="A library of customizable widgets for quick dashboard creation"
-            icon={<Widgets className="w-12 h-12" />}
+            icon={<Widgets className="h-12 w-12" />}
           />
 
           <Feature
             title="Sharing and Collaboration"
             description="Share dashboards securely and collaborate with team members"
-            icon={<Collaborate className="w-12 h-12" />}
+            icon={<Collaborate className="h-12 w-12" />}
           />
         </section>
       </div>

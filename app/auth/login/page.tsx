@@ -3,14 +3,14 @@ import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
 import { ChevronLeft } from '@/icons'
-import { AuthForm } from '@/components/authForm'
+import { AuthForm } from '@/components/auth-form'
 
 export const metadata: Metadata = {
   title: 'Login',
   description: 'Login to your account',
 }
 
-export default function LoginPage() {
+export default function Page() {
   return (
     <div className="container flex h-screen w-screen flex-col items-center justify-center">
       <Link
