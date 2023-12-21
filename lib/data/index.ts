@@ -17,22 +17,3 @@ export const fetchDashboards = async (): Promise<Dashboard[]> => {
 
   return data ?? []
 }
-
-export const filterDashboards = async (
-  searchTerm: string,
-): Promise<Dashboard[]> => {
-  const supabase = createSupabaseBrowserClient()
-  const { data, error } = await supabase
-    .rpc('search', {
-      search_term: searchTerm,
-    })
-    .select()
-    .order('created_at', { ascending: false })
-
-  if (error) {
-    console.error(error.message)
-    throw new Error('Error fetching data')
-  }
-
-  return data ?? []
-}

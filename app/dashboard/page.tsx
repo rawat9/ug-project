@@ -3,7 +3,7 @@ import { Add } from '@/icons'
 import Link from 'next/link'
 import { Header } from '@/components/header'
 import { Search } from '@/components/search'
-import { fetchDashboards, filterDashboards } from '@/lib/data'
+import { fetchDashboards } from '@/lib/data'
 import { EmptyState } from '@/components/empty-state'
 
 export default async function Page({
@@ -15,7 +15,9 @@ export default async function Page({
 }) {
   const dashboards = await fetchDashboards()
   const query = searchParams?.query || ''
-  const filteredDashboards = await filterDashboards(query)
+  const filteredDashboards = dashboards.filter((dashboard) =>
+    dashboard.title.toLocaleLowerCase().includes(query),
+  )
 
   if (!dashboards.length) {
     return <EmptyState />
@@ -25,7 +27,7 @@ export default async function Page({
     <>
       <Header />
       <main className="min-h-[calc(100vh_-_4rem)] bg-zinc-50">
-        <div className="mx-auto flex max-w-screen-lg flex-col px-4 py-36">
+        <div className="mx-auto flex max-w-screen-lg flex-col px-4 py-24">
           <div className="flex items-center space-x-2">
             <Search />
             <Button>
