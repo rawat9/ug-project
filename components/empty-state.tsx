@@ -4,7 +4,7 @@ import { Add } from '@/icons'
 
 export function EmptyState() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center">
+    <div className="flex min-h-[inherit] flex-col items-center justify-center">
       <Image
         src="/empty-dashboard.svg"
         alt="Empty dashboard"
