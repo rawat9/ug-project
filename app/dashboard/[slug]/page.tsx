@@ -1,3 +1,7 @@
-export default function Page({ params }: { params: { slug: string } }) {
-  return <h1 className="text-center">{params.slug}</h1>
+export default function Page() {
+  return (
+    <h1 className="flex min-h-screen flex-col items-center justify-center">
+      Layout
+    </h1>
+  )
 }
