@@ -1,42 +1,60 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
+import { CodeEditor } from '@/icons'
 import { Component } from '@/icons/widgets/Component'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 
 export function Sidebar() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <aside className="fixed flex">
+    <aside className="fixed z-20 flex">
       <div className="flex h-screen w-12 flex-col items-center overflow-y-auto border-r bg-white py-8 dark:border-gray-700 dark:bg-gray-900">
-        <nav className="flex flex-1 flex-col justify-center gap-6">
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="rounded-lg bg-blue-100 p-1.5 text-gray-700 transition-colors duration-200 hover:bg-gray-100 focus:outline-none dark:text-gray-200 dark:hover:bg-gray-800"
-          >
-            <Component />
-          </button>
+        <nav className="flex flex-1 flex-col justify-center gap-4">
+          <TooltipProvider delayDuration={200}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button className="rounded-lg bg-blue-100 p-1.5 text-gray-700 transition-colors duration-200 hover:bg-gray-100 focus:outline-none dark:text-gray-200 dark:hover:bg-gray-800">
+                  <Component />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p>Widgets</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
 
-          <a
-            href="#"
-            className="rounded-lg p-1.5 text-gray-700 transition-colors duration-200 hover:bg-gray-100 focus:outline-none dark:text-gray-200 dark:hover:bg-gray-800"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="currentColor"
-              className="h-6 w-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"
-              />
-            </svg>
-          </a>
+          <TooltipProvider delayDuration={200}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={() => {
+                    if (searchParams.get('editor') === 'true') {
+                      router.push(`?editor=false`)
+                    } else {
+                      router.push(`?editor=true`)
+                    }
+                  }}
+                  className="rounded-lg p-1.5 text-gray-700 transition-colors duration-200 hover:bg-gray-100 focus:outline-none dark:text-gray-200 dark:hover:bg-gray-800"
+                >
+                  <CodeEditor className="h-6 w-6" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p>Editor</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </nav>
 
         <div className="flex flex-col space-y-6">
