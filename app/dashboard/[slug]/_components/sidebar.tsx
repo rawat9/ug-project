@@ -1,6 +1,5 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
 import {
   Tooltip,
   TooltipContent,
@@ -9,22 +8,32 @@ import {
 } from '@/components/ui/tooltip'
 import { CodeEditor } from '@/icons'
 import { Component } from '@/icons/widgets/Component'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { useState } from 'react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 export function Sidebar() {
-  const router = useRouter()
+  const { replace } = useRouter()
   const searchParams = useSearchParams()
-  const [isOpen, setIsOpen] = useState(false)
+  const pathname = usePathname()
+  const params = new URLSearchParams(searchParams)
 
   return (
     <aside className="fixed z-20 flex">
       <div className="flex h-screen w-12 flex-col items-center overflow-y-auto border-r bg-white py-8 dark:border-gray-700 dark:bg-gray-900">
         <nav className="flex flex-1 flex-col justify-center gap-4">
-          <TooltipProvider delayDuration={200}>
+          <TooltipProvider delayDuration={0}>
             <Tooltip>
               <TooltipTrigger asChild>
-                <button className="rounded-lg bg-blue-100 p-1.5 text-gray-700 transition-colors duration-200 hover:bg-gray-100 focus:outline-none dark:text-gray-200 dark:hover:bg-gray-800">
+                <button
+                  onClick={() => {
+                    if (searchParams.get('widgets') === 'true') {
+                      params.delete('widgets')
+                    } else {
+                      params.set('widgets', 'true')
+                    }
+                    replace(`${pathname}?${params.toString()}`)
+                  }}
+                  className="rounded-lg bg-blue-100 p-1.5 text-gray-700 transition-colors duration-200 hover:bg-gray-100 focus:outline-none dark:text-gray-200 dark:hover:bg-gray-800"
+                >
                   <Component />
                 </button>
               </TooltipTrigger>
@@ -34,16 +43,17 @@ export function Sidebar() {
             </Tooltip>
           </TooltipProvider>
 
-          <TooltipProvider delayDuration={200}>
+          <TooltipProvider delayDuration={0}>
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
                   onClick={() => {
                     if (searchParams.get('editor') === 'true') {
-                      router.push(`?editor=false`)
+                      params.delete('editor')
                     } else {
-                      router.push(`?editor=true`)
+                      params.set('editor', 'true')
                     }
+                    replace(`${pathname}?${params.toString()}`)
                   }}
                   className="rounded-lg p-1.5 text-gray-700 transition-colors duration-200 hover:bg-gray-100 focus:outline-none dark:text-gray-200 dark:hover:bg-gray-800"
                 >
@@ -104,29 +114,6 @@ export function Sidebar() {
           </a>
         </div>
       </div>
-      {isOpen && (
-        <div className="relative bottom-[-3.5rem] flex h-[calc(100vh_-_3.5rem)] w-64 flex-col border-r transition duration-150 fade-in-10">
-          <div className="h-full w-full p-2">
-            <h1 className="mb-4 text-center">Components</h1>
-            <div className="grid grid-cols-1 gap-2 overflow-y-scroll">
-              {['Chart', 'Table', 'Text', 'Button', 'Form'].map((x, i) => (
-                <Element key={i} type={x} />
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
     </aside>
-  )
-}
-
-function Element({ type }: { type: string }) {
-  return (
-    <Button
-      variant={'outline'}
-      className={'flex h-[100px] w-full cursor-grab flex-col'}
-    >
-      <p className="text-xs">{type}</p>
-    </Button>
   )
 }
