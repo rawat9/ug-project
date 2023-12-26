@@ -26,7 +26,7 @@ export async function Header() {
       <Link href="/" className={'flex text-xl font-bold'}>
         <Dashboard className="h-5 w-5" />
       </Link>
-      <Link href="/" className={'mr-auto pl-4'}>
+      <Link href="/integrations" className={'mr-auto pl-4'}>
         Integrations
       </Link>
       <DropdownMenu>
