@@ -37,6 +37,7 @@
     "@radix-ui/react-tooltip": "1.0.7",
     "@supabase/ssr": "0.0.10",
     "@supabase/supabase-js": "2.39.0",
+    "@tanstack/react-table": "8.11.2",
     "@vercel/analytics": "1.1.1",
     "class-variance-authority": "0.7.0",
     "clsx": "2.0.0",
@@ -44,11 +45,13 @@
     "next": "14.0.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-dropzone": "14.2.3",
     "react-hook-form": "7.49.0",
     "sonner": "1.2.4",
     "tailwind-merge": "2.0.0",
     "tailwindcss-animate": "1.0.7",
     "use-debounce": "10.0.0",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.1/xlsx-0.20.1.tgz",
     "zod": "3.22.4"
   },
   "devDependencies": {
