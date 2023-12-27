@@ -41,6 +41,7 @@ export default async function Page({
                     href={`/dashboard/${dashboard.id}`}
                     key={index}
                     aria-label="Open dashboard"
+                    scroll={false}
                   >
                     <div className="min-h-[150px] cursor-pointer rounded-lg border bg-white p-4 shadow-sm hover:shadow-md">
                       <h4 className="py-2 font-semibold">{dashboard.title}</h4>
