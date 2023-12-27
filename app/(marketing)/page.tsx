@@ -1,5 +1,5 @@
 import { buttonVariants } from '@/components/ui/button'
-import { Collaborate, Data, Github, Widgets as WidgetsIcon } from '@/icons'
+import { Collaborate, Data, Github, Box } from '@/icons'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
 
@@ -61,7 +61,7 @@ export default function Page() {
           <Feature
             title="Widgets library"
             description="A library of customizable widgets for quick dashboard creation"
-            icon={<WidgetsIcon className="h-12 w-12" />}
+            icon={<Box className="h-12 w-12" />}
           />
 
           <Feature
