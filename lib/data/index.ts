@@ -4,6 +4,7 @@ import { createSupabaseRSCClient } from '@/lib/supabase/server'
 import { Tables } from '@/types/database'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { z } from 'zod'
 
 type Dashboard = Tables<'dashboard'>
 
@@ -35,15 +36,33 @@ export const fetchDashboards = async (): Promise<Dashboard[]> => {
 }
 
 export const createDashboard = async (body: FormData) => {
+  const result = z
+    .object({
+      title: z.string().min(1).trim(),
+    })
+    .safeParse(body)
+
+  if (!result.success) {
+    console.error(result.error)
+    throw new Error('Invalid form data')
+  }
+
+  const { title } = result.data
+
   const supabase = await createSupabaseRSCClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
+  if (!user) {
+    console.error('User not logged in')
+    redirect('/login')
+  }
+
   const { data, error } = await supabase
     .from('dashboard')
     .insert({
-      title: body.get('title') as string,
+      title,
       user_id: user?.id,
     })
     .select('id')
@@ -58,7 +77,9 @@ export const createDashboard = async (body: FormData) => {
   redirect(`/dashboard/${data?.id}`)
 }
 
-export const getDashboardById = async (id: string): Promise<Dashboard> => {
+export const getDashboardById = async (
+  id: string,
+): Promise<Dashboard | null> => {
   try {
     const supabase = await createSupabaseRSCClient()
     const { data, error } = await supabase
@@ -69,11 +90,7 @@ export const getDashboardById = async (id: string): Promise<Dashboard> => {
 
     if (error) {
       console.error(error.message)
-      throw new Error('Error fetching data')
-    }
-
-    if (!data) {
-      throw new Error('Dashboard not found')
+      return null
     }
 
     return data

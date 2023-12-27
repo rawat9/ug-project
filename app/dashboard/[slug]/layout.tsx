@@ -1,6 +1,7 @@
 import { Toolbar } from './_components/toolbar'
 import { Sidebar } from './_components/sidebar'
-import { getDashboardById, updateDashboardTitle } from '@/lib/data'
+import { getDashboardById } from '@/lib/data'
+import { notFound } from 'next/navigation'
 
 export default async function Layout({
   children,
@@ -10,6 +11,10 @@ export default async function Layout({
   params: { slug: string }
 }) {
   const dashboard = await getDashboardById(params.slug)
+
+  if (!dashboard) {
+    notFound()
+  }
 
   return (
     <div className="m-0 min-h-screen overflow-hidden">
