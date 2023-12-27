@@ -80,12 +80,23 @@ export const createDashboard = async (body: FormData) => {
 export const getDashboardById = async (
   id: string,
 ): Promise<Dashboard | null> => {
+  const result = z
+    .object({
+      id: z.string().uuid(),
+    })
+    .safeParse(id)
+
+  if (!result.success) {
+    console.error(result.error)
+    throw new Error('Invalid uuid')
+  }
+
   try {
     const supabase = await createSupabaseRSCClient()
     const { data, error } = await supabase
       .from('dashboard')
       .select()
-      .eq('id', id)
+      .eq('id', result.data.id)
       .single()
 
     if (error) {

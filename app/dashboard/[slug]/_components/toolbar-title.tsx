@@ -40,7 +40,6 @@ export function ToolbarTitle({
 
   const handleNameKeyDown = useCallback(
     (event: KeyboardEvent<HTMLInputElement>) => {
-      console.log(event.key)
       if (event.key === 'Enter') {
         handleRenamingSave()
       } else if (event.key === 'Escape') {
@@ -65,7 +64,7 @@ export function ToolbarTitle({
       ) : (
         <>
           <h3 className="truncate font-medium">{title}</h3>
-          <TooltipProvider delayDuration={200}>
+          <TooltipProvider delayDuration={0}>
             <Tooltip>
               <TooltipTrigger asChild>
                 <button>
