@@ -6,8 +6,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { CodeEditor, Settings } from '@/icons'
-import { Component } from '@/icons/widgets/Component'
+import { CodeEditor, Settings, Component } from '@/icons'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 export function Sidebar() {
@@ -72,9 +71,18 @@ export function Sidebar() {
         </nav>
 
         <div className="flex flex-col">
-          <button className="rounded-lg p-1.5 text-gray-700 transition-colors duration-200 hover:bg-gray-100 focus:outline-none dark:bg-gray-800 dark:text-gray-200">
-            <Settings className="h-6 w-6" />
-          </button>
+          <TooltipProvider delayDuration={0}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button className="rounded-lg p-1.5 text-gray-700 transition-colors duration-200 hover:bg-gray-100 focus:outline-none dark:bg-gray-800 dark:text-gray-200">
+                  <Settings className="h-6 w-6" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p>Settings</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </div>
     </aside>

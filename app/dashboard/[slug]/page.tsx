@@ -1,9 +1,9 @@
-import { Button } from '@/components/ui/button'
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable'
+import { Widgets } from './_components/widgets'
 
 export default function Page({
   searchParams,
@@ -64,17 +64,6 @@ export default function Page({
   )
 }
 
-function Element({ type }: { type: string }) {
-  return (
-    <Button
-      variant={'outline'}
-      className={'flex h-[100px] w-full cursor-grab flex-col'}
-    >
-      <p className="">{type}</p>
-    </Button>
-  )
-}
-
 function Canvas() {
   return <canvas className="h-full w-full rounded-lg bg-white" id="canvas" />
 }
@@ -83,21 +72,6 @@ function Editor() {
   return (
     <div className="h-full w-full rounded-lg bg-white p-2">
       <h1 className="mb-4 text-center">SQL Editor + Schema Viewer</h1>
-    </div>
-  )
-}
-
-function Widgets() {
-  return (
-    <div className="h-full w-full overflow-auto rounded-lg bg-white p-2">
-      <div className="grid grid-cols-[repeat(auto-fit,_minmax(100px,_1fr))] gap-2">
-        <Element type="Chart" />
-        <Element type="Table" />
-        <Element type="Map" />
-        <Element type="Text" />
-        <Element type="Image" />
-        <Element type="Video" />
-      </div>
     </div>
   )
 }
