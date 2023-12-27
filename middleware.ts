@@ -38,18 +38,22 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (user && request.nextUrl.pathname === '/auth/login') {
+  if (
+    user &&
+    (request.nextUrl.pathname === '/auth/login' ||
+      request.nextUrl.pathname === '/')
+  ) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
   // if user is not signed in and the current path is not / redirect the user to /
-  if (!user && request.nextUrl.pathname !== '/') {
-    return NextResponse.redirect(new URL('/', request.url))
+  if (!user && request.nextUrl.pathname !== '/auth/login') {
+    return NextResponse.redirect(new URL('/auth/login', request.url))
   }
 
   return response
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|.*\\.png$).*)'],
+  matcher: ['/', '/dashboard', '/auth/login'],
 }
