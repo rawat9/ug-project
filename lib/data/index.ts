@@ -38,7 +38,7 @@ export const fetchDashboards = async (): Promise<Dashboard[]> => {
 export const createDashboard = async (body: FormData) => {
   const result = z
     .object({
-      title: z.string().min(1).trim(),
+      title: z.string().trim().min(1),
     })
     .safeParse(body)
 
@@ -80,11 +80,7 @@ export const createDashboard = async (body: FormData) => {
 export const getDashboardById = async (
   id: string,
 ): Promise<Dashboard | null> => {
-  const result = z
-    .object({
-      id: z.string().uuid(),
-    })
-    .safeParse(id)
+  const result = z.string().uuid().safeParse(id)
 
   if (!result.success) {
     console.error(result.error)
@@ -96,7 +92,7 @@ export const getDashboardById = async (
     const { data, error } = await supabase
       .from('dashboard')
       .select()
-      .eq('id', result.data.id)
+      .eq('id', result.data)
       .single()
 
     if (error) {

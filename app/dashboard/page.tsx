@@ -43,7 +43,7 @@ export default async function Page({
                     aria-label="Open dashboard"
                     scroll={false}
                   >
-                    <div className="min-h-[150px] cursor-pointer rounded-lg border bg-white p-4 shadow-sm hover:shadow-md">
+                    <div className="min-h-[150px] cursor-pointer rounded-lg border bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md">
                       <h4 className="py-2 font-semibold">{dashboard.title}</h4>
                       <p className="text-sm">Description</p>
                     </div>
