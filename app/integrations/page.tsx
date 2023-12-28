@@ -3,7 +3,7 @@
 import { read, utils } from 'xlsx'
 import { Dropzone } from './_components/dropzone'
 import { DropzoneOptions } from 'react-dropzone'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { DataTable } from './_components/table'
 import { ColumnDef } from '@tanstack/react-table'
 
@@ -12,7 +12,7 @@ function transform(header: string[], data: unknown[]) {
   for (const value of data) {
     const obj = {}
     for (const [index, head] of header.entries()) {
-      obj[head.toLocaleLowerCase()] = value[index]
+      obj[head.toLocaleLowerCase().trim()] = value[index]
     }
     res.push(obj)
   }
@@ -26,18 +26,27 @@ export default function Page() {
   const [data, setData] = useState<unknown[]>([])
 
   const options: DropzoneOptions = {
-    onDrop: async (acceptedFiles: File[]) => {
+    onDrop: useCallback(async (acceptedFiles: File[]) => {
       const file = acceptedFiles[0]
       if (!file) return
 
       setFile(file)
 
       const arrayBuffer = await file.arrayBuffer()
-      const workBook = read(arrayBuffer, { type: 'buffer' })
+      const workBook = read(arrayBuffer, {
+        type: 'buffer',
+        cellText: false,
+        cellDates: true,
+      })
+
       const workSheet = workBook.Sheets[workBook.SheetNames.at(0)]
       const json = utils.sheet_to_json(workSheet, {
-        header: 'A',
+        header: 1,
+        raw: false,
+        dateNF: 'yyyy-mm-dd',
+        rawNumbers: true,
       })
+
       const header = json[0] as string[]
       setHeaders(Object.values(header))
       setData(
@@ -46,13 +55,13 @@ export default function Page() {
           json.slice(1).map((item) => Object.values(item)),
         ),
       )
-    },
+    }, []),
     maxFiles: 1,
   }
 
   const columns: ColumnDef<unknown>[] = headers.map((header) => ({
-    accessorKey: header.toLocaleLowerCase(),
-    header,
+    accessorKey: header.toLocaleLowerCase().trim(),
+    header: header.trim(),
   }))
 
   return (
