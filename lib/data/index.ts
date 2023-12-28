@@ -107,14 +107,32 @@ export const getDashboardById = async (
   }
 }
 
-export const updateDashboardTitle = async (dashboard: Dashboard) => {
+export const updateDashboardTitle = async ({
+  id,
+  title,
+}: {
+  id: string
+  title: string
+}) => {
+  const result = z
+    .object({
+      id: z.string().uuid(),
+      title: z.string().trim().min(1),
+    })
+    .safeParse({ id, title })
+
+  if (!result.success) {
+    console.error(result.error)
+    throw new Error('Invalid form data')
+  }
+
   const supabase = await createSupabaseRSCClient()
   const { error } = await supabase
     .from('dashboard')
     .update({
-      title: dashboard.title.trim(),
+      title: result.data.title,
     })
-    .eq('id', dashboard.id)
+    .eq('id', result.data.id)
 
   if (error) {
     console.error(error.message)

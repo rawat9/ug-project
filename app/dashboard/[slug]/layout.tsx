@@ -18,7 +18,9 @@ export default async function Layout({
 
   return (
     <div className="m-0 min-h-screen overflow-hidden">
-      <Toolbar dashboard={dashboard} />
+      <Toolbar>
+        <Toolbar.Title id={dashboard.id} title={dashboard.title} />
+      </Toolbar>
       <Sidebar />
       <>{children}</>
     </div>

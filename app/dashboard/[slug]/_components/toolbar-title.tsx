@@ -1,4 +1,5 @@
 'use client'
+
 import { ChangeEvent, KeyboardEvent, useCallback, useState } from 'react'
 import {
   Tooltip,
@@ -7,36 +8,32 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { Pencil } from '@/icons'
-import { Tables } from '@/types/database'
 import { updateDashboardTitle } from '@/lib/data'
+import { Tables } from '@/types/database'
 
 export function ToolbarTitle({
-  dashboard,
-}: {
-  dashboard: Tables<'dashboard'>
-}) {
+  id,
+  title,
+}: Pick<Tables<'dashboard'>, 'id' | 'title'>) {
   const [isRenaming, setRenaming] = useState(false)
-  const [title, setTitle] = useState(dashboard.title)
+  const [currentTitle, setCurrentTitle] = useState(title)
 
   const handleNameChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
-      setTitle(event.target.value)
+      setCurrentTitle(event.target.value)
     },
     [],
   )
 
   const handleRenamingCancel = useCallback(() => {
-    setTitle(dashboard.title)
+    setCurrentTitle(title)
     setRenaming(false)
-  }, [dashboard])
+  }, [title])
 
   const handleRenamingSave = useCallback(async () => {
-    await updateDashboardTitle({
-      ...dashboard,
-      title,
-    })
+    await updateDashboardTitle({ id, title: currentTitle })
     setRenaming(false)
-  }, [dashboard, title])
+  }, [id, currentTitle])
 
   const handleNameKeyDown = useCallback(
     (event: KeyboardEvent<HTMLInputElement>) => {
