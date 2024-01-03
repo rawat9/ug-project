@@ -16,9 +16,7 @@ import { Logout } from './logout'
 import { getUser } from '@/lib/actions'
 
 export async function Header() {
-  const {
-    data: { user },
-  } = await getUser()
+  const { user } = await getUser()
   return (
     <header className="flex h-16 w-full items-center justify-between border-b bg-white px-4">
       <Link href="/" className={'flex text-xl font-bold'}>
