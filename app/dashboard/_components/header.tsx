@@ -12,15 +12,13 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { createSupabaseBrowserClient } from '@/lib/supabase/client'
-import { Logout } from '@/components/logout'
+import { Logout } from './logout'
+import { getUser } from '@/lib/actions'
 
 export async function Header() {
-  const supabase = createSupabaseBrowserClient()
   const {
     data: { user },
-  } = await supabase.auth.getUser()
-
+  } = await getUser()
   return (
     <header className="flex h-16 w-full items-center justify-between border-b bg-white px-4">
       <Link href="/" className={'flex text-xl font-bold'}>
