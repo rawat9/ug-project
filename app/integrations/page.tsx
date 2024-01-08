@@ -72,7 +72,9 @@ export default function Page() {
         <>
           <div className="mt-4 flex h-20 max-w-4xl flex-col gap-2 rounded-lg border bg-white p-3 shadow-sm">
             <h4 className="font-semibold">{file?.name}</h4>
-            <p className="text-sm text-slate-600">{file?.size / 1000000} mb</p>
+            <p className="text-sm text-slate-600">
+              {(file?.size / 1000000).toFixed(2)} mb
+            </p>
           </div>
           <DataTable columns={columns} data={data} />
         </>
