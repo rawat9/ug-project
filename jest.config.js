@@ -16,6 +16,7 @@ const config = {
     '!**/*.config.*',
     '!**/coverage/**',
     '!next-env.d.ts',
+    '!<rootDir>/e2e/**',
   ],
   coverageDirectory: './coverage',
   coverageReporters: ['json'],

@@ -12,7 +12,7 @@ dependencies:
     specifier: 1.0.4
     version: 1.0.4(@types/react-dom@18.2.17)(@types/react@18.2.39)(react-dom@18.2.0)(react@18.2.0)
   '@radix-ui/react-dialog':
-    specifier: ^1.0.5
+    specifier: 1.0.5
     version: 1.0.5(@types/react-dom@18.2.17)(@types/react@18.2.39)(react-dom@18.2.0)(react@18.2.0)
   '@radix-ui/react-dropdown-menu':
     specifier: 2.0.6
@@ -62,15 +62,18 @@ dependencies:
   react-hook-form:
     specifier: 7.49.0
     version: 7.49.0(react@18.2.0)
+  react-resizable-panels:
+    specifier: 1.0.5
+    version: 1.0.5(react-dom@18.2.0)(react@18.2.0)
   sonner:
     specifier: 1.2.4
     version: 1.2.4(react-dom@18.2.0)(react@18.2.0)
   tailwind-merge:
-    specifier: 2.0.0
-    version: 2.0.0
+    specifier: 2.2.0
+    version: 2.2.0
   tailwindcss-animate:
     specifier: 1.0.7
-    version: 1.0.7(tailwindcss@3.3.6)
+    version: 1.0.7(tailwindcss@3.4.0)
   use-debounce:
     specifier: 10.0.0
     version: 10.0.0(react@18.2.0)
@@ -131,8 +134,8 @@ devDependencies:
     specifier: 1.123.4
     version: 1.123.4
   tailwindcss:
-    specifier: 3.3.6
-    version: 3.3.6
+    specifier: 3.4.0
+    version: 3.4.0
   typescript:
     specifier: 5.3.3
     version: 5.3.3
@@ -5214,6 +5217,16 @@ packages:
       use-sidecar: 1.1.2(@types/react@18.2.39)(react@18.2.0)
     dev: false
 
+  /react-resizable-panels@1.0.5(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-OP0whNQCko+f4BgoptGaeIc7StBRyeMeJ+8r/7rXACBDf9W5EcMWuM32hfqPDMenS2HFy/eZVi/r8XqK+ZIEag==}
+    peerDependencies:
+      react: ^16.14.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.14.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
   /react-style-singleton@2.2.1(@types/react@18.2.39)(react@18.2.0):
     resolution: {integrity: sha512-ZWj0fHEMyWkHzKYUr2Bs/4zU6XLmq9HsgBURm7g5pAVfyn49DgUiNgY2d4lXRlYSiCif9YBGpQleewkcqddc7g==}
     engines: {node: '>=10'}
@@ -5672,22 +5685,22 @@ packages:
     resolution: {integrity: sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==}
     dev: true
 
-  /tailwind-merge@2.0.0:
-    resolution: {integrity: sha512-WO8qghn9yhsldLSg80au+3/gY9E4hFxIvQ3qOmlpXnqpDKoMruKfi/56BbbMg6fHTQJ9QD3cc79PoWqlaQE4rw==}
+  /tailwind-merge@2.2.0:
+    resolution: {integrity: sha512-SqqhhaL0T06SW59+JVNfAqKdqLs0497esifRrZ7jOaefP3o64fdFNDMrAQWZFMxTLJPiHVjRLUywT8uFz1xNWQ==}
     dependencies:
       '@babel/runtime': 7.23.5
     dev: false
 
-  /tailwindcss-animate@1.0.7(tailwindcss@3.3.6):
+  /tailwindcss-animate@1.0.7(tailwindcss@3.4.0):
     resolution: {integrity: sha512-bl6mpH3T7I3UFxuvDEXLxy/VuFxBk5bbzplh7tXI68mwMokNYd1t9qPBHlnyTwfa4JGC4zP516I1hYYtQ/vspA==}
     peerDependencies:
       tailwindcss: '>=3.0.0 || insiders'
     dependencies:
-      tailwindcss: 3.3.6
+      tailwindcss: 3.4.0
     dev: false
 
-  /tailwindcss@3.3.6:
-    resolution: {integrity: sha512-AKjF7qbbLvLaPieoKeTjG1+FyNZT6KaJMJPFeQyLfIp7l82ggH1fbHJSsYIvnbTFQOlkh+gBYpyby5GT1LIdLw==}
+  /tailwindcss@3.4.0:
+    resolution: {integrity: sha512-VigzymniH77knD1dryXbyxR+ePHihHociZbXnLZHUyzf2MMs2ZVqlUrZ3FvpXP8pno9JzmILt1sZPD19M3IxtA==}
     engines: {node: '>=14.0.0'}
     hasBin: true
     dependencies:

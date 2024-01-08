@@ -9,6 +9,12 @@ interface MarketingLayoutProps {
 export default function Layout({ children }: MarketingLayoutProps) {
   return (
     <div className="flex min-h-screen flex-col">
+      <h2
+        aria-label="Announcement"
+        className="bg-black text-center font-sans text-sm text-white antialiased"
+      >
+        Under active development 🏃🏻‍♂️
+      </h2>
       <header className="border-b">
         <div className="mx-auto flex h-16 max-w-screen-lg items-center justify-between px-4">
           <Link

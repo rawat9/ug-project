@@ -1,9 +1,9 @@
 'use client'
 
 import { useForm } from 'react-hook-form'
-import { Label } from './ui/label'
-import { Input } from './ui/input'
-import { Button } from './ui/button'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import { Spinner } from '@/icons'
 import { signIn } from '@/lib/actions'
 import { z } from 'zod'
@@ -58,7 +58,10 @@ export function AuthForm() {
               {...register('email')}
             />
             {errors?.email && (
-              <p className="px-1 text-xs text-red-600">
+              <p
+                className="px-1 text-xs text-red-600"
+                data-testid="error-message"
+              >
                 {errors.email.message}
               </p>
             )}

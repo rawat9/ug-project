@@ -1,5 +1,5 @@
 import { buttonVariants } from '@/components/ui/button'
-import { Collaborate, Data, Github, Widgets } from '@/icons'
+import { Collaborate, Data, Github, Box } from '@/icons'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
 
@@ -11,7 +11,7 @@ interface FeatureProps {
 
 function Feature({ title, description, icon }: FeatureProps) {
   return (
-    <div className="rounded-lg border p-6 hover:shadow-md">
+    <div className="rounded-lg border p-6 transition-all duration-300 hover:shadow-md">
       {icon}
       <h4 className="mb-4 mt-2 font-semibold">{title}</h4>
       <p className="text-sm">{description}</p>
@@ -59,9 +59,9 @@ export default function Page() {
           />
 
           <Feature
-            title="Templates and Widgets"
+            title="Widgets library"
             description="A library of customizable widgets for quick dashboard creation"
-            icon={<Widgets className="h-12 w-12" />}
+            icon={<Box className="h-12 w-12" />}
           />
 
           <Feature
