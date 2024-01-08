@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import Page from '../page'
 import { fetchDashboards } from '@/lib/data'
 import { Search } from '../_components/search'
+import Layout from '../layout'
 
 jest.mock('../../../lib/data/index', () => ({
   __esModule: true,
@@ -19,6 +20,7 @@ jest.mock('next/navigation', () => ({
     get: (key: string) => key,
   }),
   usePathname: () => '/',
+  redirect: () => jest.fn() as never,
 }))
 
 // mock the Header RSC
@@ -26,6 +28,29 @@ jest.mock('../_components/header', () => ({
   __esModule: true,
   Header: () => <div />,
 }))
+
+jest.mock('../../../lib/actions/auth', () => ({
+  __esModule: true,
+  getSession: () => jest.fn(() => ({ session: null })),
+}))
+
+describe('Dashboard layout', () => {
+  it('should not display children if session is null', async () => {
+    const redirectSpy = jest.spyOn(await import('next/navigation'), 'redirect')
+
+    function ChildComponent() {
+      return <div>Child</div>
+    }
+
+    const dashboardLayout = await Layout({
+      children: <div>{<ChildComponent />}</div>,
+    })
+    render(dashboardLayout)
+
+    expect(redirectSpy).toHaveBeenCalledWith('/auth/login/')
+    expect(screen.queryByText('Child')).not.toBeInTheDocument()
+  })
+})
 
 describe('Dashboard Page', () => {
   afterEach(() => {
