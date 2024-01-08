@@ -11,7 +11,7 @@ interface FeatureProps {
 
 function Feature({ title, description, icon }: FeatureProps) {
   return (
-    <div className="rounded-lg border p-6 hover:shadow-md">
+    <div className="rounded-lg border p-6 transition-all duration-300 hover:shadow-md">
       {icon}
       <h4 className="mb-4 mt-2 font-semibold">{title}</h4>
       <p className="text-sm">{description}</p>
