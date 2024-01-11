@@ -33,7 +33,7 @@ export default function Page() {
           </p>
           <div className="space-y-4">
             <Link
-              href={'/dashboard'}
+              href={'/auth/login'}
               className={cn(buttonVariants({ size: 'sm' }), 'mr-2')}
             >
               Get Started
