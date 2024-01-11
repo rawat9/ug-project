@@ -128,30 +128,12 @@ describe('Dashboard Page', () => {
   })
 
   describe('Search', () => {
-    beforeEach(() => {
-      jest.mocked(fetchDashboards).mockResolvedValue([
-        {
-          id: 'slug-1',
-          title: 'test-1',
-          created_at: new Date('22/03/2020').toLocaleDateString(),
-          user_id: 'test-user',
-        },
-        {
-          id: 'slug-2',
-          title: 'test-2',
-          created_at: new Date('24/03/2020').toLocaleDateString(),
-          user_id: 'test-user',
-        },
-      ])
-    })
-
     afterEach(() => {
       jest.resetAllMocks()
     })
 
     it('should display search input field', async () => {
-      const dashboardPage = await Page({ searchParams: { query: '' } })
-      render(dashboardPage)
+      render(<Search />)
 
       const search = screen.getByRole<HTMLInputElement>('searchbox')
 
@@ -160,6 +142,14 @@ describe('Dashboard Page', () => {
     })
 
     it('should display no results found if no dashboards match the search term', async () => {
+      jest.mocked(fetchDashboards).mockResolvedValue([
+        {
+          id: 'slug-2',
+          title: 'test-2',
+          created_at: new Date('24/03/2020').toLocaleDateString(),
+          user_id: 'test-user',
+        },
+      ])
       const dashboardPage = await Page({ searchParams: { query: 'test-3' } })
       render(dashboardPage)
 
@@ -170,8 +160,7 @@ describe('Dashboard Page', () => {
     it('should update url when the search input changes', async () => {
       const routerSpy = jest.spyOn(useRouterMock, 'replace')
 
-      const dashboardPage = await Page({ searchParams: { query: '' } })
-      render(dashboardPage)
+      render(<Search />)
 
       const search = screen.getByRole<HTMLInputElement>('searchbox')
 
@@ -180,20 +169,6 @@ describe('Dashboard Page', () => {
         expect(routerSpy).toHaveBeenCalledWith(
           expect.stringContaining('query=test-0'),
         )
-      })
-    })
-
-    it.skip('should not trigger search for whitespace characters', async () => {
-      render(<Search />)
-
-      const handleSearch = jest.fn((value) => console.log(value))
-      const search = screen.getByRole<HTMLInputElement>('searchbox')
-      search.onchange = handleSearch
-
-      fireEvent.change(search, { target: { value: '     ' } })
-
-      await waitFor(() => {
-        expect(handleSearch).toHaveBeenCalledTimes(0)
       })
     })
   })
