@@ -13,7 +13,11 @@ export async function signIn(credentials: SignInWithPasswordlessCredentials) {
 
 export async function signOut() {
   const supabase = await createSupabaseServerActionClient()
-  return supabase.auth.signOut()
+  const { error } = await supabase.auth.signOut()
+
+  if (error) {
+    console.error(error.message)
+  }
 }
 
 export async function getSession() {
