@@ -3,6 +3,8 @@ import Page from '../page'
 import { fetchDashboards } from '@/lib/data'
 import { Search } from '../_components/search'
 import Layout from '../layout'
+import { getSession } from '@/lib/actions'
+import { Session } from '@supabase/supabase-js'
 
 jest.mock('../../../lib/data/index', () => ({
   __esModule: true,
@@ -10,7 +12,7 @@ jest.mock('../../../lib/data/index', () => ({
 }))
 
 const useRouterMock = {
-  replace: (href: string) => jest.fn(),
+  replace: () => jest.fn(),
 }
 
 jest.mock('next/navigation', () => ({
@@ -31,24 +33,36 @@ jest.mock('../_components/header', () => ({
 
 jest.mock('../../../lib/actions/auth', () => ({
   __esModule: true,
-  getSession: () => jest.fn(() => ({ session: null })),
+  getSession: jest.fn(() => ({ session: null })),
 }))
 
 describe('Dashboard layout', () => {
+  const ChildComponent = () => {
+    return <h1>Child component</h1>
+  }
+
+  afterEach(() => {
+    jest.resetAllMocks()
+  })
+
   it('should not display children if session is null', async () => {
     const redirectSpy = jest.spyOn(await import('next/navigation'), 'redirect')
+    await Layout({ children: <ChildComponent /> })
 
-    function ChildComponent() {
-      return <div>Child</div>
-    }
+    // should redirect to login page
+    expect(redirectSpy).toHaveBeenCalledWith('/auth/login/')
+  })
 
-    const dashboardLayout = await Layout({
-      children: <div>{<ChildComponent />}</div>,
-    })
+  it('should display children if session exists', async () => {
+    jest
+      .mocked(getSession)
+      .mockResolvedValue({ session: { user: { id: '1' } } as Session })
+
+    const dashboardLayout = await Layout({ children: <ChildComponent /> })
     render(dashboardLayout)
 
-    expect(redirectSpy).toHaveBeenCalledWith('/auth/login/')
-    expect(screen.queryByText('Child')).not.toBeInTheDocument()
+    const child = screen.getByRole('heading', { level: 1 })
+    expect(child.textContent).toEqual('Child component')
   })
 })
 
