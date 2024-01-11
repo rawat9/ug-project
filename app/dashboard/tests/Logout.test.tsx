@@ -21,8 +21,9 @@ describe('Logout', () => {
     jest.resetAllMocks()
   })
 
-  it('should display logout button', async () => {
+  it('should logout and navigate to /auth/login', async () => {
     const routerSpy = jest.spyOn(useRouterMock, 'push')
+    const signOutSpy = jest.spyOn(await import('@/lib/actions/auth'), 'signOut')
     const user = userEvent.setup()
     render(<Logout />)
 
@@ -30,6 +31,7 @@ describe('Logout', () => {
 
     await user.click(logoutButton)
 
+    expect(signOutSpy).toHaveBeenCalled()
     expect(routerSpy).toHaveBeenCalledWith('/auth/login')
   })
 })
