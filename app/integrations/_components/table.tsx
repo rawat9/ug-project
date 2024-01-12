@@ -26,14 +26,17 @@ export function DataTable({ columns, data }: DataTableProps<unknown, unknown>) {
   })
 
   return (
-    <div className="my-20 rounded-md border bg-white">
+    <div className="relative my-20 max-h-[400px] w-full overflow-auto rounded-md border bg-white">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
+            <TableRow
+              key={headerGroup.id}
+              className="sticky top-0 z-30 border-b bg-slate-100"
+            >
               {headerGroup.headers.map((header) => {
                 return (
-                  <TableHead key={header.id}>
+                  <TableHead key={header.id} className="text-center">
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -54,7 +57,7 @@ export function DataTable({ columns, data }: DataTableProps<unknown, unknown>) {
                 data-state={row.getIsSelected() && 'selected'}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
+                  <TableCell key={cell.id} className="text-center">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}

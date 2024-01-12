@@ -57,6 +57,10 @@ export default function Page() {
       )
     }, []),
     maxFiles: 1,
+    accept: {
+      'text/csv': ['.csv'],
+      'application/vnd.ms-excel': ['.xls', '.xlsx'],
+    },
   }
 
   const columns: ColumnDef<unknown>[] = headers.map((header) => ({
@@ -76,7 +80,7 @@ export default function Page() {
               {(file?.size / 1000000).toFixed(2)} mb
             </p>
           </div>
-          <DataTable columns={columns} data={data} />
+          {data.length > 0 && <DataTable columns={columns} data={data} />}
         </>
       )}
     </div>
