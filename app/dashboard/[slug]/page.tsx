@@ -4,7 +4,7 @@ import {
   ResizablePanelGroup,
 } from '@/components/ui/resizable'
 import { Widgets } from './_components/widgets'
-import { Editor } from './_components/editor'
+import Editor from './_components/editor/root'
 
 export default function Page({
   searchParams,
