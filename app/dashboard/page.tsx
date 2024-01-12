@@ -1,26 +1,20 @@
 import Link from 'next/link'
-import { Header } from '@/components/header'
-import { Search } from '@/components/search'
+import { Search } from './_components/search'
 import { fetchDashboards } from '@/lib/data'
-import { EmptyState } from '@/components/empty-state'
+import { EmptyState } from './_components/empty-state'
 import { CreateFormDialog } from './_components/create-form-dialog'
+import { Header } from './_components/header'
 
 export default async function Page({
   searchParams,
 }: {
-  searchParams?: {
-    query?: string
-  }
+  searchParams?: { query?: string }
 }) {
   const dashboards = await fetchDashboards()
   const query = searchParams?.query || ''
   const filteredDashboards = dashboards.filter((dashboard) =>
     dashboard.title.toLocaleLowerCase().includes(query),
   )
-
-  if (!dashboards.length) {
-    return <EmptyState />
-  }
 
   return (
     <>
@@ -43,7 +37,10 @@ export default async function Page({
                     aria-label="Open dashboard"
                     scroll={false}
                   >
-                    <div className="min-h-[150px] cursor-pointer rounded-lg border bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md">
+                    <div
+                      className="min-h-[150px] cursor-pointer rounded-lg border bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md"
+                      data-testid="dashboard"
+                    >
                       <h4 className="py-2 font-semibold">{dashboard.title}</h4>
                       <p className="text-sm">Description</p>
                     </div>

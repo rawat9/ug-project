@@ -5,22 +5,15 @@ import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { createSupabaseBrowserClient } from '@/lib/supabase/client'
-import { Logout } from '@/components/logout'
+import { Logout } from './logout'
+import { getUser } from '@/lib/actions'
 
 export async function Header() {
-  const supabase = createSupabaseBrowserClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
+  const { user } = await getUser()
   return (
     <header className="flex h-16 w-full items-center justify-between border-b bg-white px-4">
       <Link href="/" className={'flex text-xl font-bold'}>
@@ -41,20 +34,15 @@ export async function Header() {
         <DropdownMenuContent className="w-56" align="end" forceMount>
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col space-y-1">
-              <p className="text-sm leading-none">{user?.email}</p>
+              <p className="text-sm font-semibold">Logged in as</p>
+              <p
+                className="text-xs leading-none text-slate-600"
+                data-testid="user-email"
+              >
+                {user?.email}
+              </p>
             </div>
           </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuItem>
-              Profile
-              <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              Settings
-              <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <Logout />
         </DropdownMenuContent>
