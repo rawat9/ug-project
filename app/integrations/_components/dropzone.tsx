@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { Share } from '@/icons'
+import { Upload } from '@/icons'
 import { useDropzone, type DropzoneOptions } from 'react-dropzone'
 
 export function Dropzone({ options }: { options: DropzoneOptions }) {
@@ -15,7 +15,7 @@ export function Dropzone({ options }: { options: DropzoneOptions }) {
       >
         <input {...getInputProps({ name: 'file', type: 'file' })} />
         <div className="flex flex-col items-center justify-center gap-4">
-          <Share className="h-5 w-5 fill-current" />
+          <Upload className="h-8 w-8 text-slate-900" />
           {isDragActive ? (
             <p className="text-slate-600">Drop the files here...</p>
           ) : (

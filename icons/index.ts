@@ -19,6 +19,7 @@ export * from './CodeEditor'
 export * from './Settings'
 export * from './Component'
 export * from './Logout'
+export * from './Upload'
 
 // Icons for widgets library
 export * from './widgets/Text'
