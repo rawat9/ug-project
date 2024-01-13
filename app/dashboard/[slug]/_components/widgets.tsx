@@ -31,7 +31,8 @@ function Element({ icon, name }: { icon: React.ReactElement; name: string }) {
 
 export function Widgets() {
   return (
-    <div className="h-full w-full overflow-auto rounded-lg bg-white p-2">
+    <div className="h-full w-full space-y-3 overflow-auto rounded-lg bg-white p-2">
+      <h1 className="text-center">Widgets</h1>
       <div className="grid grid-cols-[repeat(auto-fit,_minmax(100px,_1fr))] gap-2">
         {elements.map((element) => (
           <Element key={element.name} {...element} />

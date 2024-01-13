@@ -33,7 +33,7 @@ export default function Page({
               >
                 <Widgets />
               </ResizablePanel>
-              <ResizableHandle className="hover:bg-slate-500" />
+              <ResizableHandle />
             </>
           )}
           <ResizablePanel
@@ -47,7 +47,7 @@ export default function Page({
         </ResizablePanelGroup>
       </ResizablePanel>
 
-      <ResizableHandle />
+      <ResizableHandle className="bg-slate-100" />
 
       {searchParams?.editor === 'true' && (
         <ResizablePanel

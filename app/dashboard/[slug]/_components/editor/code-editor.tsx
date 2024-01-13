@@ -1,16 +1,15 @@
 'use client'
 
-import { disableGrammarly } from '@/lib/utils'
-import Editor, { OnMount } from '@monaco-editor/react'
+import Editor from '@monaco-editor/react'
 
-export function CodeEditor() {
+function CodeEditor() {
   return (
     <Editor
-      height="200px"
+      height="90%"
       language="sql"
       theme="vs-light"
       defaultValue="-- Write your query"
-      className="border-gray-200 text-lg"
+      className="px-4"
       options={{
         fontSize: 15,
         minimap: {
@@ -20,3 +19,5 @@ export function CodeEditor() {
     />
   )
 }
+
+export default CodeEditor

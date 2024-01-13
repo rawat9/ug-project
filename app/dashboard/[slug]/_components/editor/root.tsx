@@ -5,9 +5,10 @@ import {
 } from '@/components/ui/resizable'
 import { Button } from '@/components/ui/button'
 import { Run } from '@/icons'
-import { CodeEditor } from './code-editor'
+import CodeEditor from './code-editor'
 import { SchemaViewer } from './schema-viewer'
 import { Queries } from './queries'
+import { Sources } from './_components/sources'
 
 function Editor() {
   return (
@@ -23,17 +24,24 @@ function Editor() {
 
         <ResizablePanel order={2} defaultSize={60}>
           <div className="flex h-full w-full flex-col gap-4 rounded-lg bg-white">
-            <div className="flex h-12 w-full items-center gap-2 border-b px-4">
+            <div className="flex h-14 w-full items-center gap-2 border-b px-4">
               <h1 className="flex-1">query-name</h1>
-              <Button variant={'outline'} size={'sm'} className="text-sm">
+              <Sources />
+              <Button variant={'outline'} className="text-sm">
                 <Run className="mr-2 h-3 w-3" />
                 Run
               </Button>
             </div>
 
-            <div className="px-4">
-              <CodeEditor />
-            </div>
+            <ResizablePanelGroup direction="vertical">
+              <ResizablePanel minSize={20} defaultSize={100} order={1}>
+                <CodeEditor />
+              </ResizablePanel>
+              <ResizableHandle />
+              <ResizablePanel defaultSize={0} order={2}>
+                <div>Results</div>
+              </ResizablePanel>
+            </ResizablePanelGroup>
           </div>
         </ResizablePanel>
 
