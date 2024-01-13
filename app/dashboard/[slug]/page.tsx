@@ -4,6 +4,7 @@ import {
   ResizablePanelGroup,
 } from '@/components/ui/resizable'
 import { Widgets } from './_components/widgets'
+import Editor from './_components/editor/root'
 
 export default function Page({
   searchParams,
@@ -32,7 +33,7 @@ export default function Page({
               >
                 <Widgets />
               </ResizablePanel>
-              <ResizableHandle className="hover:bg-slate-500" />
+              <ResizableHandle />
             </>
           )}
           <ResizablePanel
@@ -46,7 +47,7 @@ export default function Page({
         </ResizablePanelGroup>
       </ResizablePanel>
 
-      <ResizableHandle />
+      <ResizableHandle className="bg-slate-100" />
 
       {searchParams?.editor === 'true' && (
         <ResizablePanel
@@ -66,12 +67,4 @@ export default function Page({
 
 function Canvas() {
   return <canvas className="h-full w-full rounded-lg bg-white" id="canvas" />
-}
-
-function Editor() {
-  return (
-    <div className="h-full w-full rounded-lg bg-white p-2">
-      <h1 className="mb-4 text-center">SQL Editor + Schema Viewer</h1>
-    </div>
-  )
 }

@@ -25,3 +25,9 @@ export * from './widgets/Text'
 export * from './widgets/Button'
 export * from './widgets/Table'
 export * from './widgets/Chart'
+
+// Icons for editor
+export * from './editor/CaretSort'
+export * from './editor/Run'
+export * from './editor/Check'
+export * from './editor/Delete'
