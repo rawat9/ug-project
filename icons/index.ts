@@ -18,11 +18,16 @@ export * from './DragHandle'
 export * from './CodeEditor'
 export * from './Settings'
 export * from './Component'
-export * from './Run'
 export * from './Logout'
+export * from './Delete'
 
 // Icons for widgets library
 export * from './widgets/Text'
 export * from './widgets/Button'
 export * from './widgets/Table'
 export * from './widgets/Chart'
+
+// Icons for editor
+export * from './editor/CaretSort'
+export * from './editor/Run'
+export * from './editor/Check'
