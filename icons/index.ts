@@ -19,7 +19,6 @@ export * from './CodeEditor'
 export * from './Settings'
 export * from './Component'
 export * from './Logout'
-export * from './Delete'
 
 // Icons for widgets library
 export * from './widgets/Text'
@@ -31,3 +30,4 @@ export * from './widgets/Chart'
 export * from './editor/CaretSort'
 export * from './editor/Run'
 export * from './editor/Check'
+export * from './editor/Delete'
