@@ -10,8 +10,6 @@ import { editorAtom } from './state'
 import { executeQuery } from '@/lib/data'
 
 function CodeEditor() {
-  console.log('render')
-
   const editorRef = useRef<Parameters<OnMount>[0]>()
   const set = useSetAtom(editorAtom)
 
