@@ -3,12 +3,11 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable'
-import { Button } from '@/components/ui/button'
-import { Run } from '@/icons'
 import CodeEditor from './code-editor'
 import { SchemaViewer } from './schema-viewer'
 import { Queries } from './queries'
-import { Sources } from './_components/sources'
+import { Result } from './result'
+import { Provider } from 'jotai'
 
 function Editor() {
   return (
@@ -24,23 +23,21 @@ function Editor() {
 
         <ResizablePanel order={2} defaultSize={60}>
           <div className="flex h-full w-full flex-col gap-4 rounded-lg bg-white">
-            <div className="flex h-14 w-full items-center gap-2 border-b px-4">
-              <h1 className="flex-1">query-name</h1>
-              <Sources />
-              <Button variant={'outline'} className="text-sm">
-                <Run className="mr-2 h-3 w-3" />
-                Run
-              </Button>
-            </div>
-
             <ResizablePanelGroup direction="vertical">
-              <ResizablePanel minSize={20} defaultSize={100} order={1}>
-                <CodeEditor />
-              </ResizablePanel>
-              <ResizableHandle />
-              <ResizablePanel defaultSize={0} order={2}>
-                <div>Results</div>
-              </ResizablePanel>
+              <Provider>
+                <ResizablePanel minSize={20} defaultSize={100} order={1}>
+                  <CodeEditor />
+                </ResizablePanel>
+                <ResizableHandle />
+                <ResizablePanel defaultSize={0} order={2}>
+                  <div className="flex h-8 w-full items-center gap-2 border-b px-4">
+                    <h1 className="text-sm font-semibold text-slate-600">
+                      Result
+                    </h1>
+                  </div>
+                  <Result />
+                </ResizablePanel>
+              </Provider>
             </ResizablePanelGroup>
           </div>
         </ResizablePanel>

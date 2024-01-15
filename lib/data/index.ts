@@ -1,6 +1,9 @@
 'use server'
 
-import { createSupabaseRSCClient } from '@/lib/supabase/server'
+import {
+  createSupabaseRSCClient,
+  createSupabaseServerActionClient,
+} from '@/lib/supabase/server'
 import { Tables } from '@/types/database'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
@@ -140,4 +143,16 @@ export const updateDashboardTitle = async ({
   }
 
   revalidatePath('/dashboard')
+}
+
+export async function executeQuery(query: string) {
+  const supabase = await createSupabaseServerActionClient()
+  const { data, error } = await supabase.functions.invoke('execute-postgres', {
+    body: { query },
+  })
+
+  if (error) {
+    console.error(error)
+  }
+  return data
 }

@@ -22,24 +22,12 @@ import { CaretSort, Check } from '@/icons'
 
 const frameworks = [
   {
-    value: 'next.js',
-    label: 'Next.js',
+    value: 'postgresql',
+    label: 'onboarding-db (PostgreSQL)',
   },
   {
-    value: 'sveltekit',
-    label: 'SvelteKit',
-  },
-  {
-    value: 'nuxt.js',
-    label: 'Nuxt.js',
-  },
-  {
-    value: 'remix',
-    label: 'Remix',
-  },
-  {
-    value: 'astro',
-    label: 'Astro',
+    value: 'mysql',
+    label: 'sales-db (MySQL)',
   },
 ]
 
@@ -64,8 +52,8 @@ export function Sources() {
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Search framework..." className="h-9" />
-          <CommandEmpty>No framework found.</CommandEmpty>
+          <CommandInput placeholder="Search integration..." className="h-9" />
+          <CommandEmpty>No integration found.</CommandEmpty>
           <CommandGroup>
             {frameworks.map((framework) => (
               <CommandItem
