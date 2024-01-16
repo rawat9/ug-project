@@ -56,8 +56,8 @@ function CodeEditor() {
     //   },
     // ]
 
-    const result = await executeQuery(query)
-    set((prev) => ({ ...prev, data: result }))
+    const { data, error, executionTime } = await executeQuery(query)
+    set((prev) => ({ ...prev, result: data, error, executionTime }))
   }, [set])
 
   const handleEditorDidMount: OnMount = (editor, monaco) => {

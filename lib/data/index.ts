@@ -5,7 +5,7 @@ import {
   createSupabaseServerActionClient,
 } from '@/lib/supabase/server'
 import { Tables } from '@/types/database'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, unstable_cache } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
 
@@ -145,14 +145,31 @@ export const updateDashboardTitle = async ({
   revalidatePath('/dashboard')
 }
 
-export async function executeQuery(query: string) {
-  const supabase = await createSupabaseServerActionClient()
-  const { data, error } = await supabase.functions.invoke('execute-postgres', {
-    body: { query },
-  })
-
-  if (error) {
-    console.error(error)
-  }
-  return data
+interface Result {
+  data: unknown[]
+  error: Error | null
+  executionTime: number
 }
+
+export const executeQuery = unstable_cache(
+  async (query: string) => {
+    const supabase = await createSupabaseServerActionClient()
+    const { data, error } = await supabase.functions.invoke<Result>(
+      'execute-query',
+      {
+        body: { query },
+      },
+    )
+
+    if (error) {
+      throw error
+    }
+
+    if (!data) {
+      throw new Error('No data returned')
+    }
+
+    return data
+  },
+  ['sql-query'],
+)
