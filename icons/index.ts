@@ -20,6 +20,7 @@ export * from './Settings'
 export * from './Component'
 export * from './Logout'
 export * from './Upload'
+export * from './Check'
 
 // Icons for widgets library
 export * from './widgets/Text'
