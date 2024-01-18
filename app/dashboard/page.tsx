@@ -1,9 +1,9 @@
 import Link from 'next/link'
-import { Search } from './_components/search'
+import Search from '../../components/shared/search'
 import { fetchDashboards } from '@/lib/data'
 import { EmptyState } from './_components/empty-state'
 import { CreateFormDialog } from './_components/create-form-dialog'
-import { Header } from './_components/header'
+import { Header } from '@/components/shared/header'
 
 export default async function Page({
   searchParams,

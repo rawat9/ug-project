@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import { Logout } from '../_components/logout'
+import { Logout } from '@/components/shared/logout'
 import userEvent from '@testing-library/user-event'
 
 const useRouterMock = {

@@ -11,17 +11,21 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Logout } from './logout'
 import { getUser } from '@/lib/actions'
+import { ActiveLink } from './active-link'
 
 export async function Header() {
   const { user } = await getUser()
   return (
-    <header className="flex h-16 w-full items-center justify-between border-b bg-white px-4">
-      <Link href="/" className={'flex text-xl font-bold'}>
-        <Dashboard className="h-5 w-5" />
-      </Link>
-      <Link href="/integrations" className={'mr-auto pl-4'}>
-        Integrations
-      </Link>
+    <header className="flex h-14 w-full items-center justify-between border-b bg-white px-4">
+      <div className="flex items-center gap-10">
+        <Link href="/">
+          <Dashboard className="h-6 w-6" />
+        </Link>
+        <nav className="flex gap-2">
+          <ActiveLink href="/dashboard">Home</ActiveLink>
+          <ActiveLink href="/integrations">Integrations</ActiveLink>
+        </nav>
+      </div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="relative h-8 w-8 rounded-full">

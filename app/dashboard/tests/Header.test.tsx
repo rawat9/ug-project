@@ -1,9 +1,9 @@
 import { render, screen } from '@testing-library/react'
-import { Header } from '../_components/header'
+import { Header } from '@/components/shared/header'
 import userEvent from '@testing-library/user-event'
 
 // mock Logout component
-jest.mock('../_components/logout', () => ({
+jest.mock('../../../components/shared/logout', () => ({
   __esModule: true,
   Logout: () => <div>Logout</div>,
 }))
