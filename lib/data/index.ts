@@ -43,7 +43,7 @@ export const createDashboard = async (body: FormData) => {
     .object({
       title: z.string().trim().min(1),
     })
-    .safeParse(body)
+    .safeParse({ title: body.get('title') })
 
   if (!result.success) {
     console.error(result.error)
