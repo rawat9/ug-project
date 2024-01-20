@@ -21,6 +21,9 @@ export * from './Component'
 export * from './Logout'
 export * from './Upload'
 export * from './Check'
+export * from './CaretSort'
+export * from './EyeOff'
+export * from './Filter'
 
 // Icons for widgets library
 export * from './widgets/Text'
