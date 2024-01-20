@@ -1,10 +1,10 @@
 'use client'
 
 import { read, utils } from 'xlsx'
-import { Dropzone } from './_components/dropzone'
+import { Dropzone } from './dropzone'
 import { DropzoneOptions } from 'react-dropzone'
 import { useCallback, useState } from 'react'
-import { DataTable } from './_components/table'
+import { Preview } from './preview'
 import { ColumnDef } from '@tanstack/react-table'
 
 function transform(header: string[], data: unknown[]) {
@@ -20,7 +20,7 @@ function transform(header: string[], data: unknown[]) {
   return res
 }
 
-export default function Page() {
+export function ExcelImport() {
   const [file, setFile] = useState<File | null>(null)
   const [headers, setHeaders] = useState<string[]>([])
   const [data, setData] = useState<unknown[]>([])
@@ -80,7 +80,9 @@ export default function Page() {
               {(file?.size / 1000000).toFixed(2)} mb
             </p>
           </div>
-          {data.length > 0 && <DataTable columns={columns} data={data} />}
+          {data.length > 0 && (
+            <Preview columns={columns} data={data.slice(1, 20)} />
+          )}
         </>
       )}
     </div>

@@ -18,7 +18,8 @@ interface DataTableProps<TData, TValue> {
   data: TData[]
 }
 
-export function DataTable({ columns, data }: DataTableProps<unknown, unknown>) {
+export function Preview({ columns, data }: DataTableProps<unknown, unknown>) {
+  console.log('PREVIEW', columns, data)
   const table = useReactTable({
     columns,
     data,
@@ -26,7 +27,7 @@ export function DataTable({ columns, data }: DataTableProps<unknown, unknown>) {
   })
 
   return (
-    <div className="relative my-20 max-h-[400px] w-full overflow-auto rounded-md border bg-white">
+    <div className="relative max-h-[460px] w-full overflow-auto rounded-md border bg-white">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (

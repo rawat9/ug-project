@@ -20,9 +20,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import {
@@ -33,50 +30,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Input } from '@/components/ui/input'
-import { Add, Dashboard } from '@/icons'
+import { Add, EyeOff, CaretSort, Filter } from '@/icons'
+import { Payment, data } from './data'
 
-const data: Payment[] = [
-  {
-    id: 'm5gr84i9',
-    amount: 316,
-    status: 'success',
-    email: 'ken99@yahoo.com',
-  },
-  {
-    id: '3u1reuv4',
-    amount: 242,
-    status: 'success',
-    email: 'Abe45@gmail.com',
-  },
-  {
-    id: 'derv1ws0',
-    amount: 837,
-    status: 'processing',
-    email: 'Monserrat44@gmail.com',
-  },
-  {
-    id: '5kma53ae',
-    amount: 874,
-    status: 'success',
-    email: 'Silas22@gmail.com',
-  },
-  {
-    id: 'bhqecj4p',
-    amount: 721,
-    status: 'failed',
-    email: 'carmella@hotmail.com',
-  },
-]
-
-export type Payment = {
-  id: string
-  amount: number
-  status: 'pending' | 'processing' | 'success' | 'failed'
-  email: string
-}
-
-export const columns: ColumnDef<Payment>[] = [
+const columns: ColumnDef<Payment>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -113,8 +70,10 @@ export const columns: ColumnDef<Payment>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          className="p-0"
         >
           Email
+          <CaretSort className="ml-1 h-4 w-4" />
         </Button>
       )
     },
@@ -166,6 +125,12 @@ export function DataTable() {
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    initialState: {
+      pagination: {
+        pageIndex: 0,
+        pageSize: 20,
+      },
+    },
     state: {
       sorting,
       columnFilters,
@@ -175,26 +140,20 @@ export function DataTable() {
   })
 
   return (
-    <div className="h-[calc(100vh_-_3.5rem)] w-full">
-      <div className="flex h-16 items-center justify-between bg-white px-4">
-        <div className="flex gap-2">
-          <Input
-            placeholder="Quick search..."
-            value={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
-            onChange={(event) =>
-              table.getColumn('email')?.setFilterValue(event.target.value)
-            }
-            className="h-8 max-w-sm"
-          />
-          <Button variant="outline" size="sm">
-            Add row
+    <div className="h-[calc(100vh_-_6rem)] w-full">
+      <div className="flex h-[4%] items-center justify-between bg-white px-4">
+        <div className="flex items-center gap-2">
+          <Button variant="outline" className="h-6" size="sm">
+            Insert
           </Button>
           <Button variant="ghost" size="sm">
+            <Filter className="mr-1 h-4 w-4" />
             Filter
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="sm">
+                <EyeOff className="mr-1 h-4 w-4" />
                 Fields
               </Button>
             </DropdownMenuTrigger>
@@ -224,9 +183,9 @@ export function DataTable() {
         </p>
       </div>
 
-      <div className="h-[90%] overflow-auto bg-white">
-        <Table className="">
-          <TableHeader className="bg-slate-100">
+      <div className="relative h-[92%] bg-white">
+        <Table>
+          <TableHeader className="sticky top-0 z-30 bg-slate-100">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -274,23 +233,29 @@ export function DataTable() {
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 px-2">
-        <div className="text-muted-foreground flex-1 text-sm">
+      <div className="flex h-[4%] items-center justify-end space-x-2 px-2">
+        <div className="flex-1 text-sm text-slate-500">
           {table.getFilteredSelectedRowModel().rows.length} of{' '}
           {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
-        <div className="space-x-2">
+        <div className="flex items-center space-x-2">
           <Button
             variant="outline"
             size="sm"
+            className="h-6"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
             Previous
           </Button>
+          <p className="text-xs">
+            Page {table.getState().pagination.pageIndex + 1} of{' '}
+            {table.getPageCount()}
+          </p>
           <Button
             variant="outline"
             size="sm"
+            className="h-6"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
