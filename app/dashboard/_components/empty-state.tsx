@@ -1,6 +1,5 @@
 import Image from 'next/image'
-import { Button } from '@/components/ui/button'
-import { Add } from '@/icons'
+import { CreateFormDialog } from './create-form-dialog'
 
 export function EmptyState() {
   return (
@@ -19,10 +18,9 @@ export function EmptyState() {
         <p>Every dashboard you create will appear here.</p>
         To get started, click the button below
       </h4>
-      <Button variant="ghost" aria-label="Create a new dashboard">
-        <Add />
-        <p className="ml-2 flex">Add New</p>
-      </Button>
+      <CreateFormDialog
+        props={{ variant: 'ghost', 'aria-label': 'Create a new dashboard' }}
+      />
     </div>
   )
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
+import { Button, ButtonProps } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -12,11 +12,11 @@ import {
 import { Add } from '@/icons'
 import { CreateForm } from './create-form'
 
-export function CreateFormDialog() {
+export function CreateFormDialog({ props }: { props?: ButtonProps }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>
+        <Button {...props}>
           <Add />
           <p className="ml-2 hidden sm:flex">Add New</p>
         </Button>
