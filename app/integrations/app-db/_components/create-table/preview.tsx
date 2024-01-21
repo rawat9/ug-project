@@ -19,7 +19,6 @@ interface DataTableProps<TData, TValue> {
 }
 
 export function Preview({ columns, data }: DataTableProps<unknown, unknown>) {
-  console.log('PREVIEW', columns, data)
   const table = useReactTable({
     columns,
     data,

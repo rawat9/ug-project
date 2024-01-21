@@ -1,9 +1,7 @@
 import { ExcelImport } from './excel-import2'
 import {
   Sheet,
-  SheetClose,
   SheetContent,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -23,13 +21,6 @@ export function ImportSpreadSheet() {
           <SheetTitle>Import your data</SheetTitle>
         </SheetHeader>
         <ExcelImport />
-        <SheetFooter className="h-[5%] items-center border-t px-4 py-2">
-          <SheetClose asChild>
-            <Button type="submit" className="h-8">
-              Save changes
-            </Button>
-          </SheetClose>
-        </SheetFooter>
       </SheetContent>
     </Sheet>
   )
