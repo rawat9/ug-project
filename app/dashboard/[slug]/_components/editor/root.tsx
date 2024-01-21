@@ -6,8 +6,8 @@ import {
 import CodeEditor from './code-editor'
 import { SchemaViewer } from './schema-viewer'
 import { Queries } from './queries'
-import { Result } from './result'
 import { Provider } from 'jotai'
+import { Result } from './result'
 
 function Editor() {
   return (
@@ -23,22 +23,23 @@ function Editor() {
 
         <ResizablePanel order={2} defaultSize={60}>
           <div className="flex h-full w-full flex-col gap-4 rounded-lg bg-white">
-            <ResizablePanelGroup direction="vertical">
-              <Provider>
-                <ResizablePanel minSize={20} defaultSize={100} order={1}>
+            <Provider>
+              <ResizablePanelGroup
+                autoSaveId="editor-center"
+                direction="vertical"
+              >
+                <ResizablePanel
+                  id="code-editor"
+                  minSize={20}
+                  defaultSize={100}
+                  order={1}
+                >
                   <CodeEditor />
                 </ResizablePanel>
                 <ResizableHandle />
-                <ResizablePanel defaultSize={0} order={2}>
-                  <div className="flex h-8 w-full items-center gap-2 border-b px-4">
-                    <h1 className="text-sm font-semibold text-slate-600">
-                      Result
-                    </h1>
-                  </div>
-                  <Result />
-                </ResizablePanel>
-              </Provider>
-            </ResizablePanelGroup>
+                <Result />
+              </ResizablePanelGroup>
+            </Provider>
           </div>
         </ResizablePanel>
 

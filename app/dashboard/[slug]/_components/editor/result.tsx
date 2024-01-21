@@ -1,82 +1,43 @@
 'use client'
 
-import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table'
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
-import { useAtomValue } from 'jotai'
-import { queryResultAtom } from './state'
-
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
-}
+import { useAtom, useAtomValue } from 'jotai'
+import { queryResultAtom, showQueryResultAtom } from './state'
+import { ResultsTable } from './results-table'
+import { ResizablePanel } from '@/components/ui/resizable'
+import { ImperativePanelHandle } from 'react-resizable-panels'
+import * as React from 'react'
 
 export function Result() {
   const queryResult = useAtomValue(queryResultAtom)
-  const { data, columns } = queryResult
+  const showQueryResults = useAtomValue(showQueryResultAtom)
+  console.log('Result', queryResult, showQueryResults)
 
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  })
+  if (!queryResult)
+    return <ResizablePanel id="empty-result" defaultSize={0} order={2} />
+
+  const { data, executionTime, columns } = queryResult
 
   return (
-    <div className="overflow-auto">
-      <Table>
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                  </TableHead>
-                )
-              })}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && 'selected'}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </div>
+    <>
+      {showQueryResults && (
+        <ResizablePanel id="result" order={2} defaultSize={50} minSize={30}>
+          <div className="flex h-8 w-full items-center gap-2 px-4">
+            <h1 className="text-sm font-semibold text-slate-600">Result</h1>
+            <p className="ml-auto text-sm text-slate-600">
+              Ran successfully in {executionTime} ms
+            </p>
+          </div>
+          {/* {error ? (
+            <div className="flex h-full w-full items-center justify-center">
+              <h1 className="text-sm font-semibold text-slate-600">
+                {error.message}
+              </h1>
+            </div>
+          ) : ( */}
+          <ResultsTable columns={columns ?? []} data={data} />
+          {/* )} */}
+        </ResizablePanel>
+      )}
+    </>
   )
 }
