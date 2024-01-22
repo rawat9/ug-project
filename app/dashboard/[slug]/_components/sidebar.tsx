@@ -18,7 +18,7 @@ export function Sidebar() {
   return (
     <aside className="fixed z-20 flex">
       <div className="flex h-screen w-12 flex-col items-center overflow-y-auto border-r bg-white py-8 dark:border-gray-700 dark:bg-gray-900">
-        <nav className="flex flex-1 flex-col justify-center gap-4">
+        <nav className="flex flex-1 flex-col justify-center gap-2">
           <TooltipProvider delayDuration={0}>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -33,9 +33,9 @@ export function Sidebar() {
                       scroll: false,
                     })
                   }}
-                  className="rounded-lg bg-blue-100 p-1.5 text-gray-700 transition-colors duration-200 hover:bg-gray-100 focus:outline-none dark:text-gray-200 dark:hover:bg-gray-800"
+                  className="rounded-lg p-1.5 text-gray-700 transition-colors duration-200 hover:bg-gray-100 focus:outline-none dark:text-gray-200 dark:hover:bg-gray-800"
                 >
-                  <Component />
+                  <Component className="h-6 w-6" />
                 </button>
               </TooltipTrigger>
               <TooltipContent side="right">
