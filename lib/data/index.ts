@@ -1,8 +1,11 @@
 'use server'
 
-import { createSupabaseRSCClient } from '@/lib/supabase/server'
+import {
+  createSupabaseRSCClient,
+  createSupabaseServerActionClient,
+} from '@/lib/supabase/server'
 import { Tables } from '@/types/database'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, unstable_cache as cache } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
 
@@ -141,3 +144,26 @@ export const updateDashboardTitle = async ({
 
   revalidatePath('/dashboard')
 }
+
+export const executeQuery = cache(
+  async (query: string) => {
+    const supabase = await createSupabaseServerActionClient()
+    const { data, error } = await supabase.functions.invoke<Result>(
+      'execute-query',
+      {
+        body: { query },
+      },
+    )
+
+    if (error) {
+      throw error
+    }
+
+    if (!data) {
+      throw new Error('No data returned')
+    }
+
+    return data
+  },
+  ['sql-query'],
+)
