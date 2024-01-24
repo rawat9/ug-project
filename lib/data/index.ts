@@ -5,7 +5,7 @@ import {
   createSupabaseServerActionClient,
 } from '@/lib/supabase/server'
 import { Tables } from '@/types/database'
-import { revalidatePath, unstable_cache } from 'next/cache'
+import { revalidatePath, unstable_cache as cache } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
 
@@ -145,13 +145,7 @@ export const updateDashboardTitle = async ({
   revalidatePath('/dashboard')
 }
 
-interface Result {
-  data: unknown[]
-  error: Error | null
-  executionTime: number
-}
-
-export const executeQuery = unstable_cache(
+export const executeQuery = cache(
   async (query: string) => {
     const supabase = await createSupabaseServerActionClient()
     const { data, error } = await supabase.functions.invoke<Result>(
