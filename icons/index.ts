@@ -24,6 +24,7 @@ export * from './Check'
 export * from './CaretSort'
 export * from './EyeOff'
 export * from './Filter'
+export * from './Help'
 
 // Icons for widgets library
 export * from './widgets/Text'
