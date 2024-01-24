@@ -1,4 +1,4 @@
-import { ExcelImport } from './excel-import2'
+import { ExcelImport } from './excel-import'
 import {
   Sheet,
   SheetContent,

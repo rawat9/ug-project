@@ -1,26 +1,20 @@
 'use client'
 
-import { read, utils } from 'xlsx'
 import { Dropzone } from './dropzone'
 import { DropzoneOptions } from 'react-dropzone'
-import { useCallback, useState } from 'react'
+import { Suspense, useCallback, useState } from 'react'
 import { Preview } from './preview'
 import { ColumnDef } from '@tanstack/react-table'
-
-function transform(header: string[], data: unknown[]) {
-  const res = []
-  for (const value of data) {
-    const obj = {}
-    for (const [index, head] of header.entries()) {
-      obj[head.toLocaleLowerCase().trim()] = value[index]
-    }
-    res.push(obj)
-  }
-
-  return res
-}
+import { readCSV, readExcel } from './utils'
+import { useSetAtom } from 'jotai'
+import { Column, createTableAtom } from './state'
+import { SheetClose, SheetFooter } from '@/components/ui/sheet'
+import { Button } from '@/components/ui/button'
+import { Cross } from '@/icons'
 
 export function ExcelImport() {
+  console.log('ExcelImport Render')
+  const set = useSetAtom(createTableAtom)
   const [file, setFile] = useState<File | null>(null)
   const [headers, setHeaders] = useState<string[]>([])
   const [data, setData] = useState<unknown[]>([])
@@ -31,30 +25,22 @@ export function ExcelImport() {
       if (!file) return
 
       setFile(file)
+      if (file.type === 'text/csv') {
+        readCSV(file, (results) => {
+          const columns = results.meta.fields ?? []
 
-      const arrayBuffer = await file.arrayBuffer()
-      const workBook = read(arrayBuffer, {
-        type: 'buffer',
-        cellText: false,
-        cellDates: true,
-      })
+          if (!columns.length) {
+            throw new Error('Headers not found')
+          }
 
-      const workSheet = workBook.Sheets[workBook.SheetNames.at(0)]
-      const json = utils.sheet_to_json(workSheet, {
-        header: 1,
-        raw: false,
-        dateNF: 'yyyy-mm-dd',
-        rawNumbers: true,
-      })
-
-      const header = json[0] as string[]
-      setHeaders(Object.values(header))
-      setData(
-        transform(
-          Object.values(header),
-          json.slice(1).map((item) => Object.values(item)),
-        ),
-      )
+          setData(results.data)
+          setHeaders(columns)
+        })
+      } else {
+        const { data, columns } = await readExcel(file)
+        setHeaders(columns)
+        setData(data)
+      }
     }, []),
     maxFiles: 1,
     accept: {
@@ -64,27 +50,82 @@ export function ExcelImport() {
   }
 
   const columns: ColumnDef<unknown>[] = headers.map((header) => ({
-    accessorKey: header.toLocaleLowerCase().trim(),
+    accessorKey: header.trim(),
     header: header.trim(),
   }))
 
+  const handleChange = useCallback(() => {
+    set({
+      name: file?.name.split('.')[0] ?? '',
+      columns: columns.map((column) => {
+        const columnName = column.header?.toString() ?? ''
+        return {
+          name: columnName,
+          type: 'text',
+          default: '',
+          options: {
+            primary: false,
+            nullable: false,
+            unique: false,
+          },
+        } satisfies Column
+      }),
+    })
+  }, [columns, file, set])
+
+  const handleRemove = useCallback(() => {
+    setFile(null)
+    setHeaders([])
+    setData([])
+  }, [])
+
   return (
-    <div className="mx-auto max-w-4xl px-4 py-20">
-      <Dropzone options={options} />
-      {/* preview */}
-      {file && (
-        <>
-          <div className="mt-4 flex h-20 max-w-4xl flex-col gap-2 rounded-lg border bg-white p-3 shadow-sm">
-            <h4 className="font-semibold">{file?.name}</h4>
-            <p className="text-sm text-slate-600">
-              {(file?.size / 1000000).toFixed(2)} mb
-            </p>
-          </div>
-          {data.length > 0 && (
-            <Preview columns={columns} data={data.slice(1, 20)} />
-          )}
-        </>
-      )}
-    </div>
+    <>
+      <div className="h-[90%] px-6 py-4">
+        <p className="py-2 text-sm text-slate-600">
+          The first row must be the headers of the table*
+        </p>
+        <Dropzone options={options} />
+        {/* preview */}
+        {file && (
+          <>
+            <div className="mt-4 flex h-20 max-w-4xl gap-2 rounded-lg border bg-white p-3 shadow-sm">
+              <div className="flex flex-1 flex-col">
+                <h4 className="font-semibold">{file?.name}</h4>
+                <p className="text-sm text-slate-600">
+                  {(file?.size / 1000000).toFixed(2)} mb
+                </p>
+              </div>
+              <Button variant="ghost" size="sm" onClick={handleRemove}>
+                <Cross className="h-4 w-4" />
+              </Button>
+            </div>
+            <Suspense
+              fallback={<h1 className="text-3xl font-medium">Loading...</h1>}
+            >
+              {data.length > 0 && (
+                <div className="flex flex-col gap-2 py-6">
+                  <p className="text-lg font-medium">Preview</p>
+                  <p className="text-sm text-slate-600">
+                    Your table will have {data.length} rows and the following{' '}
+                    {columns.length} columns. Here is a preview of the data that
+                    will be added (up to the first 20 columns and first 20
+                    rows).
+                  </p>
+                  <Preview columns={columns} data={data.slice(0, 20)} />
+                </div>
+              )}
+            </Suspense>
+          </>
+        )}
+      </div>
+      <SheetFooter className="h-[5%] items-center border-t px-4 py-2">
+        <SheetClose asChild>
+          <Button type="submit" className="h-8" onClick={handleChange}>
+            Save changes
+          </Button>
+        </SheetClose>
+      </SheetFooter>
+    </>
   )
 }

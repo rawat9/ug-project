@@ -98,7 +98,7 @@ const columns: ColumnDef<Payment>[] = [
     id: 'add-new-col',
     enableHiding: false,
     header: () => (
-      <Button variant={'ghost'} className="w-full justify-start">
+      <Button variant="ghost" className="w-full justify-start">
         <Add />
       </Button>
     ),

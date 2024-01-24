@@ -4,8 +4,6 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
-  SheetFooter,
-  SheetClose,
 } from '@/components/ui/sheet'
 import { Add } from '@/icons'
 import { Button } from '@/components/ui/button'
@@ -29,11 +27,6 @@ export function CreateTable() {
           <SheetTitle>Create a new table</SheetTitle>
         </SheetHeader>
         <ColumnsForm />
-        <SheetFooter className="p-4">
-          <SheetClose asChild>
-            <Button type="submit">Save changes</Button>
-          </SheetClose>
-        </SheetFooter>
       </SheetContent>
     </Sheet>
   )

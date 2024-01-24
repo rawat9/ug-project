@@ -1,10 +1,12 @@
 import { atom } from 'jotai'
+import { dataTypes } from './data-types'
 
-type Column = {
+export type Column = {
   name: string
-  type: string
+  type: (typeof dataTypes)[number]['name'] | ''
   default: string
   options: {
+    primary: boolean
     nullable: boolean
     unique: boolean
   }
@@ -23,6 +25,7 @@ export const createTableAtom = atom<Table>({
       type: '',
       default: '',
       options: {
+        primary: false,
         nullable: false,
         unique: false,
       },
