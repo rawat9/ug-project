@@ -31,11 +31,13 @@ Deno.serve(async (req) => {
     const result = await sql.unsafe(query)
     end = performance.now()
 
+    const columns = result.columns.map((column) => column.name)
+
     const executionTime = end - start
     logger.info(`Query took ${executionTime}ms`)
 
     return new Response(
-      JSON.stringify({ data: result, error: null, executionTime }),
+      JSON.stringify({ data: result, columns, error: null, executionTime }),
       {
         headers: { 'Content-Type': 'application/json' },
         status: 200,
@@ -49,16 +51,19 @@ Deno.serve(async (req) => {
     if (error instanceof postgres.PostgresError) {
       errorResponse = {
         data: [],
+        columns: [],
         error: {
           name: error.name,
           message: error.message,
           position: error.position,
+          hint: error.hint,
         },
         executionTime,
       }
     } else {
       errorResponse = {
         data: [],
+        columns: [],
         error: new Error('Internal Server Error'),
         executionTime,
       }
