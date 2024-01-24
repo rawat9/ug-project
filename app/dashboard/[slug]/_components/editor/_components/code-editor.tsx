@@ -1,38 +1,35 @@
 'use client'
 
 import Editor, { OnMount } from '@monaco-editor/react'
-import { useCallback, useRef } from 'react'
-import { Sources } from './_components/sources'
-import Run from './_components/run'
+import * as React from 'react'
+import { Sources } from './sources'
+import { Run } from './run'
 import { useSetAtom } from 'jotai'
 import { useDebouncedCallback } from 'use-debounce'
-import { editorAtom, showQueryResultAtom } from './state'
+import { editorAtom, queryAtom } from '../state'
 import { executeQuery } from '@/lib/data'
-import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 
 function CodeEditor() {
-  const editorRef = useRef<Parameters<OnMount>[0]>()
+  const editorRef = React.useRef<Parameters<OnMount>[0]>()
   const set = useSetAtom(editorAtom)
-  const toggle = useSetAtom(showQueryResultAtom)
+  const setQuery = useSetAtom(queryAtom)
 
-  const execute = useCallback(async () => {
+  const execute = React.useCallback(async () => {
     const query = editorRef.current?.getValue()
     if (!query || query.trim() === '') return
-    const { data, error, executionTime } = await executeQuery(query.trim())
-    if (error) {
-      set((prev) => ({ ...prev, error, executionTime }))
-    }
-    set((prev) => ({ ...prev, data, executionTime }))
-    toggle(true)
-  }, [set, toggle])
+    const { data, error, columns, executionTime } = await executeQuery(
+      query.trim(),
+    )
+    set({ query, data, error, columns, executionTime })
+  }, [set])
 
   const handleEditorDidMount: OnMount = (editor) => {
     editorRef.current = editor
   }
 
   const handleOnChange = useDebouncedCallback((value?: string) => {
-    set((prev) => ({ ...prev, query: value || '' }))
-  }, 500)
+    setQuery(value || '')
+  }, 600)
 
   return (
     <>
@@ -45,8 +42,7 @@ function CodeEditor() {
         height="90%"
         language="sql"
         theme="vs-light"
-        defaultValue="-- Write your query"
-        className="px-4"
+        className="pr-4"
         options={{
           fontSize: 15,
           minimap: {
@@ -60,4 +56,4 @@ function CodeEditor() {
   )
 }
 
-export default CodeEditor
+export default React.memo(CodeEditor)

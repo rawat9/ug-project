@@ -18,7 +18,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[]
 }
 
-export function ResultsTable({
+export function QueryResultTable({
   columns,
   data,
 }: DataTableProps<unknown, unknown>) {
@@ -30,7 +30,7 @@ export function ResultsTable({
 
   return (
     <Table>
-      <TableHeader className="border-t">
+      <TableHeader className="sticky top-8 z-30 bg-slate-100">
         {table.getHeaderGroups().map((headerGroup) => (
           <TableRow key={headerGroup.id}>
             {headerGroup.headers.map((header) => {
@@ -49,26 +49,15 @@ export function ResultsTable({
         ))}
       </TableHeader>
       <TableBody>
-        {table.getRowModel().rows?.length ? (
-          table.getRowModel().rows.map((row) => (
-            <TableRow
-              key={row.id}
-              data-state={row.getIsSelected() && 'selected'}
-            >
-              {row.getVisibleCells().map((cell) => (
-                <TableCell key={cell.id} className="overflow-x-auto border-r">
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableCell>
-              ))}
-            </TableRow>
-          ))
-        ) : (
-          <TableRow>
-            <TableCell colSpan={columns.length} className="h-24 text-center">
-              {/* <p className="text-red-500">{error?.message}</p> */}
-            </TableCell>
+        {table.getRowModel().rows.map((row) => (
+          <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+            {row.getVisibleCells().map((cell) => (
+              <TableCell key={cell.id} className="border-r">
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </TableCell>
+            ))}
           </TableRow>
-        )}
+        ))}
       </TableBody>
     </Table>
   )

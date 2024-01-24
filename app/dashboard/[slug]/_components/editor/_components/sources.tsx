@@ -42,7 +42,7 @@ export function Sources() {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          className="h-8 w-[190px] justify-between"
         >
           {value
             ? frameworks.find((framework) => framework.value === value)?.label
@@ -50,7 +50,7 @@ export function Sources() {
           <CaretSort className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent className="w-[300px] p-0">
         <Command>
           <CommandInput placeholder="Search integration..." className="h-9" />
           <CommandEmpty>No integration found.</CommandEmpty>
