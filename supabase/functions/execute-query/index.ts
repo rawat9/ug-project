@@ -1,12 +1,9 @@
 import postgres from 'postgres'
 import { Logger } from 'logger'
 
-const sql = postgres(
-  'postgresql://postgres:N6CwvvwtLPJnKRRr@db.cvbsyozqujjjvapqodxj.supabase.co:6543/postgres',
-  {
-    max: 1,
-  },
-)
+const sql = postgres('secret', {
+  max: 1,
+})
 
 const logger = new Logger()
 
