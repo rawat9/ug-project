@@ -8,7 +8,7 @@ import { Spinner } from '@/icons'
 import { signIn } from '@/lib/actions'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { toast } from 'sonner'
+import { toast } from 'react-hot-toast'
 
 export function AuthForm() {
   const authSchema = z.object({
@@ -66,7 +66,7 @@ export function AuthForm() {
               </p>
             )}
           </div>
-          <Button type={'submit'} size={'lg'} disabled={isSubmitting}>
+          <Button type="submit" size="lg" disabled={isSubmitting}>
             {isSubmitting && <Spinner className="mr-2 animate-spin" />}
             Continue
           </Button>

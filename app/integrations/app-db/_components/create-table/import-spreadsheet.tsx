@@ -12,7 +12,7 @@ export function ImportSpreadSheet() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="outline" size={'sm'} className="h-6">
+        <Button variant="outline" size="sm" className="h-6">
           Import data from spreadsheet
         </Button>
       </SheetTrigger>

@@ -8,6 +8,9 @@ import { useSetAtom } from 'jotai'
 import { useDebouncedCallback } from 'use-debounce'
 import { editorAtom, queryAtom } from '../state'
 import { executeQuery } from '@/lib/data'
+import { Button } from '@/components/ui/button'
+import { format } from 'sql-formatter'
+import { Format } from '@/icons'
 
 function CodeEditor() {
   const editorRef = React.useRef<Parameters<OnMount>[0]>()
@@ -31,10 +34,24 @@ function CodeEditor() {
     setQuery(value || '')
   }, 600)
 
+  const formatQuery = React.useCallback(() => {
+    const query = editorRef.current?.getValue()
+    if (!query || query.trim() === '') return
+    const formattedQuery = format(query, {
+      language: 'postgresql',
+      tabWidth: 2,
+      keywordCase: 'upper',
+    })
+    editorRef.current?.setValue(formattedQuery)
+  }, [])
+
   return (
     <>
-      <div className="flex h-14 w-full items-center gap-2 border-b px-4">
+      <div className="flex h-14 w-full items-center gap-2 border-b px-6">
         <h1 className="flex-1">query-name</h1>
+        <Button onClick={formatQuery} variant="outline" className="h-8 px-2">
+          <Format className="h-5 w-5" />
+        </Button>
         <Sources />
         <Run executionHandler={execute} />
       </div>
