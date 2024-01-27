@@ -23,7 +23,7 @@ export function CreateTable() {
         </Button>
       </SheetTrigger>
       <SheetContent className="min-w-[600px]">
-        <SheetHeader className="border-b px-4 py-2">
+        <SheetHeader className="h-[5%] border-b px-4 py-2">
           <SheetTitle>Create a new table</SheetTitle>
         </SheetHeader>
         <ColumnsForm />

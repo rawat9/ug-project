@@ -7,14 +7,14 @@ import { Preview } from './preview'
 import { ColumnDef } from '@tanstack/react-table'
 import { readCSV, readExcel } from './utils'
 import { useSetAtom } from 'jotai'
-import { Column, createTableAtom } from './state'
+import { dataImportAtom } from './state'
 import { SheetClose, SheetFooter } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 import { Cross } from '@/icons'
+import { Table } from './types'
 
 export function ExcelImport() {
-  console.log('ExcelImport Render')
-  const set = useSetAtom(createTableAtom)
+  const setAtom = useSetAtom(dataImportAtom)
   const [file, setFile] = useState<File | null>(null)
   const [headers, setHeaders] = useState<string[]>([])
   const [data, setData] = useState<unknown[]>([])
@@ -54,9 +54,11 @@ export function ExcelImport() {
     header: header.trim(),
   }))
 
-  const handleChange = useCallback(() => {
-    set({
+  const handleSubmit = () => {
+    setAtom({
       name: file?.name.split('.')[0] ?? '',
+      description: '',
+      data,
       columns: columns.map((column) => {
         const columnName = column.header?.toString() ?? ''
         return {
@@ -65,13 +67,13 @@ export function ExcelImport() {
           default: '',
           options: {
             primary: false,
-            nullable: false,
+            nullable: true,
             unique: false,
           },
-        } satisfies Column
+        } satisfies Table['columns'][number]
       }),
     })
-  }, [columns, file, set])
+  }
 
   const handleRemove = useCallback(() => {
     setFile(null)
@@ -121,7 +123,7 @@ export function ExcelImport() {
       </div>
       <SheetFooter className="h-[5%] items-center border-t px-4 py-2">
         <SheetClose asChild>
-          <Button type="submit" className="h-8" onClick={handleChange}>
+          <Button type="submit" className="h-8" onClick={handleSubmit}>
             Save changes
           </Button>
         </SheetClose>

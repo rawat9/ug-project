@@ -34,11 +34,12 @@ import {
 import { toast } from 'react-hot-toast'
 import { Table } from './types'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
-import { createSQLTableQuery } from './create-table-query'
+import { createSQLTableQuery, insertSQLTableQuery } from './create-table-query'
 import { z } from 'zod'
 import { InputSelect } from './input-select'
 import { useAtomValue } from 'jotai'
-import { createTableAtom } from './state'
+import { dataImportAtom } from './state'
+import { executeSqlite } from '@/lib/data'
 
 export function ColumnsForm() {
   const FormSchema = z.object({
@@ -47,18 +48,28 @@ export function ColumnsForm() {
     columns: z.array(
       z.object({
         name: z.string().min(1, { message: 'Please enter column name' }),
-        type: z.string().min(1, { message: 'Please select column type' }),
+        type: z.union(
+          [
+            z.literal('uuid'),
+            z.literal('integer'),
+            z.literal('text'),
+            z.literal('date'),
+            z.literal('timestamp'),
+            z.literal(''),
+          ],
+          { required_error: 'Please select a data type' },
+        ),
         default: z.string().optional(),
         options: z.object({
-          primary: z.boolean().default(false),
-          nullable: z.boolean().default(true),
-          unique: z.boolean().default(false),
+          primary: z.boolean(),
+          nullable: z.boolean(),
+          unique: z.boolean(),
         }),
       }),
     ),
   })
 
-  const { register, getValues, setValue, handleSubmit, control, watch, reset } =
+  const { register, setValue, handleSubmit, control, watch, reset } =
     useForm<Table>({
       defaultValues: {
         name: '',
@@ -77,7 +88,7 @@ export function ColumnsForm() {
           {
             name: 'created_at',
             type: 'timestamp',
-            default: 'CURRENT_TIMESTAMP()',
+            default: 'CURRENT_TIMESTAMP',
             options: {
               primary: false,
               nullable: false,
@@ -93,20 +104,19 @@ export function ColumnsForm() {
     name: 'columns',
   })
 
-  const valuesFromDataImport = useAtomValue(createTableAtom)
+  const valuesFromDataImport = useAtomValue(dataImportAtom)
 
   React.useEffect(() => {
     if (valuesFromDataImport.columns.length) {
       setValue('name', valuesFromDataImport.name)
 
-      // remove uuid
+      // remove uuid field
       remove(0)
       insert(0, valuesFromDataImport.columns)
     }
   }, [valuesFromDataImport, insert])
 
-  function onSubmit(formData: Table) {
-    console.log(getValues())
+  async function onSubmit(formData: Table) {
     const result = FormSchema.safeParse(formData)
 
     if (!result.success) {
@@ -116,27 +126,35 @@ export function ColumnsForm() {
         return toast.error(errors[0]?.message as string)
       }
 
-      return toast.error('')
+      return toast.error('hehe')
     }
 
+    const tableData = result.data
+
     const primaryKeysCount =
-      formData.columns.filter((column) => column.options.primary).length > 1
+      tableData.columns.filter((column) => column.options.primary).length > 1
 
     if (primaryKeysCount) {
       return toast.error('You can only have one primary key')
     }
 
-    const { sql, error } = createSQLTableQuery(formData)
+    const createQuery = createSQLTableQuery(tableData)!
 
-    if (error) {
-      return toast.error(error)
-    }
+    const insertQuery = insertSQLTableQuery(
+      tableData,
+      valuesFromDataImport.data,
+    )!
 
-    console.log(sql)
-
-    toast.success('Arreee kya baat hai!!')
+    console.log(createQuery)
+    console.log(insertQuery)
 
     console.log('Resetting form')
+
+    toast.success('Creating your table')
+
+    const { data } = await executeSqlite(createQuery + ' ' + insertQuery)
+
+    console.log('Result', data)
     reset()
   }
 
@@ -251,18 +269,20 @@ export function ColumnsForm() {
                     </div>
                   </SelectItem>
                 ) : watch(`columns.${index}.type`) === 'date' ? (
-                  <SelectItem value="CURRENT_DATE()">
+                  <SelectItem value="CURRENT_DATE">
                     <div className="flex flex-col items-start gap-2">
-                      <p className="font-mono text-slate-600">CURRENT_DATE()</p>
+                      <p className="font-mono text-slate-600">CURRENT_DATE</p>
                       <p className=" text-xs text-gray-400">
                         Returns the current date
                       </p>
                     </div>
                   </SelectItem>
                 ) : watch(`columns.${index}.type`) === 'timestamp' ? (
-                  <SelectItem value="now()">
+                  <SelectItem value="CURRENT_TIMESTAMP">
                     <div className="flex flex-col items-start gap-2">
-                      <p className="font-mono text-slate-600">now()</p>
+                      <p className="font-mono text-slate-600">
+                        CURRENT_TIMESTAMP
+                      </p>
                       <p className=" text-xs text-gray-400">
                         Returns the current date and time
                       </p>
@@ -318,7 +338,13 @@ export function ColumnsForm() {
                   variant="ghost"
                   size="icon"
                   className="h-6 self-center"
-                  onClick={() => remove(index)}
+                  onClick={() => {
+                    remove(index)
+                    const key = item.name
+                    valuesFromDataImport.data.map((row) => {
+                      delete row[key]
+                    })
+                  }}
                 >
                   <Cross className="h-4 w-4" />
                 </Button>
