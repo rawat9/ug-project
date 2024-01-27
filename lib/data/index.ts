@@ -167,3 +167,20 @@ export const executeQuery = cache(
   },
   ['sql-query'],
 )
+
+export const executeSqlite = async (query: string) => {
+  const supabase = await createSupabaseServerActionClient()
+  const { data, error } = await supabase.functions.invoke<Result>('turso', {
+    body: { query },
+  })
+
+  if (error) {
+    throw error
+  }
+
+  if (!data) {
+    throw new Error('No data returned')
+  }
+
+  return data
+}
