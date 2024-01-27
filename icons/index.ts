@@ -25,6 +25,7 @@ export * from './CaretSort'
 export * from './EyeOff'
 export * from './Filter'
 export * from './Help'
+export * from './Options'
 
 // Icons for widgets library
 export * from './widgets/Text'
@@ -35,3 +36,4 @@ export * from './widgets/Chart'
 // Icons for editor
 export * from './Run'
 export * from './Delete'
+export * from './Format'
