@@ -5,7 +5,7 @@ type DataImportAtom = {
   name: string
   description: string
   columns: Table['columns']
-  data: unknown[]
+  data: Record<string, unknown>[]
 }
 
 export const dataImportAtom = atom<DataImportAtom>({
