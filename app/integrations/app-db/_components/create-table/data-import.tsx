@@ -2,7 +2,7 @@
 
 import { Dropzone } from './dropzone'
 import { DropzoneOptions } from 'react-dropzone'
-import { Suspense, useCallback, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Preview } from './preview'
 import { ColumnDef } from '@tanstack/react-table'
 import { readCSV, readExcel } from './utils'
@@ -11,9 +11,13 @@ import { dataImportAtom } from './state'
 import { SheetClose, SheetFooter } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 import { Cross } from '@/icons'
-import { Table } from './types'
+import type { Table } from './types'
 
-export function ExcelImport() {
+/**
+ * Reads a CSV (uses Papaparse) or Excel (uses Sheetjs) file and returns the data
+ * @returns
+ */
+export function DataImport() {
   const setAtom = useSetAtom(dataImportAtom)
   const [file, setFile] = useState<File | null>(null)
   const [headers, setHeaders] = useState<string[]>([])
@@ -102,22 +106,17 @@ export function ExcelImport() {
                 <Cross className="h-4 w-4" />
               </Button>
             </div>
-            <Suspense
-              fallback={<h1 className="text-3xl font-medium">Loading...</h1>}
-            >
-              {data.length > 0 && (
-                <div className="flex flex-col gap-2 py-6">
-                  <p className="text-lg font-medium">Preview</p>
-                  <p className="text-sm text-slate-600">
-                    Your table will have {data.length} rows and the following{' '}
-                    {columns.length} columns. Here is a preview of the data that
-                    will be added (up to the first 20 columns and first 20
-                    rows).
-                  </p>
-                  <Preview columns={columns} data={data.slice(0, 20)} />
-                </div>
-              )}
-            </Suspense>
+            {data.length > 0 && (
+              <div className="flex flex-col gap-2 py-6">
+                <p className="text-lg font-medium">Preview</p>
+                <p className="text-sm text-slate-600">
+                  Your table will have {data.length} rows and the following{' '}
+                  {columns.length} columns. Here is a preview of the data that
+                  will be added (up to the first 20 columns and first 20 rows).
+                </p>
+                <Preview columns={columns} data={data.slice(0, 20)} />
+              </div>
+            )}
           </>
         )}
       </div>
