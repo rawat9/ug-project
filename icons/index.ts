@@ -37,3 +37,7 @@ export * from './widgets/Chart'
 export * from './Run'
 export * from './Delete'
 export * from './Format'
+
+// Icons for fetchIntegrations
+export * from './integrations/Sqlite'
+export * from './integrations/Postgres'

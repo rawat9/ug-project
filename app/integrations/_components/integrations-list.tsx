@@ -1,30 +1,33 @@
+import { Postgres } from '@/icons'
+import { fetchIntegrations } from '@/lib/data'
 import Link from 'next/link'
 
-export function IntegrationsList({ query }: { query: string }) {
-  const filteredDashboards = [
-    {
-      id: 1,
-      title: 'Test Integration 1',
-    },
-    {
-      id: 2,
-      title: 'Test Integration 2',
-    },
-    {
-      id: 3,
-      title: 'Test Integration 3',
-    },
-    {
-      id: 4,
-      title: 'Test Integration 4',
-    },
-  ]
+export async function IntegrationsList({ query }: { query: string }) {
+  const integrations = await fetchIntegrations()
+
+  if (!integrations.length) {
+    return (
+      <div className="flex min-h-[300px] flex-col items-center justify-center rounded-lg border bg-white py-8">
+        <h1>No integrations found</h1>
+        <Link
+          href="/integrations/create"
+          className="text-xs text-gray-500 hover:underline hover:underline-offset-4"
+        >
+          + Create a new integration
+        </Link>
+      </div>
+    )
+  }
+
+  const filteredIntegrations = integrations.filter((integration) =>
+    integration.title.toLocaleLowerCase().includes(query),
+  )
 
   return (
     <>
-      {filteredDashboards.length ? (
-        <div className="grid gap-4 overflow-auto py-10">
-          {filteredDashboards.map((dashboard, index) => (
+      {filteredIntegrations.length ? (
+        <div className="grid gap-4 overflow-y-auto">
+          {filteredIntegrations.map((integration, index) => (
             <Link
               href="/integrations/app-db"
               key={index}
@@ -37,17 +40,20 @@ export function IntegrationsList({ query }: { query: string }) {
               >
                 <div className="flex items-center">
                   <div className="flex-1">
-                    <h4 className="py-2 font-semibold">{dashboard.title}</h4>
+                    <h4 className="py-2 font-semibold">{integration.title}</h4>
                     <p className="text-sm text-gray-600">Description</p>
                   </div>
-                  <p>PostgreSQL</p>
+                  <div className="flex items-center gap-1">
+                    <Postgres className="h-7 w-7" />
+                    <p className="font-medium">PostgreSQL</p>
+                  </div>
                 </div>
               </div>
             </Link>
           ))}
         </div>
       ) : (
-        <div className="my-4 flex min-h-[300px] flex-col items-center justify-center rounded-lg border bg-white py-8">
+        <div className="flex min-h-[300px] flex-col items-center justify-center rounded-lg border bg-white py-8">
           <h1>No results found for &apos;{query}&apos;</h1>
           <p className="text-xs text-gray-500">
             Try a different search term or create a new dashboard
