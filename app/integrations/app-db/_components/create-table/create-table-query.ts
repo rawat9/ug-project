@@ -51,13 +51,12 @@ export function insertSQLTableQuery(
     })
 
     return `INSERT INTO ${name} ( ${cols.join(', ')} ) VALUES
-      ${data.map((row) => {
-        const r = Object.values(row)
-          .map((v) => `\"${v}\"`)
-          .join(',')
-
-        return `(${r})`
-      })}`
+      ${data.map(
+        (row) =>
+          `(${Object.values(row)
+            .map((v) => `\"${v}\"`)
+            .join(',')})`,
+      )}`
   } catch (error) {
     console.error(error)
   }
