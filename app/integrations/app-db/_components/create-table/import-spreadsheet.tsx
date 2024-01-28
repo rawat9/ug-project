@@ -1,4 +1,4 @@
-import { ExcelImport } from './excel-import'
+import { DataImport } from './data-import'
 import {
   Sheet,
   SheetContent,
@@ -20,7 +20,7 @@ export function ImportSpreadSheet() {
         <SheetHeader className="h-[5%] border-b px-4 py-2">
           <SheetTitle>Import your data</SheetTitle>
         </SheetHeader>
-        <ExcelImport />
+        <DataImport />
       </SheetContent>
     </Sheet>
   )

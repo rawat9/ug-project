@@ -39,7 +39,10 @@ function parseColumnOptions(
   return opts.join(' ')
 }
 
-export function insertSQLTableQuery(table: Table, data: unknown[]) {
+export function insertSQLTableQuery(
+  table: Table,
+  data: Record<string, unknown>[],
+) {
   const { name, columns } = table
 
   try {
@@ -51,7 +54,7 @@ export function insertSQLTableQuery(table: Table, data: unknown[]) {
       ${data.map((row) => {
         const r = Object.values(row)
           .map((v) => `\"${v}\"`)
-          .join(', ')
+          .join(',')
 
         return `(${r})`
       })}`

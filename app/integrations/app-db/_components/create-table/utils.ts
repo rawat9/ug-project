@@ -3,7 +3,7 @@ import { read, utils } from 'xlsx'
 
 export function readCSV(
   file: File,
-  completeCallback: (results: ParseResult<unknown>) => void,
+  completeCallback: (results: ParseResult<Record<string, unknown>>) => void,
 ) {
   parse(file, {
     header: true,
@@ -23,11 +23,12 @@ export async function readExcel(file: File) {
 
   // @ts-ignore
   const workSheet = workBook.Sheets[workBook.SheetNames.at(0)]
-  const json = utils.sheet_to_json(workSheet, {
-    // header: 1,
-    // raw: false,
-    // dateNF: 'yyyy-mm-dd',
-    // rawNumbers: true,
+  const json = utils.sheet_to_json<Record<string, unknown>>(workSheet, {
+    raw: false,
+    rawNumbers: true,
   })
-  return { data: json, columns: Object.keys(json[0] as string[]) }
+  return {
+    data: json,
+    columns: Object.keys(json[0] as Record<string, unknown>),
+  }
 }

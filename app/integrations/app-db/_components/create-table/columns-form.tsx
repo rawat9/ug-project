@@ -39,11 +39,15 @@ import { z } from 'zod'
 import { InputSelect } from './input-select'
 import { useAtomValue } from 'jotai'
 import { dataImportAtom } from './state'
-import { executeSqlite } from '@/lib/data'
 
 export function ColumnsForm() {
   const FormSchema = z.object({
-    name: z.string().min(1, { message: 'Please enter table name' }),
+    name: z
+      .string()
+      .regex(new RegExp('^[a-zA-Z_]*$'), {
+        message: 'Only letters and underscores are allowed',
+      })
+      .min(1, { message: 'Please enter table name' }),
     description: z.string().optional(),
     columns: z.array(
       z.object({
@@ -114,7 +118,7 @@ export function ColumnsForm() {
       remove(0)
       insert(0, valuesFromDataImport.columns)
     }
-  }, [valuesFromDataImport, insert])
+  }, [valuesFromDataImport, insert, remove, setValue])
 
   async function onSubmit(formData: Table) {
     const result = FormSchema.safeParse(formData)
@@ -126,7 +130,7 @@ export function ColumnsForm() {
         return toast.error(errors[0]?.message as string)
       }
 
-      return toast.error('hehe')
+      return toast.error('Something went wrong')
     }
 
     const tableData = result.data
@@ -145,23 +149,18 @@ export function ColumnsForm() {
       valuesFromDataImport.data,
     )!
 
-    console.log(createQuery)
-    console.log(insertQuery)
-
-    console.log('Resetting form')
-    reset()
-
     toast.success('Creating your table')
 
-    // const data = await executeSqlite(createQuery + '; ' + insertQuery)
-    const data = await fetch('/api/execute-sqlite', {
+    // create table and insert data
+    await fetch('/api/execute-sqlite', {
       method: 'POST',
       body: JSON.stringify({
         query: createQuery + '; ' + insertQuery,
       }),
-    }).then((res) => res.json())
+    })
 
-    console.log('Result', data)
+    // reset form
+    reset()
   }
 
   return (

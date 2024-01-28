@@ -21,7 +21,7 @@ export function DataImport() {
   const setAtom = useSetAtom(dataImportAtom)
   const [file, setFile] = useState<File | null>(null)
   const [headers, setHeaders] = useState<string[]>([])
-  const [data, setData] = useState<unknown[]>([])
+  const [data, setData] = useState<Record<string, unknown>[]>([])
 
   const options: DropzoneOptions = {
     onDrop: useCallback(async (acceptedFiles: File[]) => {
@@ -37,6 +37,7 @@ export function DataImport() {
             throw new Error('Headers not found')
           }
 
+          // TODO: handle errors
           setData(results.data)
           setHeaders(columns)
         })
