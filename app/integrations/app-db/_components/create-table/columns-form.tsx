@@ -149,13 +149,19 @@ export function ColumnsForm() {
     console.log(insertQuery)
 
     console.log('Resetting form')
+    reset()
 
     toast.success('Creating your table')
 
-    const { data } = await executeSqlite(createQuery + ' ' + insertQuery)
+    // const data = await executeSqlite(createQuery + '; ' + insertQuery)
+    const data = await fetch('/api/execute-sqlite', {
+      method: 'POST',
+      body: JSON.stringify({
+        query: createQuery + '; ' + insertQuery,
+      }),
+    }).then((res) => res.json())
 
     console.log('Result', data)
-    reset()
   }
 
   return (

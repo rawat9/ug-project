@@ -50,11 +50,11 @@ export function insertSQLTableQuery(table: Table, data: unknown[]) {
     return `INSERT INTO ${name} ( ${cols.join(', ')} ) VALUES
       ${data.map((row) => {
         const r = Object.values(row)
-          .map((v) => `\`${v}\``)
+          .map((v) => `\"${v}\"`)
           .join(', ')
 
         return `(${r})`
-      })})`
+      })}`
   } catch (error) {
     console.error(error)
   }
