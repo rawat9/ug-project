@@ -39,6 +39,7 @@ import { z } from 'zod'
 import { InputSelect } from './input-select'
 import { useAtomValue } from 'jotai'
 import { dataImportAtom } from './state'
+import { executeSqlite } from '@/lib/data'
 
 export function ColumnsForm() {
   const FormSchema = z.object({
@@ -142,22 +143,23 @@ export function ColumnsForm() {
       return toast.error('You can only have one primary key')
     }
 
-    const createQuery = createSQLTableQuery(tableData)!
+    const createQuery = createSQLTableQuery(tableData)
+
+    if (!createQuery) {
+      return toast.error('Something went wrong')
+    }
+
+    // create table
+    toast.promise(executeSqlite(createQuery), {
+      loading: 'Creating your table',
+      success: `Table ${tableData.name} created`,
+      error: 'Table could not be created',
+    })
 
     const insertQuery = insertSQLTableQuery(
       tableData,
       valuesFromDataImport.data,
-    )!
-
-    toast.success('Creating your table')
-
-    // create table and insert data
-    await fetch('/api/execute-sqlite', {
-      method: 'POST',
-      body: JSON.stringify({
-        query: createQuery + '; ' + insertQuery,
-      }),
-    })
+    )
 
     // reset form
     reset()
