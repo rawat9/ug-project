@@ -34,74 +34,21 @@ import {
 import { toast } from 'react-hot-toast'
 import { Table } from './types'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
-import { createSQLTableQuery, insertSQLTableQuery } from './create-table-query'
-import { z } from 'zod'
+import { createSQLTableQuery, insertSQLTableQuery } from './queries'
 import { InputSelect } from './input-select'
 import { useAtomValue } from 'jotai'
 import { dataImportAtom } from './state'
 import { executeSqlite } from '@/lib/data'
+import { formSchema, defaultValues } from './form-schema'
 
-export function ColumnsForm() {
-  const FormSchema = z.object({
-    name: z
-      .string()
-      .regex(new RegExp('^[a-zA-Z_]*$'), {
-        message: 'Only letters and underscores are allowed',
-      })
-      .min(1, { message: 'Please enter table name' }),
-    description: z.string().optional(),
-    columns: z.array(
-      z.object({
-        name: z.string().min(1, { message: 'Please enter column name' }),
-        type: z.union(
-          [
-            z.literal('uuid'),
-            z.literal('integer'),
-            z.literal('text'),
-            z.literal('date'),
-            z.literal('timestamp'),
-            z.literal(''),
-          ],
-          { required_error: 'Please select a data type' },
-        ),
-        default: z.string().optional(),
-        options: z.object({
-          primary: z.boolean(),
-          nullable: z.boolean(),
-          unique: z.boolean(),
-        }),
-      }),
-    ),
-  })
-
+export function ColumnsForm({
+  onOpenChange,
+}: {
+  onOpenChange: (open: boolean) => void
+}) {
   const { register, setValue, handleSubmit, control, watch, reset } =
     useForm<Table>({
-      defaultValues: {
-        name: '',
-        description: '',
-        columns: [
-          {
-            name: 'id',
-            type: 'uuid',
-            default: 'gen_random_uuid()',
-            options: {
-              primary: true,
-              nullable: false,
-              unique: true,
-            },
-          },
-          {
-            name: 'created_at',
-            type: 'timestamp',
-            default: 'CURRENT_TIMESTAMP',
-            options: {
-              primary: false,
-              nullable: false,
-              unique: false,
-            },
-          },
-        ],
-      },
+      defaultValues,
     })
 
   const { fields, append, remove, insert } = useFieldArray({
@@ -122,7 +69,8 @@ export function ColumnsForm() {
   }, [valuesFromDataImport, insert, remove, setValue])
 
   async function onSubmit(formData: Table) {
-    const result = FormSchema.safeParse(formData)
+    // validate
+    const result = formSchema.safeParse(formData)
 
     if (!result.success) {
       const errors = result.error.issues
@@ -152,17 +100,38 @@ export function ColumnsForm() {
     // create table
     toast.promise(executeSqlite(createQuery), {
       loading: 'Creating your table',
-      success: `Table ${tableData.name} created`,
+      success: () => {
+        if (!valuesFromDataImport.data.length) {
+          // close the sheet
+          onOpenChange(false)
+          // reset form
+          reset()
+        }
+        return `Table ${tableData.name} created`
+      },
       error: 'Table could not be created',
     })
 
-    const insertQuery = insertSQLTableQuery(
-      tableData,
-      valuesFromDataImport.data,
-    )
+    if (valuesFromDataImport.data.length) {
+      const insertQuery = insertSQLTableQuery(
+        tableData,
+        valuesFromDataImport.data,
+      )
 
-    // reset form
-    reset()
+      if (!insertQuery) {
+        return toast.error('Something went wrong')
+      }
+
+      toast.promise(executeSqlite(insertQuery), {
+        loading: 'Inserting data into table',
+        success: () => {
+          onOpenChange(false)
+          reset()
+          return `Data inserted into "${tableData.name}"`
+        },
+        error: 'Data could not be inserted',
+      })
+    }
   }
 
   return (

@@ -152,6 +152,7 @@ export const executeQuery = cache(
     const { data, error } = await supabase.functions.invoke<Result>(
       'execute-query',
       {
+        method: 'POST',
         body: { query },
       },
     )
@@ -187,4 +188,22 @@ export const fetchIntegrations = async (): Promise<Integration[]> => {
     console.error(error)
     throw new Error('Error creating the supabase client')
   }
+}
+
+export const executeSqlite = async (query: string) => {
+  const supabase = await createSupabaseServerActionClient()
+  const { data, error } = await supabase.functions.invoke('turso', {
+    method: 'POST',
+    body: { query },
+  })
+
+  if (error) {
+    throw error
+  }
+
+  if (!data) {
+    throw new Error('No data returned')
+  }
+
+  return data
 }

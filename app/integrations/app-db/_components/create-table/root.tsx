@@ -1,3 +1,5 @@
+'use client'
+
 import {
   Sheet,
   SheetTrigger,
@@ -8,10 +10,13 @@ import {
 import { Add } from '@/icons'
 import { Button } from '@/components/ui/button'
 import { ColumnsForm } from './columns-form'
+import * as React from 'react'
 
 export function CreateTable() {
+  const [open, setOpen] = React.useState(false)
+
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button
           variant="outline"
@@ -26,7 +31,7 @@ export function CreateTable() {
         <SheetHeader className="h-[5%] border-b px-4 py-2">
           <SheetTitle>Create a new table</SheetTitle>
         </SheetHeader>
-        <ColumnsForm />
+        <ColumnsForm onOpenChange={setOpen} />
       </SheetContent>
     </Sheet>
   )
