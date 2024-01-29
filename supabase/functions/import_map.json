@@ -1,6 +1,8 @@
 {
   "imports": {
     "postgres": "https://deno.land/x/postgresjs@v3.4.3/mod.js",
-    "logger": "https://deno.land/x/optic@1.3.11/mod.ts"
+    "logger": "https://deno.land/x/optic@1.3.11/mod.ts",
+    "drizzle-orm": "https://esm.sh/drizzle-orm@0.29.3",
+    "drizzle/sqlite-core": "https://esm.sh/drizzle-orm@0.29.3/sqlite-core"
   }
 }
