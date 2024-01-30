@@ -56,7 +56,7 @@ export async function IntegrationsList({ query }: { query: string }) {
         <div className="flex min-h-[300px] flex-col items-center justify-center rounded-lg border bg-white py-8">
           <h1>No results found for &apos;{query}&apos;</h1>
           <p className="text-xs text-gray-500">
-            Try a different search term or create a new dashboard
+            Try a different search term or create a new integration
           </p>
         </div>
       )}
