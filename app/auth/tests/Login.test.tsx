@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import Page from '../login/page'
 import { AuthForm } from '../login/_components/auth-form'
-import { toast } from 'sonner'
+import { toast } from 'react-hot-toast'
 
 const auth = {
   signInWithOtp: async (creds?: { email: string }) => jest.fn(),
