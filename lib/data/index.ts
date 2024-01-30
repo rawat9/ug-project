@@ -149,13 +149,12 @@ export const updateDashboardTitle = async ({
 export const executeQuery = cache(
   async (query: string) => {
     const supabase = await createSupabaseServerActionClient()
-    const { data, error } = await supabase.functions.invoke<Result>(
-      'execute-query',
-      {
-        method: 'POST',
-        body: { query },
-      },
-    )
+    const { data, error } = await supabase.functions.invoke<
+      Result['execute-query']
+    >('execute-query', {
+      method: 'POST',
+      body: { query },
+    })
 
     if (error) {
       throw error
@@ -179,7 +178,6 @@ export const fetchIntegrations = async (): Promise<Integration[]> => {
       .order('created_at', { ascending: false })
 
     if (error) {
-      console.error(error.message)
       throw new Error('Error fetching data')
     }
 
@@ -192,10 +190,13 @@ export const fetchIntegrations = async (): Promise<Integration[]> => {
 
 export const executeSqlite = async (query: string) => {
   const supabase = await createSupabaseServerActionClient()
-  const { data, error } = await supabase.functions.invoke('turso', {
-    method: 'POST',
-    body: { query },
-  })
+  const { data, error } = await supabase.functions.invoke<Result['turso']>(
+    'turso',
+    {
+      method: 'POST',
+      body: { query },
+    },
+  )
 
   if (error) {
     throw error

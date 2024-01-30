@@ -1,4 +1,4 @@
-import { createClient } from 'https://esm.sh/@libsql/client@0.4.0/web'
+import { createClient } from '@libsql/client/web'
 
 const client = createClient({
   url: Deno.env.get('TURSO_DB_URL')!,
