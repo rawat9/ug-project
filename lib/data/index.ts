@@ -10,6 +10,7 @@ import { redirect } from 'next/navigation'
 import { z } from 'zod'
 
 type Dashboard = Tables<'dashboard'>
+type Integration = Tables<'integration'>
 
 function customFetch(input: RequestInfo | URL, init?: RequestInit) {
   return fetch(input as URL, {
@@ -148,12 +149,12 @@ export const updateDashboardTitle = async ({
 export const executeQuery = cache(
   async (query: string) => {
     const supabase = await createSupabaseServerActionClient()
-    const { data, error } = await supabase.functions.invoke<Result>(
-      'execute-query',
-      {
-        body: { query },
-      },
-    )
+    const { data, error } = await supabase.functions.invoke<
+      Result['execute-query']
+    >('execute-query', {
+      method: 'POST',
+      body: { query },
+    })
 
     if (error) {
       throw error
@@ -167,3 +168,43 @@ export const executeQuery = cache(
   },
   ['sql-query'],
 )
+
+export const fetchIntegrations = async (): Promise<Integration[]> => {
+  try {
+    const supabase = await createSupabaseRSCClient()
+    const { data, error } = await supabase
+      .from('integration')
+      .select()
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      throw new Error('Error fetching data')
+    }
+
+    return data ?? []
+  } catch (error) {
+    console.error(error)
+    throw new Error('Error creating the supabase client')
+  }
+}
+
+export const executeSqlite = async (query: string) => {
+  const supabase = await createSupabaseServerActionClient()
+  const { data, error } = await supabase.functions.invoke<Result['turso']>(
+    'turso',
+    {
+      method: 'POST',
+      body: { query },
+    },
+  )
+
+  if (error) {
+    throw error
+  }
+
+  if (!data) {
+    throw new Error('No data returned')
+  }
+
+  return data
+}

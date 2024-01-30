@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useDebouncedCallback } from 'use-debounce'
 
-export function Search() {
+function Search() {
   const searchParams = useSearchParams()
   const pathname = usePathname()
   const { replace } = useRouter()
@@ -34,3 +34,5 @@ export function Search() {
     </div>
   )
 }
+
+export default Search

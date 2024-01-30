@@ -19,6 +19,13 @@ export * from './CodeEditor'
 export * from './Settings'
 export * from './Component'
 export * from './Logout'
+export * from './Upload'
+export * from './Check'
+export * from './CaretSort'
+export * from './EyeOff'
+export * from './Filter'
+export * from './Help'
+export * from './Options'
 
 // Icons for widgets library
 export * from './widgets/Text'
@@ -27,7 +34,10 @@ export * from './widgets/Table'
 export * from './widgets/Chart'
 
 // Icons for editor
-export * from './editor/CaretSort'
-export * from './editor/Run'
-export * from './editor/Check'
-export * from './editor/Delete'
+export * from './Run'
+export * from './Delete'
+export * from './Format'
+
+// Icons for fetchIntegrations
+export * from './integrations/Sqlite'
+export * from './integrations/Postgres'

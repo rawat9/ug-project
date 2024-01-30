@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import Page from '../page'
 import { fetchDashboards } from '@/lib/data'
-import { Search } from '../_components/search'
+import Search from '@/components/shared/search'
 import Layout from '../layout'
 import { getSession } from '@/lib/actions'
 import { Session } from '@supabase/supabase-js'
@@ -26,7 +26,7 @@ jest.mock('next/navigation', () => ({
 }))
 
 // mock the Header RSC
-jest.mock('../_components/header', () => ({
+jest.mock('../../../components/shared/header', () => ({
   __esModule: true,
   Header: () => <div />,
 }))
