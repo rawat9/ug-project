@@ -26,6 +26,7 @@ export * from './EyeOff'
 export * from './Filter'
 export * from './Help'
 export * from './Options'
+export * from './ChevronRight'
 
 // Icons for widgets library
 export * from './widgets/Text'
@@ -41,3 +42,4 @@ export * from './Format'
 // Icons for fetchIntegrations
 export * from './integrations/Sqlite'
 export * from './integrations/Postgres'
+export * from './integrations/Connection'
