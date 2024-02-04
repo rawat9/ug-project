@@ -1,10 +1,19 @@
+'use client'
+
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable'
-import { Widgets } from './_components/widgets'
-import Editor from './_components/editor/root'
+import { Editor } from './_components/editor/root'
+import { Canvas } from './_components/canvas/root'
+import { Widgets } from './_components/widgets/root'
+import { DndContext, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
+import { DragOverlayWrapper } from './_components/canvas/_components/drag-overlay-wrapper'
+import { createSnapModifier } from '@dnd-kit/modifiers'
+import * as React from 'react'
+import { Provider } from 'jotai'
+import { Properties } from './_components/properties'
 
 export default function Page({
   searchParams,
@@ -14,57 +23,45 @@ export default function Page({
     widgets?: string
   }
 }) {
+  const snapToGrid = React.useMemo(() => createSnapModifier(30), [])
+  const pointerSensor = useSensor(PointerSensor, {
+    activationConstraint: {
+      distance: 10,
+      delay: 10,
+      tolerance: 5,
+    },
+  })
+  const sensors = useSensors(pointerSensor)
+
   return (
-    <ResizablePanelGroup
-      direction="vertical"
-      autoSaveId="persistance"
-      className="fixed left-12 top-14 z-10 max-h-[calc(100vh_-_3.5rem)] max-w-[calc(100vw_-_3rem)] bg-slate-100"
-    >
-      <ResizablePanel id="canvas+editor" order={1} defaultSize={60}>
-        <ResizablePanelGroup direction="horizontal">
-          {searchParams?.widgets === 'true' && (
-            <>
-              <ResizablePanel
-                id="widgets"
-                order={1}
-                className="mr-[-0.5rem] flex items-center justify-center p-2"
-                maxSize={20}
-                minSize={10}
-              >
-                <Widgets />
-              </ResizablePanel>
-              <ResizableHandle />
-            </>
-          )}
-          <ResizablePanel
-            id="canvas"
-            defaultSize={100}
-            className="flex items-center justify-center p-2"
-            order={2}
+    <>
+      <ResizablePanelGroup
+        direction="vertical"
+        autoSaveId="persistance"
+        className="fixed left-12 top-14 z-10 max-h-[calc(100vh_-_3.5rem)] max-w-[calc(100vw_-_3rem)] bg-zinc-50"
+      >
+        <Provider>
+          <DndContext
+            sensors={sensors}
+            // modifiers={[restrictToParentElement]}
           >
-            <Canvas />
-          </ResizablePanel>
-        </ResizablePanelGroup>
-      </ResizablePanel>
+            <ResizablePanel
+              id="canvas"
+              defaultSize={100}
+              className="flex items-center justify-center"
+              order={2}
+            >
+              <Canvas />
+            </ResizablePanel>
 
-      <ResizableHandle className="bg-slate-100" />
-
-      {searchParams?.editor === 'true' && (
-        <ResizablePanel
-          id="editor"
-          defaultSize={40}
-          minSize={30}
-          className="mt-[-0.5rem] flex items-center justify-center p-2"
-          order={2}
-          collapsible
-        >
-          <Editor />
-        </ResizablePanel>
-      )}
-    </ResizablePanelGroup>
+            <ResizableHandle className="bg-slate-100" />
+            <Widgets isOpen={searchParams?.widgets === 'true'} />
+            <DragOverlayWrapper />
+          </DndContext>
+          <Properties />
+          <Editor isOpen={searchParams?.editor === 'true'} />
+        </Provider>
+      </ResizablePanelGroup>
+    </>
   )
-}
-
-function Canvas() {
-  return <canvas className="h-full w-full rounded-lg bg-white" id="canvas" />
 }
