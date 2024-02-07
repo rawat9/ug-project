@@ -1,9 +1,6 @@
 'use server'
 
-import {
-  createSupabaseRSCClient,
-  createSupabaseServerActionClient,
-} from '@/lib/supabase/server'
+import { createSupabaseServerClient } from '@/lib/supabase/server'
 import { Tables } from '@/types/database'
 import { revalidatePath, unstable_cache as cache } from 'next/cache'
 import { redirect } from 'next/navigation'
@@ -21,7 +18,7 @@ function customFetch(input: RequestInfo | URL, init?: RequestInit) {
 
 export const fetchDashboards = async (): Promise<Dashboard[]> => {
   try {
-    const supabase = await createSupabaseRSCClient()
+    const supabase = await createSupabaseServerClient()
     const { data, error } = await supabase
       .from('dashboard')
       .select()
@@ -53,7 +50,7 @@ export const createDashboard = async (body: FormData) => {
 
   const { title } = result.data
 
-  const supabase = await createSupabaseRSCClient()
+  const supabase = await createSupabaseServerClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -92,7 +89,7 @@ export const getDashboardById = async (
   }
 
   try {
-    const supabase = await createSupabaseRSCClient()
+    const supabase = await createSupabaseServerClient()
     const { data, error } = await supabase
       .from('dashboard')
       .select()
@@ -130,7 +127,7 @@ export const updateDashboardTitle = async ({
     throw new Error('Invalid form data')
   }
 
-  const supabase = await createSupabaseRSCClient()
+  const supabase = await createSupabaseServerClient()
   const { error } = await supabase
     .from('dashboard')
     .update({
@@ -148,7 +145,7 @@ export const updateDashboardTitle = async ({
 
 export const executeQuery = cache(
   async (query: string) => {
-    const supabase = await createSupabaseServerActionClient()
+    const supabase = await createSupabaseServerClient()
     const { data, error } = await supabase.functions.invoke<
       Result['execute-query']
     >('execute-query', {
@@ -171,7 +168,7 @@ export const executeQuery = cache(
 
 export const fetchIntegrations = async (): Promise<Integration[]> => {
   try {
-    const supabase = await createSupabaseRSCClient()
+    const supabase = await createSupabaseServerClient()
     const { data, error } = await supabase
       .from('integration')
       .select()
@@ -189,7 +186,7 @@ export const fetchIntegrations = async (): Promise<Integration[]> => {
 }
 
 export const executeSqlite = async (query: string) => {
-  const supabase = await createSupabaseServerActionClient()
+  const supabase = await createSupabaseServerClient()
   const { data, error } = await supabase.functions.invoke<Result['turso']>(
     'turso',
     {
