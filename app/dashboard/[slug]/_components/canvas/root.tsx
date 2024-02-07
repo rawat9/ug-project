@@ -1,81 +1,151 @@
 'use client'
 
-import { DragEndEvent, useDndMonitor, useDroppable } from '@dnd-kit/core'
 import { useCanvasAtom } from './state'
 import { nanoid } from 'nanoid'
 import { cn } from '@/lib/utils'
-import { DraggableWrapper } from './_components/draggable-wrapper'
 import { Element } from './types'
+import { GridLayout } from './_components/grid-layout'
+import { Layout } from 'react-grid-layout'
+import { BaseElement } from './_components/elements/_base-element'
+import { useState } from 'react'
+import { Badge } from '@tremor/react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 export function Canvas() {
-  const { setNodeRef, isOver } = useDroppable({
-    id: 'canvas',
-    data: {
-      type: 'canvas',
-    },
-  })
+  const { replace } = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const params = new URLSearchParams(searchParams)
 
-  const { elements, addElement, setSelectedElement, updateElement } =
-    useCanvasAtom()
+  const {
+    elements,
+    addElement,
+    setSelectedElement,
+    removeElement,
+    selectedElement,
+  } = useCanvasAtom()
 
-  useDndMonitor({
-    onDragEnd: (event: DragEndEvent) => {
-      const { active, delta } = event
-      if (!active) return
+  const [layout, setLayout] = useState<Layout[]>([])
+  const [resizableId, setResizableId] = useState('')
 
-      const isNew = active.data.current?.isNewElement
+  function onDrop(_layout: Layout[], item: Layout, e: DragEvent) {
+    const w = e.dataTransfer?.getData('width')
+    const h = e.dataTransfer?.getData('height')
+    const type = e.dataTransfer?.getData('type') ?? ''
+    const count = elements.length === 0 ? 1 : elements.length + 1
 
-      if (isNew) {
-        if (active.id === 'text-widget') {
-          const id = nanoid()
-          const count = elements.length === 0 ? 1 : elements.length + 1
-          const element = {
-            id,
-            type: 'text',
-            name: `text${count}`,
-            x: delta.x,
-            y: delta.y,
-            width: 200,
-            height: 50,
-            props: {
-              value: 'Dummy Text',
-              alignment: 'left',
-            },
-          } satisfies Element
+    item.w = w ? parseInt(w) : 1
+    item.h = h ? parseInt(h) : 1
+    const element = {
+      id: nanoid(),
+      type,
+      name: `${type}${count}`,
+      x: item.x,
+      y: item.y,
+      width: item.w,
+      height: item.h,
+      props: {
+        value: 'Dummy Text',
+        alignment: 'left',
+      },
+    } satisfies Element
+    addElement(element)
+    setSelectedElement(element)
+    setResizableId(element.id)
+    setLayout((prev) => [...prev, addNewLayoutItem(element)])
+  }
 
-          addElement(element)
-          setSelectedElement(element)
-        }
-      } else {
-        const element = elements.find((el) => el.id === active.id)
+  function addNewLayoutItem(element: Element) {
+    return {
+      i: element.id,
+      x: element.x,
+      y: element.y,
+      w: element.width,
+      h: element.height,
+    }
+  }
 
-        if (!element) return
+  function onLayoutChange(layout: Layout[]) {
+    setLayout(layout)
+  }
 
-        element.x += delta.x
-        element.y += delta.y
+  function onDragHandler(_layout: Layout[], oldItem: Layout, newItem: Layout) {
+    // don't do anything if the position hasn't changed
+    if (oldItem.x === newItem.x && oldItem.y === newItem.y) return
 
-        updateElement(element.id, element)
-        setSelectedElement(element)
-      }
-    },
-  })
+    if (params.has('widgets')) {
+      params.delete('widgets')
+      replace(`${pathname}?${params.toString()}`, {
+        scroll: false,
+      })
+    }
+
+    if (selectedElement) {
+      setSelectedElement(null)
+    }
+  }
+
+  function remove(id: string) {
+    setSelectedElement(null)
+    setLayout((prev) => prev.filter((el) => el.i !== id))
+    removeElement(id)
+  }
 
   return (
-    <main className="h-full w-full p-2" id="canvas-area">
-      {/* <Paper className="absolute" /> */}
-      <div
-        ref={setNodeRef}
-        className={cn(
-          'relative h-full w-full rounded-lg border-2 border-dashed',
-          isOver && 'border-blue-500',
-        )}
+    <main className="font-canvas h-full w-full p-2" id="canvas">
+      <GridLayout
+        onDrop={onDrop}
+        layout={layout}
+        onLayoutChange={onLayoutChange}
+        onDrag={onDragHandler}
+        onResize={() => {
+          if (selectedElement) {
+            setSelectedElement(null)
+          }
+        }}
+        onResizeStop={(_layout: Layout[], oldItem: Layout) => {
+          if (!selectedElement) {
+            const element = elements.find((el) => el.id === oldItem.i)
+            setSelectedElement(element ?? null)
+          }
+        }}
+        useCSSTransforms={true}
       >
-        {/* <Grid size={30} /> */}
-        {elements.length > 0 &&
-          elements.map((element) => (
-            <DraggableWrapper key={element.id} element={element} />
-          ))}
-      </div>
+        {elements.map((element) => (
+          <div
+            key={element.id}
+            onBlur={() => {
+              setResizableId('')
+              // case: this hides the properties panel when clicked outside of the element
+              // setSelectedElement(null)
+            }}
+            className={cn(
+              'relative flex h-full w-full cursor-pointer select-none items-center rounded-md p-2',
+              selectedElement?.id === element?.id &&
+                resizableId &&
+                'border border-dashed border-gray-400 ring-1 ring-inset ring-blue-400',
+              resizableId !== element.id && 'react-resizable-hide',
+            )}
+            tabIndex={0}
+            onClick={() => {
+              setSelectedElement(element)
+              setResizableId(element.id)
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Backspace') {
+                remove(element.id)
+              }
+            }}
+          >
+            {selectedElement?.id === element.id && resizableId && (
+              <Badge size="xs" className="fixed -left-[1px] -top-[30px]">
+                {element.name}
+              </Badge>
+            )}
+            <BaseElement element={element} />
+          </div>
+        ))}
+      </GridLayout>
     </main>
   )
 }

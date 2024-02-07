@@ -1,10 +1,10 @@
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { useCanvasAtom } from '../canvas/state'
-import { Element } from '../canvas/types'
+import { useCanvasAtom } from '../../canvas/state'
+import { Element } from '../../canvas/types'
 import { useEffect, useState } from 'react'
+import { TextInput } from '@tremor/react'
 
-export function TextFieldProperties({
+export function TextElementProperties({
   selectedElement,
 }: {
   selectedElement: Element
@@ -32,8 +32,9 @@ export function TextFieldProperties({
       <Label htmlFor="value" className="text-xs text-slate-500">
         Value
       </Label>
-      <Input
+      <TextInput
         type="text"
+        autoComplete="off"
         id="value"
         value={value}
         onChange={handleValueChange}

@@ -18,6 +18,9 @@ const config: Config = {
     },
     transparent: 'transparent',
     current: 'currentColor',
+    fontFamily: {
+      canvas: ['Inter', 'sans-serif'],
+    },
     extend: {
       colors: {
         // light mode

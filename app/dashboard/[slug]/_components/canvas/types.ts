@@ -16,7 +16,7 @@ interface TextElementProps extends Partial<TextProps> {
 export interface Element {
   id: string
   name: string
-  type: 'text'
+  type: string
   x: number
   y: number
   width: number
