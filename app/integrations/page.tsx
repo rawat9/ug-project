@@ -5,6 +5,7 @@ import { Header } from '@/components/shared/header'
 import { Suspense } from 'react'
 import Link from 'next/link'
 import { Sqlite } from '@/icons'
+import { IntegrationsListSkeleton } from './_components/integrations-list-skeleton'
 
 export default async function Page({
   searchParams,
@@ -47,7 +48,7 @@ export default async function Page({
             </div>
           </Link>
           <div className="my-8 h-px w-full bg-zinc-200" />
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<IntegrationsListSkeleton />}>
             <IntegrationsList query={query} />
           </Suspense>
         </div>
