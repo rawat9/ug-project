@@ -2,7 +2,6 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import Page from '../page'
 import { fetchDashboards } from '@/lib/data'
 import Search from '@/components/shared/search'
-import Layout from '../layout'
 import { getSession } from '@/lib/actions'
 import { Session } from '@supabase/supabase-js'
 
@@ -47,7 +46,7 @@ describe('Dashboard layout', () => {
 
   it('should not display children if session is null', async () => {
     const redirectSpy = jest.spyOn(await import('next/navigation'), 'redirect')
-    await Layout({ children: <ChildComponent /> })
+    await Page({ searchParams: { query: '' } })
 
     // should redirect to login page
     expect(redirectSpy).toHaveBeenCalledWith('/auth/login/')
@@ -58,7 +57,7 @@ describe('Dashboard layout', () => {
       .mocked(getSession)
       .mockResolvedValue({ session: { user: { id: '1' } } as Session })
 
-    const dashboardLayout = await Layout({ children: <ChildComponent /> })
+    const dashboardLayout = await Page({ searchParams: { query: '' } })
     render(dashboardLayout)
 
     const child = screen.getByRole('heading', { level: 1 })

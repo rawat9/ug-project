@@ -8,7 +8,7 @@ const auth = {
 }
 
 jest.mock('../../../lib/supabase/server', () => ({
-  createSupabaseServerActionClient: async () => {
+  createSupabaseServerClient: async () => {
     return {
       auth,
     }
