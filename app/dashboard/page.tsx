@@ -1,9 +1,9 @@
-import Search from '../../components/shared/search'
-import { CreateFormDialog } from './_components/create-form-dialog'
+import Search from '@/components/shared/search'
 import { Header } from '@/components/shared/header'
+import { CreateFormDialog } from './_components/create-form-dialog'
 import { DashboardsList } from './_components/dashboards-list'
-import { Suspense } from 'react'
 import { DashboardsListSkeleton } from './_components/dashboards-list-skeleton'
+import { Suspense } from 'react'
 
 export default async function Page({
   searchParams,
