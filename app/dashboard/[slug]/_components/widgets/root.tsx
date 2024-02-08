@@ -1,7 +1,6 @@
 'use client'
 
 import Search from '@/components/shared/search'
-import { cn } from '@/lib/utils'
 import { AnimatePresence, motion } from 'framer-motion'
 import { TextWidget } from './_components/text-widget'
 import { CardWidget } from './_components/card-widget'
@@ -20,9 +19,7 @@ export function Widgets({ isOpen }: { isOpen: boolean }) {
             type: 'tween',
             duration: 0.2,
           }}
-          className={cn(
-            'z-990 absolute left-4 top-2 block w-[300px] rounded-lg bg-white p-4 drop-shadow-xl', // 'block duration-500 animate-in fade-in-100 slide-in-from-left-full',
-          )}
+          className="absolute left-2 top-2 block w-[300px] rounded-lg bg-white p-4 drop-shadow-xl"
         >
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-lg font-semibold">Components</h2>

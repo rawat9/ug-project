@@ -11,8 +11,8 @@ export function AreaChartWidget() {
       onDragStart={(e) => {
         e.dataTransfer.setData('text/plain', '')
         e.dataTransfer.setData('type', 'area-chart')
-        e.dataTransfer.setData('width', '5')
-        e.dataTransfer.setData('height', '4')
+        e.dataTransfer.setData('width', '6')
+        e.dataTransfer.setData('height', '10')
       }}
     >
       <Chart className="h-10 w-10" />

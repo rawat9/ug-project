@@ -4,7 +4,7 @@ import { Element } from '../../types'
 
 const CardElement = memo(({ element }: { element: Element }) => {
   return (
-    <Card className="h-[120px]" decoration="top" decorationColor="indigo">
+    <Card className="h-full" decoration="top" decorationColor="indigo">
       <Text>Sales</Text>
       <Metric>£ 34,743</Metric>
     </Card>

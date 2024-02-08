@@ -27,20 +27,25 @@ export default function Page({
         className="fixed left-12 top-14 z-10 max-h-[calc(100vh_-_3.5rem)] max-w-[calc(100vw_-_3rem)] bg-zinc-50"
       >
         <JotaiProvider>
-          <ResizablePanel
-            id="canvas"
-            defaultSize={100}
-            className="flex items-center justify-center"
-            order={2}
-          >
-            <Canvas />
+          <ResizablePanel order={1} defaultSize={60}>
+            <ResizablePanelGroup direction="horizontal">
+              <ResizablePanel id="canvas" defaultSize={80} order={1}>
+                <Canvas />
+              </ResizablePanel>
+              <ResizableHandle />
+              <ResizablePanel
+                id="properties"
+                order={2}
+                defaultSize={20}
+                className="bg-white drop-shadow-xl"
+              >
+                <Properties />
+              </ResizablePanel>
+            </ResizablePanelGroup>
           </ResizablePanel>
-
-          <ResizableHandle className="bg-slate-100" />
-          <Widgets isOpen={searchParams?.widgets === 'true'} />
-          <Editor isOpen={searchParams?.editor === 'true'} />
-          <Properties />
         </JotaiProvider>
+        <Editor isOpen={searchParams?.editor === 'true'} />
+        <Widgets isOpen={searchParams?.widgets === 'true'} />
       </ResizablePanelGroup>
     </>
   )

@@ -5,11 +5,12 @@ import { nanoid } from 'nanoid'
 import { cn } from '@/lib/utils'
 import { Element } from './types'
 import { GridLayout } from './_components/grid-layout'
-import { Layout } from 'react-grid-layout'
 import { BaseElement } from './_components/elements/_base-element'
-import { useState } from 'react'
+import { Layout } from 'react-grid-layout'
+import { useRef, useState } from 'react'
 import { Badge } from '@tremor/react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useClickOutsideSelectedElementButInsideCanvas } from '@/hooks'
 
 export function Canvas() {
   const { replace } = useRouter()
@@ -55,6 +56,13 @@ export function Canvas() {
     setLayout((prev) => [...prev, addNewLayoutItem(element)])
   }
 
+  const canvasRef = useRef<HTMLDivElement>(null)
+
+  useClickOutsideSelectedElementButInsideCanvas(canvasRef, () => {
+    setSelectedElement(null)
+    setResizableId('')
+  })
+
   function addNewLayoutItem(element: Element) {
     return {
       i: element.id,
@@ -69,7 +77,15 @@ export function Canvas() {
     setLayout(layout)
   }
 
-  function onDragHandler(_layout: Layout[], oldItem: Layout, newItem: Layout) {
+  function onDragStart(_layout: Layout[], oldItem: Layout) {
+    const element = elements.find((el) => el.id === oldItem.i)
+    if (element) {
+      setSelectedElement(element)
+      setResizableId(element.id)
+    }
+  }
+
+  function onDrag(_layout: Layout[], oldItem: Layout, newItem: Layout) {
     // don't do anything if the position hasn't changed
     if (oldItem.x === newItem.x && oldItem.y === newItem.y) return
 
@@ -78,10 +94,6 @@ export function Canvas() {
       replace(`${pathname}?${params.toString()}`, {
         scroll: false,
       })
-    }
-
-    if (selectedElement) {
-      setSelectedElement(null)
     }
   }
 
@@ -92,33 +104,19 @@ export function Canvas() {
   }
 
   return (
-    <main className="h-full w-full p-2 font-canvas" id="canvas">
+    <main className="h-full w-full font-canvas" id="canvas">
       <GridLayout
         onDrop={onDrop}
         layout={layout}
         onLayoutChange={onLayoutChange}
-        onDrag={onDragHandler}
-        onResize={() => {
-          if (selectedElement) {
-            setSelectedElement(null)
-          }
-        }}
-        onResizeStop={(_layout: Layout[], oldItem: Layout) => {
-          if (!selectedElement) {
-            const element = elements.find((el) => el.id === oldItem.i)
-            setSelectedElement(element ?? null)
-          }
-        }}
+        onDrag={onDrag}
+        onDragStart={onDragStart}
+        innerRef={canvasRef}
         useCSSTransforms={true}
       >
         {elements.map((element) => (
           <div
             key={element.id}
-            onBlur={() => {
-              setResizableId('')
-              // case: this hides the properties panel when clicked outside of the element
-              // setSelectedElement(null)
-            }}
             className={cn(
               'relative flex h-full w-full cursor-pointer select-none items-center rounded-md p-2',
               selectedElement?.id === element?.id &&
@@ -127,10 +125,7 @@ export function Canvas() {
               resizableId !== element.id && 'react-resizable-hide',
             )}
             tabIndex={0}
-            onClick={() => {
-              setSelectedElement(element)
-              setResizableId(element.id)
-            }}
+            onClick={() => {}}
             onKeyDown={(e) => {
               if (e.key === 'Backspace') {
                 remove(element.id)
