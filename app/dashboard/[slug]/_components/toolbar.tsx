@@ -19,7 +19,7 @@ const Toolbar: ToolbarComponent = ({
 }) => {
   return (
     <header className="fixed top-0 z-30 flex h-14 w-full items-center border-b px-4">
-      <div className="grid h-full w-full grid-cols-3 gap-2">
+      <div className="flex h-full w-full justify-between">
         <Link href="/dashboard" className="flex items-center justify-start">
           <Dashboard className="h-5 w-5" />
         </Link>

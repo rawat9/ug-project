@@ -92,7 +92,7 @@ export function Canvas() {
   }
 
   return (
-    <main className="font-canvas h-full w-full p-2" id="canvas">
+    <main className="h-full w-full p-2 font-canvas" id="canvas">
       <GridLayout
         onDrop={onDrop}
         layout={layout}
