@@ -52,7 +52,7 @@ export function ToolbarTitle({
         <input
           autoFocus
           name="title"
-          className="bg-transparent text-center font-medium outline-none"
+          className="text-center font-medium focus:border-transparent focus:ring-0"
           onBlur={handleRenamingCancel}
           onKeyDown={handleNameKeyDown}
           onChange={handleNameChange}

@@ -1,10 +1,15 @@
+'use client'
+
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable'
+import { Editor } from './_components/editor'
+import { Canvas } from './_components/canvas'
 import { Widgets } from './_components/widgets'
-import Editor from './_components/editor/root'
+import { Properties } from './_components/properties'
+import { Provider as JotaiProvider } from 'jotai'
 
 export default function Page({
   searchParams,
@@ -16,55 +21,31 @@ export default function Page({
 }) {
   return (
     <ResizablePanelGroup
-      direction="vertical"
+      direction="horizontal"
       autoSaveId="persistance"
-      className="fixed left-12 top-14 z-10 max-h-[calc(100vh_-_3.5rem)] max-w-[calc(100vw_-_3rem)] bg-slate-100"
+      className="fixed left-12 top-14 z-10 max-h-[calc(100vh_-_3.5rem)] max-w-[calc(100vw_-_3rem)] bg-zinc-50"
     >
-      <ResizablePanel id="canvas+editor" order={1} defaultSize={60}>
-        <ResizablePanelGroup direction="horizontal">
-          {searchParams?.widgets === 'true' && (
-            <>
-              <ResizablePanel
-                id="widgets"
-                order={1}
-                className="mr-[-0.5rem] flex items-center justify-center p-2"
-                maxSize={20}
-                minSize={10}
-              >
-                <Widgets />
-              </ResizablePanel>
-              <ResizableHandle />
-            </>
-          )}
-          <ResizablePanel
-            id="canvas"
-            defaultSize={100}
-            className="flex items-center justify-center p-2"
-            order={2}
-          >
-            <Canvas />
-          </ResizablePanel>
-        </ResizablePanelGroup>
-      </ResizablePanel>
-
-      <ResizableHandle className="bg-slate-100" />
-
-      {searchParams?.editor === 'true' && (
-        <ResizablePanel
-          id="editor"
-          defaultSize={40}
-          minSize={30}
-          className="mt-[-0.5rem] flex items-center justify-center p-2"
-          order={2}
-          collapsible
-        >
-          <Editor />
+      <JotaiProvider>
+        <ResizablePanel order={1} defaultSize={80}>
+          <ResizablePanelGroup direction="vertical">
+            <ResizablePanel id="canvas" minSize={60} order={1}>
+              <Canvas />
+            </ResizablePanel>
+            <ResizableHandle />
+            <Editor isOpen={searchParams?.editor === 'true'} />
+          </ResizablePanelGroup>
         </ResizablePanel>
-      )}
+        <ResizableHandle />
+        <ResizablePanel
+          id="properties"
+          order={2}
+          defaultSize={20}
+          className="bg-white"
+        >
+          <Properties />
+        </ResizablePanel>
+      </JotaiProvider>
+      <Widgets isOpen={searchParams?.widgets === 'true'} />
     </ResizablePanelGroup>
   )
-}
-
-function Canvas() {
-  return <canvas className="h-full w-full rounded-lg bg-white" id="canvas" />
 }
