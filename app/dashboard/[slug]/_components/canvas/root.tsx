@@ -1,5 +1,3 @@
-'use client'
-
 import { useCanvasAtom } from './state'
 import { nanoid } from 'nanoid'
 import { cn } from '@/lib/utils'
@@ -39,7 +37,7 @@ export function Canvas() {
     item.h = h ? parseInt(h) : 1
     const element = {
       id: nanoid(),
-      type,
+      type: type as Element['type'],
       name: `${type}${count}`,
       x: item.x,
       y: item.y,
@@ -125,7 +123,6 @@ export function Canvas() {
               resizableId !== element.id && 'react-resizable-hide',
             )}
             tabIndex={0}
-            onClick={() => {}}
             onKeyDown={(e) => {
               if (e.key === 'Backspace') {
                 remove(element.id)

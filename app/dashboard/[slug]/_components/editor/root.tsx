@@ -16,7 +16,7 @@ export function Editor({ isOpen }: { isOpen: boolean }) {
           id="editor"
           defaultSize={40}
           minSize={30}
-          className="z-90 hidden items-center justify-center border-t shadow-2xl sm:flex"
+          className="z-90 hidden items-center justify-center shadow-2xl sm:flex"
           order={2}
           collapsible
         >

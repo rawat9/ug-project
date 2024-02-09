@@ -1,10 +1,8 @@
 import type { TextProps } from '@tremor/react'
 
-type ElementType = 'text'
+type ElementTypes = 'text' | 'card' | 'area-chart'
 
-type ElementProps<T extends ElementType> = T extends 'text'
-  ? TextElementProps
-  : never
+type ElementProps = TextElementProps
 
 interface TextElementProps extends Partial<TextProps> {
   value: string
@@ -12,16 +10,15 @@ interface TextElementProps extends Partial<TextProps> {
   alignment?: 'left' | 'center' | 'right'
 }
 
-// TODO: pass a default without compromising the type
 export interface Element {
   id: string
   name: string
-  type: string
+  type: ElementTypes
   x: number
   y: number
   width: number
   height: number
-  props: ElementProps<'text'>
+  props: ElementProps
 }
 
 export interface Canvas {

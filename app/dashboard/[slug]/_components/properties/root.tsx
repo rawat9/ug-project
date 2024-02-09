@@ -1,4 +1,4 @@
-// import { Cross } from '@/icons'
+import { Cross } from '@/icons'
 import { useCanvasAtom } from '../canvas/state'
 import { Element } from '../canvas/types'
 import { TextElementProperties } from './_components/text-element-properties'
@@ -10,12 +10,9 @@ export function Properties() {
     <div className="h-full">
       <div className="flex h-[5%] items-center justify-between p-2">
         <h2 className="text-lg font-semibold">Properties</h2>
-        {/* <button
-          onClick={() => setSelectedElement(null)}
-          className="text-gray-400 hover:text-gray-600"
-        >
+        <button className="text-gray-400 hover:text-gray-600">
           <Cross className="h-5 w-5" />
-        </button> */}
+        </button>
       </div>
       <div className="h-px w-full bg-gray-200" />
       {selectedElement ? (
