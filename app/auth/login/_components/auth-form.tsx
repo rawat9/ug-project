@@ -29,6 +29,9 @@ export function AuthForm() {
   async function onSubmit(formData: FormData) {
     const { error } = await signIn({
       email: formData.email,
+      options: {
+        emailRedirectTo: window.location.origin + '/auth/callback',
+      }
     })
 
     if (error) {
