@@ -40,7 +40,7 @@ export default function Page({
           id="properties"
           order={2}
           defaultSize={20}
-          className="bg-white"
+          className="hidden bg-white md:block"
         >
           <Properties />
         </ResizablePanel>

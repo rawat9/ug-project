@@ -45,7 +45,9 @@ export * from './integrations/Postgres'
 // Icons for element properties
 export * from './AlignLeft'
 export * from './AlignRight'
-export * from './AlignCenterHorizontal'
+export * from './AlignCenter'
 export * from './AlignBottom'
 export * from './AlignTop'
-export * from './AlignCenterVertically'
+export * from './AlignMiddle'
+
+export * from './Selection'

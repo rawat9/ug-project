@@ -1,6 +1,6 @@
 import type { SVGProps } from 'react'
 
-export function AlignLeft(props: SVGProps<SVGSVGElement>) {
+export function AlignMiddle(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ export function AlignLeft(props: SVGProps<SVGSVGElement>) {
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth="2"
-        d="M4 4v16m3-8h11M7 12l3-3m-3 3l3 3"
+        d="M4 12h16m-8-4V3M9 6l3 3l3-3m-3 10v5m-3-3l3-3l3 3"
       />
     </svg>
   )

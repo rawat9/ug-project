@@ -6,8 +6,8 @@ import { TextInput } from '@tremor/react'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import {
   AlignBottom,
-  AlignCenterHorizontally,
-  AlignCenterVertically,
+  AlignCenter,
+  AlignMiddle,
   AlignLeft,
   AlignRight,
   AlignTop,
@@ -50,31 +50,31 @@ export function TextElementProperties({
           onChange={handleValueChange}
         />
       </div>
-      <div className="h-px w-full bg-gray-200" />
-      <div className="text-gray-500">Alignment</div>
+      <div className="my-4 h-px w-full bg-gray-200" />
+      <div className="p-2 text-sm text-gray-500">Alignment</div>
       <div className="flex justify-between px-4">
         <div>
           <ToggleGroup type="single" variant="outline">
             <ToggleGroupItem
               size="sm"
               value="align-left"
-              aria-label="Toggle bold"
+              aria-label="Toggle align left"
             >
-              <AlignLeft className="h-4 w-4" />
+              <AlignLeft className="h-5 w-5" />
             </ToggleGroupItem>
             <ToggleGroupItem
               size="sm"
               value="align-center"
-              aria-label="Toggle italic"
+              aria-label="Toggle align center"
             >
-              <AlignCenterHorizontally className="h-4 w-4" />
+              <AlignCenter className="h-5 w-5" />
             </ToggleGroupItem>
             <ToggleGroupItem
               size="sm"
               value="align-right"
-              aria-label="Toggle strikethrough"
+              aria-label="Toggle align right"
             >
-              <AlignRight className="h-4 w-4" />
+              <AlignRight className="h-5 w-5" />
             </ToggleGroupItem>
           </ToggleGroup>
         </div>
@@ -82,24 +82,24 @@ export function TextElementProperties({
           <ToggleGroup type="single" variant="outline">
             <ToggleGroupItem
               size="sm"
-              value="align-left"
-              aria-label="Toggle bold"
+              value="align-top"
+              aria-label="Toggle align top"
             >
-              <AlignTop className="h-4 w-4" />
+              <AlignTop className="h-5 w-5" />
             </ToggleGroupItem>
             <ToggleGroupItem
               size="sm"
-              value="align-center"
-              aria-label="Toggle italic"
+              value="align-middle"
+              aria-label="Toggle align middle"
             >
-              <AlignCenterVertically className="h-4 w-4" />
+              <AlignMiddle className="h-5 w-5" />
             </ToggleGroupItem>
             <ToggleGroupItem
               size="sm"
-              value="align-right"
-              aria-label="Toggle strikethrough"
+              value="align-bottom"
+              aria-label="Toggle align bottom"
             >
-              <AlignBottom className="h-4 w-4" />
+              <AlignBottom className="h-5 w-5" />
             </ToggleGroupItem>
           </ToggleGroup>
         </div>
