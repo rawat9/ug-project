@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { TextWidget } from './_components/text-widget'
 import { CardWidget } from './_components/card-widget'
 import { AreaChartWidget } from './_components/area-chart-widget'
+import { TableWidget } from './_components/table-widget'
 import { Cross } from '@/icons'
 
 export function Widgets({ isOpen }: { isOpen: boolean }) {
@@ -34,6 +35,7 @@ export function Widgets({ isOpen }: { isOpen: boolean }) {
             <TextWidget />
             <CardWidget />
             <AreaChartWidget />
+            <TableWidget />
           </div>
         </motion.div>
       )}

@@ -1,6 +1,6 @@
 import type { TextProps } from '@tremor/react'
 
-type ElementTypes = 'text' | 'card' | 'area-chart'
+type ElementTypes = 'text' | 'card' | 'area-chart' | 'table'
 
 type ElementProps = TextElementProps
 
