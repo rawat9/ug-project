@@ -41,3 +41,11 @@ export * from './Format'
 // Icons for fetchIntegrations
 export * from './integrations/Sqlite'
 export * from './integrations/Postgres'
+
+// Icons for element properties
+export * from './AlignLeft'
+export * from './AlignRight'
+export * from './AlignCenterHorizontal'
+export * from './AlignBottom'
+export * from './AlignTop'
+export * from './AlignCenterVertically'

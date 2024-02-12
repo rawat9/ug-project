@@ -65,9 +65,9 @@ describe('Login Page', () => {
       expect(submitButton).toBeDisabled()
     })
 
-    // expect(mockLogin).toHaveBeenCalledWith({
-    //   email: 'test@dev.com',
-    // })
+    expect(mockLogin).toHaveBeenCalledWith({
+      email: 'test@dev.com',
+    })
     expect(toastSuccess).toHaveBeenCalledWith(
       'Check your email for the magic link!',
     )
@@ -99,9 +99,9 @@ describe('Login Page', () => {
       expect(submitButton).toBeDisabled()
     })
 
-    // expect(mockLogin).toHaveBeenCalledWith({
-    //   email: 'test@dev.com',
-    // })
+    expect(mockLogin).toHaveBeenCalledWith({
+      email: 'test@dev.com',
+    })
     expect(toastError).toHaveBeenCalledWith(
       'Your request has been failed. Please try again.',
     )

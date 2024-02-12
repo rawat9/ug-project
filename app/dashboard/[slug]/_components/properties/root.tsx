@@ -18,7 +18,7 @@ export function Properties() {
       {selectedElement ? (
         <>
           <div className="border-b p-2">{selectedElement.name}</div>
-          <div className="px-3 py-4">
+          <div className="py-4">
             <BaseProperties element={selectedElement} />
           </div>
         </>
