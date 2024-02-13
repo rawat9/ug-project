@@ -1,222 +1,295 @@
 import {
   Card,
+  // Table,
+  // TableBody,
+  // TableCell,
+  // TableHead,
+  // TableHeaderCell,
+  // TableRow,
+} from '@tremor/react'
+import { memo, useState } from 'react'
+import { Element } from '../../types'
+import {
   Table,
   TableBody,
   TableCell,
   TableHead,
-  TableHeaderCell,
+  TableHeader,
   TableRow,
-} from '@tremor/react'
-import { memo } from 'react'
-import { Element } from '../../types'
-// import {
-//   Table,
-//   TableBody,
-//   TableCell,
-//   TableHead,
-//   TableHeader,
-//   TableRow,
-// } from '@/components/ui/table'
+} from '@/components/ui/table'
 import {
   ColumnDef,
+  ColumnFiltersState,
+  SortingState,
+  VisibilityState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
+  getGroupedRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
 import { Payment } from '@/app/integrations/app-db/_components/data'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import { CaretDown, CaretSort, CaretUp, Filter } from '@/icons'
 
-const data = [
+type Row = {
+  firstName: string
+  lastName: string
+  age: number
+  visits: number
+  status: string
+  progress: string
+}
+
+const data: Row[] = [
   {
-    id: 'm5gr84i9',
-    amount: 316,
-    status: 'success',
-    email: 'ken99@yahoo.com',
+    firstName: 'Marcella',
+    lastName: 'Muller',
+    age: 28,
+    visits: 93,
+    status: 'relationship',
+    progress: '100%',
   },
   {
-    id: 'm5gr84i9',
-    amount: 316,
-    status: 'success',
-    email: 'ken99@yahoo.com',
+    firstName: 'Dortha',
+    lastName: 'Crist',
+    age: 35,
+    visits: 66,
+    status: 'complicated',
+    progress: '67%',
   },
   {
-    id: 'm5gr84i9',
-    amount: 316,
-    status: 'success',
-    email: 'ken99@yahoo.com',
+    firstName: 'Eldon',
+    lastName: 'Hane',
+    age: 23,
+    visits: 800,
+    status: 'complicated',
+    progress: '92%',
   },
   {
-    id: 'm5gr84i9',
-    amount: 316,
-    status: 'success',
-    email: 'ken99@yahoo.com',
+    firstName: 'Justen',
+    lastName: 'Larkin',
+    age: 18,
+    visits: 647,
+    status: 'single',
+    progress: '75%',
   },
   {
-    id: 'm5gr84i9',
-    amount: 316,
-    status: 'success',
-    email: 'ken99@yahoo.com',
+    firstName: 'Nellie',
+    lastName: 'Zieme',
+    age: 34,
+    visits: 958,
+    status: 'relationship',
+    progress: '60%',
   },
   {
-    id: 'm5gr84i9',
-    amount: 316,
-    status: 'success',
-    email: 'ken99@yahoo.com',
+    firstName: 'Mikel',
+    lastName: 'Grant',
+    age: 31,
+    visits: 860,
+    status: 'relationship',
+    progress: '71%',
   },
   {
-    id: 'm5gr84i9',
-    amount: 316,
-    status: 'success',
-    email: 'ken99@yahoo.com',
+    firstName: 'Abigayle',
+    lastName: 'Barrows',
+    age: 22,
+    visits: 89,
+    status: 'relationship',
+    progress: '53%',
   },
   {
-    id: 'm5gr84i9',
-    amount: 316,
-    status: 'success',
-    email: 'ken99@yahoo.com',
+    firstName: 'Favian',
+    lastName: 'Hagenes',
+    age: 26,
+    visits: 783,
+    status: 'complicated',
+    progress: '39%',
   },
   {
-    id: 'm5gr84i9',
-    amount: 316,
-    status: 'success',
-    email: 'ken99@yahoo.com',
+    firstName: 'Sigrid',
+    lastName: 'Windler',
+    age: 22,
+    visits: 863,
+    status: 'relationship',
+    progress: '43%',
   },
   {
-    id: 'm5gr84i9',
-    amount: 316,
-    status: 'success',
-    email: 'ken99@yahoo.com',
+    firstName: 'Zackary',
+    lastName: 'Casper',
+    age: 2,
+    visits: 88,
+    status: 'relationship',
+    progress: '34%',
   },
   {
-    id: 'm5gr84i9',
-    amount: 316,
-    status: 'success',
-    email: 'ken99@yahoo.com',
+    firstName: 'Kathlyn',
+    lastName: 'Koss',
+    age: 29,
+    visits: 1000,
+    status: 'single',
+    progress: '100%',
   },
   {
-    id: 'm5gr84i9',
-    amount: 316,
-    status: 'success',
-    email: 'ken99@yahoo.com',
-  },
-  {
-    id: 'm5gr84i9',
-    amount: 316,
-    status: 'success',
-    email: 'ken99@yahoo.com',
-  },
-  {
-    id: 'm5gr84i9',
-    amount: 316,
-    status: 'success',
-    email: 'ken99@yahoo.com',
-  },
-  {
-    id: 'm5gr84i9',
-    amount: 316,
-    status: 'success',
-    email: 'ken99@yahoo.com',
-  },
-  {
-    id: 'm5gr84i9',
-    amount: 316,
-    status: 'success',
-    email: 'ken99@yahoo.com',
-  },
-  {
-    id: 'm5gr84i9',
-    amount: 316,
-    status: 'success',
-    email: 'ken99@yahoo.com',
-  },
-  {
-    id: 'm5gr84i9',
-    amount: 316,
-    status: 'success',
-    email: 'ken99@yahoo.com',
-  },
-  {
-    id: 'm5gr84i9',
-    amount: 316,
-    status: 'success',
-    email: 'ken99@yahoo.com',
-  },
-  {
-    id: 'm5gr84i9',
-    amount: 316,
-    status: 'success',
-    email: 'ken99@yahoo.com',
+    firstName: 'Laurie',
+    lastName: 'Kerluke',
+    age: 21,
+    visits: 190,
+    status: 'single',
+    progress: '10%',
   },
 ]
 
-const columns: ColumnDef<Payment>[] = [
+const columns: ColumnDef<Row>[] = [
+  // {
+  //   id: 'select',
+  //   header: ({ table }) => (
+  //     <Checkbox
+  //       checked={
+  //         table.getIsAllPageRowsSelected() ||
+  //         (table.getIsSomePageRowsSelected() && 'indeterminate')
+  //       }
+  //       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+  //       aria-label="Select all"
+  //     />
+  //   ),
+  //   cell: ({ row }) => (
+  //     <Checkbox
+  //       checked={row.getIsSelected()}
+  //       onCheckedChange={(value) => row.toggleSelected(!!value)}
+  //       aria-label="Select row"
+  //     />
+  //   ),
+  //   enableSorting: false,
+  //   enableHiding: false,
+  // },
   {
-    id: 'select',
-    header: () => <div>id</div>,
-    cell: ({ row }) => <div>{row.getValue('id')}</div>,
-  },
-  {
-    accessorKey: 'status',
-    header: 'Status',
+    accessorKey: 'firstName',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting()}
+          className="p-0"
+        >
+          <p className="font-semibold">first_name</p>
+          {column.getIsSorted() ? (
+            column.getIsSorted() === 'asc' ? (
+              <CaretUp className="ml-1 h-5 w-5" />
+            ) : (
+              <CaretDown className="ml-1 h-5 w-5" />
+            )
+          ) : (
+            <CaretSort className="ml-1 h-5 w-5" />
+          )}
+        </Button>
+      )
+    },
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue('status')}</div>
+      <div className="capitalize">{row.getValue('firstName')}</div>
     ),
   },
   {
-    accessorKey: 'email',
-    header: () => <div>Email</div>,
-    cell: ({ row }) => <div className="lowercase">{row.getValue('email')}</div>,
+    accessorKey: 'lastName',
+    header: () => <p className="font-semibold">last_name</p>,
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue('lastName')}</div>
+    ),
   },
   {
-    accessorKey: 'amount',
-    header: () => <div>Amount</div>,
+    accessorKey: 'age',
+    header: () => <p className="font-semibold">age</p>,
+    cell: ({ row }) => <div>{row.getValue('age')}</div>,
+  },
+  {
+    accessorKey: 'visits',
+    header: () => <p className="font-semibold">visits</p>,
+    cell: ({ row }) => <div>{row.getValue('visits')}</div>,
+    aggregationFn: 'sum',
+  },
+  {
+    accessorKey: 'status',
+    header: () => <p className="font-semibold">status</p>,
+    cell: ({ row }) => <div>{row.getValue('status')}</div>,
+  },
+  {
+    accessorKey: 'progress',
+    header: () => <div className="font-medium">progress</div>,
+    cell: ({ row }) => <div>{row.getValue('progress')}</div>,
   },
 ]
 
 const TableElement = memo(({ element }: { element: Element }) => {
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [rowSelection, setRowSelection] = useState({})
+
   const table = useReactTable({
     data,
     columns,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getGroupedRowModel: getGroupedRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
     initialState: {
       pagination: {
         pageIndex: 0,
-        pageSize: 20,
+        pageSize: 10,
       },
     },
+    state: {
+      sorting,
+      columnFilters,
+      columnVisibility,
+      rowSelection,
+    },
+    debugTable: true,
   })
-  return (
-    <Card className="h-full w-full">
-      <h3 className="font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong">
-        List of something
-      </h3>
 
-      <div className="mt-5 h-full overflow-auto border bg-white">
+  return (
+    <Card className="flex h-full w-full flex-col gap-6">
+      <div className="flex items-center">
+        <h3 className="flex-1 font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong">
+          List of something
+        </h3>
+        <Button variant="outline" className="h-8">
+          <Filter className="mr-1 h-4 w-4" />
+          Filters
+        </Button>
+      </div>
+
+      <div className="h-full overflow-auto rounded-md border bg-white">
         <Table>
-          <TableHead className="sticky top-0 z-30 bg-slate-100">
+          <TableHeader className="sticky top-0 z-30 bg-slate-100">
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow key={headerGroup.id} className="border-b-4">
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHeaderCell key={header.id}>
+                    <TableHead
+                      key={header.id}
+                      className="h-11 border-r last:border-r-0"
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
                             header.getContext(),
                           )}
-                    </TableHeaderCell>
+                    </TableHead>
                   )
                 })}
               </TableRow>
             ))}
-          </TableHead>
+          </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
@@ -225,11 +298,16 @@ const TableElement = memo(({ element }: { element: Element }) => {
                   data-state={row.getIsSelected() && 'selected'}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
+                    <TableCell
+                      key={cell.id}
+                      className="border-b border-r last:border-r-0"
+                    >
+                      {cell.getIsPlaceholder()
+                        ? null
+                        : flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
                     </TableCell>
                   ))}
                 </TableRow>
@@ -247,10 +325,15 @@ const TableElement = memo(({ element }: { element: Element }) => {
           </TableBody>
         </Table>
       </div>
-      {/* <div className="flex h-[4%] items-center justify-end space-x-2 px-2">
+      <div className="flex h-[4%] items-center justify-end space-x-2 px-2">
         <div className="flex-1 text-sm text-slate-500">
-          {table.getFilteredSelectedRowModel().rows.length} of{' '}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {/* {table.getFilteredSelectedRowModel().rows.length} of{' '}
+          {table.getFilteredRowModel().rows.length} row(s) selected. */}
+          {'Showing ' +
+            table.getPaginationRowModel().rows.length +
+            ' of ' +
+            data.length +
+            ' rows'}
         </div>
         <div className="flex items-center space-x-2">
           <Button
@@ -276,7 +359,7 @@ const TableElement = memo(({ element }: { element: Element }) => {
             Next
           </Button>
         </div>
-      </div> */}
+      </div>
     </Card>
   )
 })
