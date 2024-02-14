@@ -8,7 +8,7 @@ import {
   // TableRow,
 } from '@tremor/react'
 import { memo, useState } from 'react'
-import { Element } from '../../types'
+import { type TableElement } from '../../types'
 import {
   Table,
   TableBody,
@@ -228,7 +228,7 @@ const columns: ColumnDef<Row>[] = [
   },
 ]
 
-const TableElement = memo(({ element }: { element: Element }) => {
+const TableElement = memo(({ element }: { element: TableElement }) => {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
@@ -269,7 +269,7 @@ const TableElement = memo(({ element }: { element: Element }) => {
     <Card className="flex h-full w-full flex-col gap-6">
       <div className="flex items-center">
         <h3 className="flex-1 font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong">
-          List of something
+          {element.props.name}
         </h3>
         <Button variant="outline" className="h-8">
           <Filter className="mr-1 h-4 w-4" />

@@ -43,7 +43,6 @@ export function Canvas() {
       width: item.w,
       height: item.h,
       type,
-      props: {},
     } satisfies BaseElementType
     addElement(element)
     setSelectedElement(element)

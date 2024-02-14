@@ -20,9 +20,6 @@ export type BaseElement = {
   width: number
   height: number
   type: string
-  props: {
-    [key: string]: any
-  }
 }
 
 export type TextElement = BaseElement & {

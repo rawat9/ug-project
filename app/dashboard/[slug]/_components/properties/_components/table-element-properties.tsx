@@ -1,16 +1,14 @@
 import { Label } from '@/components/ui/label'
 import { useCanvasAtom } from '../../canvas/state'
 import { TableElement } from '../../canvas/types'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { TextInput } from '@tremor/react'
 
 export function TableElementProperties({ element }: { element: TableElement }) {
-  const [value, setValue] = useState(element.props.name)
-  const { updateElement } = useCanvasAtom()
+  const { name } = element.props
 
-  useEffect(() => {
-    setValue(element.props.name)
-  }, [element])
+  const [value, setValue] = useState(name)
+  const { updateElement } = useCanvasAtom()
 
   function handleValueChange(e: React.ChangeEvent<HTMLInputElement>) {
     setValue(e.target.value)

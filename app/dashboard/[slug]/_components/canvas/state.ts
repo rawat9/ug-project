@@ -1,5 +1,5 @@
 import { atom, useAtom } from 'jotai'
-import { BaseElement, Canvas, Element } from './types'
+import { BaseElement, Canvas, Element, TextElement } from './types'
 
 const canvasAtom = atom<Canvas>({
   selectedElement: null,
@@ -15,6 +15,8 @@ export const useCanvasAtom = () => {
       setState((prev) => ({ ...prev, selectedElement: element }))
     },
     addElement: (element: BaseElement) => {
+      // @ts-ignore
+      element.props = defaultValues[element.type]
       setState((prev) => ({
         ...prev,
         elements: [...prev.elements, element as Element],
@@ -35,4 +37,26 @@ export const useCanvasAtom = () => {
       })
     },
   }
+}
+
+// TODO: Write a type for defaultValues
+type StartsWith<T extends string, U extends string> = T extends `${U}${string}`
+  ? T
+  : never
+
+// type DefaultValues = {
+//   [P in Element['type']]: { }
+// }
+
+const defaultValues = {
+  text: {
+    value: 'Dummy text',
+    heading: '',
+    alignment: 'left',
+  },
+  table: {
+    name: 'Table name',
+  },
+  'area-chart': {},
+  card: {},
 }
