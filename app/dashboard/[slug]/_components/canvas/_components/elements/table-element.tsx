@@ -20,19 +20,19 @@ import {
 import {
   ColumnDef,
   ColumnFiltersState,
+  GroupingState,
   SortingState,
   VisibilityState,
   flexRender,
   getCoreRowModel,
+  getExpandedRowModel,
   getFilteredRowModel,
   getGroupedRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { Payment } from '@/app/integrations/app-db/_components/data'
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
 import { CaretDown, CaretSort, CaretUp, Filter } from '@/icons'
 
 type Row = {
@@ -203,6 +203,9 @@ const columns: ColumnDef<Row>[] = [
     accessorKey: 'age',
     header: () => <p className="font-semibold">age</p>,
     cell: ({ row }) => <div>{row.getValue('age')}</div>,
+    aggregatedCell: ({ getValue }) =>
+      Math.round(getValue<number>() * 100) / 100,
+    aggregationFn: 'median',
   },
   {
     accessorKey: 'visits',
@@ -218,7 +221,10 @@ const columns: ColumnDef<Row>[] = [
   {
     accessorKey: 'progress',
     header: () => <div className="font-medium">progress</div>,
-    cell: ({ row }) => <div>{row.getValue('progress')}</div>,
+    cell: ({ getValue }) => Math.round(getValue<number>() * 100) / 100 + '%',
+    aggregationFn: 'mean',
+    aggregatedCell: ({ getValue }) =>
+      Math.round(getValue<number>() * 100) / 100 + '%',
   },
 ]
 
@@ -227,13 +233,16 @@ const TableElement = memo(({ element }: { element: Element }) => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
+  const [grouping, setGrouping] = useState<GroupingState>([])
 
   const table = useReactTable({
     data,
     columns,
     onSortingChange: setSorting,
+    onGroupingChange: setGrouping,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -248,6 +257,7 @@ const TableElement = memo(({ element }: { element: Element }) => {
     },
     state: {
       sorting,
+      grouping,
       columnFilters,
       columnVisibility,
       rowSelection,
@@ -278,12 +288,30 @@ const TableElement = memo(({ element }: { element: Element }) => {
                       key={header.id}
                       className="h-11 border-r last:border-r-0"
                     >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
+                      {header.isPlaceholder ? null : (
+                        <div>
+                          {header.column.getCanGroup() ? (
+                            // If the header can be grouped, let's add a toggle
+                            <button
+                              {...{
+                                onClick:
+                                  header.column.getToggleGroupingHandler(),
+                                style: {
+                                  cursor: 'pointer',
+                                },
+                              }}
+                            >
+                              {header.column.getIsGrouped()
+                                ? `🛑(${header.column.getGroupedIndex()}) `
+                                : `👊 `}
+                            </button>
+                          ) : null}{' '}
+                          {flexRender(
                             header.column.columnDef.header,
                             header.getContext(),
                           )}
+                        </div>
+                      )}
                     </TableHead>
                   )
                 })}
@@ -291,37 +319,57 @@ const TableElement = memo(({ element }: { element: Element }) => {
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      className="border-b border-r last:border-r-0"
-                    >
-                      {cell.getIsPlaceholder()
-                        ? null
-                        : flexRender(
+            {table.getRowModel().rows.map((row) => (
+              <TableRow
+                key={row.id}
+                data-state={row.getIsSelected() && 'selected'}
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell
+                    key={cell.id}
+                    className="border-b border-r last:border-r-0"
+                  >
+                    {/* {cell.getIsPlaceholder()
+                      ? null
+                      : flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )} */}
+                    {cell.getIsGrouped() ? (
+                      // If it's a grouped cell, add an expander and row count
+                      <>
+                        <button
+                          {...{
+                            onClick: row.getToggleExpandedHandler(),
+                            style: {
+                              cursor: row.getCanExpand() ? 'pointer' : 'normal',
+                            },
+                          }}
+                        >
+                          {row.getIsExpanded() ? '👇' : '👉'}{' '}
+                          {flexRender(
                             cell.column.columnDef.cell,
                             cell.getContext(),
-                          )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
+                          )}{' '}
+                          ({row.subRows.length})
+                        </button>
+                      </>
+                    ) : cell.getIsAggregated() ? (
+                      // If the cell is aggregated, use the Aggregated
+                      // renderer for cell
+                      flexRender(
+                        cell.column.columnDef.aggregatedCell ??
+                          cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )
+                    ) : cell.getIsPlaceholder() ? null : ( // For cells with repeated values, render null
+                      // Otherwise, just render the regular cell
+                      flexRender(cell.column.columnDef.cell, cell.getContext())
+                    )}
+                  </TableCell>
+                ))}
               </TableRow>
-            )}
+            ))}
           </TableBody>
         </Table>
       </div>

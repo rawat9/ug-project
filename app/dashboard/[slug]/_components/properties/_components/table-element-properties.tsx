@@ -1,16 +1,16 @@
 import { Label } from '@/components/ui/label'
 import { useCanvasAtom } from '../../canvas/state'
-import { TextElement } from '../../canvas/types'
+import { TableElement } from '../../canvas/types'
 import { useEffect, useState } from 'react'
 import { TextInput } from '@tremor/react'
 
-export function TextElementProperties({ element }: { element: TextElement }) {
-  const [value, setValue] = useState(element.props.value)
+export function TableElementProperties({ element }: { element: TableElement }) {
+  const [value, setValue] = useState(element.props.name)
   const { updateElement } = useCanvasAtom()
 
   useEffect(() => {
-    setValue(element.props.value)
-  }, [element.props])
+    setValue(element.props.name)
+  }, [element])
 
   function handleValueChange(e: React.ChangeEvent<HTMLInputElement>) {
     setValue(e.target.value)
@@ -18,7 +18,7 @@ export function TextElementProperties({ element }: { element: TextElement }) {
       ...element,
       props: {
         ...element.props,
-        value: e.target.value,
+        name: e.target.value,
       },
     })
   }
@@ -26,7 +26,7 @@ export function TextElementProperties({ element }: { element: TextElement }) {
   return (
     <div className="flex flex-col gap-1">
       <Label htmlFor="value" className="text-xs text-slate-500">
-        Value
+        Name
       </Label>
       <TextInput
         type="text"
@@ -35,6 +35,7 @@ export function TextElementProperties({ element }: { element: TextElement }) {
         value={value}
         onChange={handleValueChange}
       />
+      <div className="w-px bg-gray-300" />
     </div>
   )
 }

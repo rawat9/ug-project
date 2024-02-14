@@ -2,26 +2,56 @@ import type { TextProps } from '@tremor/react'
 
 type ElementTypes = 'text' | 'card' | 'area-chart' | 'table'
 
-type ElementProps = TextElementProps
-
 interface TextElementProps extends Partial<TextProps> {
   value: string
   heading?: string
   alignment?: 'left' | 'center' | 'right'
 }
 
-export interface Element {
+interface TableElementProps {
+  name: string
+}
+
+export type BaseElement = {
   id: string
   name: string
-  type: ElementTypes
   x: number
   y: number
   width: number
   height: number
-  props: ElementProps
+  type: string
+  props: {
+    [key: string]: any
+  }
 }
 
+export type TextElement = BaseElement & {
+  type: 'text'
+  props: TextElementProps
+}
+
+export type TableElement = BaseElement & {
+  type: 'table'
+  props: TableElementProps
+}
+
+export type AreaChartElement = BaseElement & {
+  type: 'area-chart'
+  props: {}
+}
+
+export type CardElement = BaseElement & {
+  type: 'card'
+  props: {}
+}
+
+export type Element =
+  | TextElement
+  | TableElement
+  | AreaChartElement
+  | CardElement
+
 export interface Canvas {
-  selectedElement: Element | null
+  selectedElement: BaseElement | Element | null
   elements: Element[]
 }

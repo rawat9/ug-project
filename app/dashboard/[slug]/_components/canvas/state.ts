@@ -1,5 +1,5 @@
 import { atom, useAtom } from 'jotai'
-import { Canvas, Element } from './types'
+import { BaseElement, Canvas, Element } from './types'
 
 const canvasAtom = atom<Canvas>({
   selectedElement: null,
@@ -11,13 +11,13 @@ export const useCanvasAtom = () => {
 
   return {
     ...state,
-    setSelectedElement: (element: Element | null) => {
+    setSelectedElement: (element: BaseElement | Element | null) => {
       setState((prev) => ({ ...prev, selectedElement: element }))
     },
-    addElement: (element: Element) => {
+    addElement: (element: BaseElement) => {
       setState((prev) => ({
         ...prev,
-        elements: [...prev.elements, element],
+        elements: [...prev.elements, element as Element],
       }))
     },
     removeElement: (id: string) => {

@@ -1,7 +1,7 @@
 import { useCanvasAtom } from './state'
 import { nanoid } from 'nanoid'
 import { cn } from '@/lib/utils'
-import { Element } from './types'
+import { type BaseElement as BaseElementType } from './types'
 import { GridLayout } from './_components/grid-layout'
 import { BaseElement } from './_components/elements/_base-element'
 import { Layout } from 'react-grid-layout'
@@ -37,17 +37,14 @@ export function Canvas() {
     item.h = h ? parseInt(h) : 1
     const element = {
       id: nanoid(),
-      type: type as Element['type'],
       name: `${type}${count}`,
       x: item.x,
       y: item.y,
       width: item.w,
       height: item.h,
-      props: {
-        value: 'Dummy Text',
-        alignment: 'left',
-      },
-    } satisfies Element
+      type,
+      props: {},
+    } satisfies BaseElementType
     addElement(element)
     setSelectedElement(element)
     setResizableId(element.id)
@@ -61,7 +58,7 @@ export function Canvas() {
     setResizableId('')
   })
 
-  function addNewLayoutItem(element: Element) {
+  function addNewLayoutItem(element: BaseElementType) {
     return {
       i: element.id,
       x: element.x,

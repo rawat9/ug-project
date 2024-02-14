@@ -1,7 +1,8 @@
 import { Cross } from '@/icons'
 import { useCanvasAtom } from '../canvas/state'
-import { Element } from '../canvas/types'
+import { type Element } from '../canvas/types'
 import { TextElementProperties } from './_components/text-element-properties'
+import { TableElementProperties } from './_components/table-element-properties'
 
 export function Properties() {
   const { selectedElement } = useCanvasAtom()
@@ -19,7 +20,7 @@ export function Properties() {
         <>
           <div className="border-b p-2">{selectedElement.name}</div>
           <div className="px-3 py-4">
-            <BaseProperties element={selectedElement} />
+            <BaseProperties element={selectedElement as Element} />
           </div>
         </>
       ) : (
@@ -34,7 +35,9 @@ export function Properties() {
 function BaseProperties({ element }: { element: Element }) {
   switch (element.type) {
     case 'text':
-      return <TextElementProperties selectedElement={element} />
+      return <TextElementProperties element={element} />
+    case 'table':
+      return <TableElementProperties element={element} />
     default:
       return null
   }
