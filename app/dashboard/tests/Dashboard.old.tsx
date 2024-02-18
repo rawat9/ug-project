@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import Page from '../page'
 import { fetchDashboards } from '@/lib/data'
