@@ -6,23 +6,26 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export interface Database {
+export type Database = {
   public: {
     Tables: {
       dashboard: {
         Row: {
+          content: Json | null
           created_at: string
           id: string
           title: string
           user_id: string | null
         }
         Insert: {
+          content?: Json | null
           created_at?: string
           id?: string
           title?: string
           user_id?: string | null
         }
         Update: {
+          content?: Json | null
           created_at?: string
           id?: string
           title?: string
@@ -77,6 +80,7 @@ export interface Database {
           search_term: string
         }
         Returns: {
+          content: Json | null
           created_at: string
           id: string
           title: string

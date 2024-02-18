@@ -1,7 +1,6 @@
 import { Toolbar } from './_components/toolbar'
 import { Sidebar } from './_components/sidebar'
-import { getDashboardById } from '@/lib/data'
-import { notFound } from 'next/navigation'
+import { Provider as JotaiProvider } from 'jotai'
 
 export default async function Layout({
   children,
@@ -10,19 +9,13 @@ export default async function Layout({
   children: React.ReactNode
   params: { slug: string }
 }) {
-  const dashboard = await getDashboardById(params.slug)
-
-  if (!dashboard) {
-    notFound()
-  }
-
   return (
     <div className="m-0 min-h-screen overflow-hidden">
-      <Toolbar>
-        <Toolbar.Title id={dashboard.id} title={dashboard.title} />
-      </Toolbar>
-      <Sidebar />
-      <>{children}</>
+      <JotaiProvider>
+        <Toolbar id={params.slug} />
+        <Sidebar />
+        <>{children}</>
+      </JotaiProvider>
     </div>
   )
 }

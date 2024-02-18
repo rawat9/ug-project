@@ -6,6 +6,13 @@ const canvasAtom = atom<Canvas>({
   elements: [],
 })
 
+export const elementsAtom = atom(
+  (get) => get(canvasAtom).elements,
+  (_get, set, update: Element[]) => {
+    set(canvasAtom, (prev) => ({ ...prev, elements: update }))
+  },
+)
+
 export const useCanvasAtom = () => {
   const [state, setState] = useAtom(canvasAtom)
 

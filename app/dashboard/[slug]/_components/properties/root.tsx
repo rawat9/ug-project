@@ -1,8 +1,9 @@
-import { Cross } from '@/icons'
+import { Cross, Selection } from '@/icons'
 import { useCanvasAtom } from '../canvas/state'
-import { type Element } from '../canvas/types'
 import { TextElementProperties } from './_components/text-element-properties'
 import { TableElementProperties } from './_components/table-element-properties'
+
+import { type Element } from '../canvas/types'
 
 export function Properties() {
   const { selectedElement } = useCanvasAtom()
@@ -19,12 +20,13 @@ export function Properties() {
       {selectedElement ? (
         <>
           <div className="border-b p-2">{selectedElement.name}</div>
-          <div className="px-3 py-4">
-            <BaseProperties element={selectedElement as Element} />
+          <div className="py-4">
+            <BaseProperties element={selectedElement} />
           </div>
         </>
       ) : (
-        <div className="flex h-[90%] flex-col items-center justify-center p-2 text-gray-500">
+        <div className="flex h-[90%] flex-col items-center justify-center p-2 text-gray-400">
+          <Selection className="my-4 h-12 w-12" />
           Select an element to edit its properties
         </div>
       )}
@@ -38,7 +40,11 @@ function BaseProperties({ element }: { element: Element }) {
       return <TextElementProperties element={element} />
     case 'table':
       return <TableElementProperties element={element} />
+    case 'card':
+      return <div>Card properties</div>
+    case 'area-chart':
+      return <div>Area chart properties</div>
     default:
-      return null
+      throw new Error('Invalid type')
   }
 }
