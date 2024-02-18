@@ -15,9 +15,9 @@ import { Percentage } from '@/icons/Percentage'
 import { type TableElement } from '../../canvas/types'
 
 export function TableElementProperties({ element }: { element: TableElement }) {
-  const { name } = element.props
+  const { tableHeader } = element.props
 
-  const [value, setValue] = useState(name)
+  const [value, setValue] = useState(tableHeader)
   const { updateElement } = useCanvasAtom()
 
   function handleValueChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -26,7 +26,7 @@ export function TableElementProperties({ element }: { element: TableElement }) {
       ...element,
       props: {
         ...element.props,
-        name: e.target.value,
+        tableHeader: e.target.value,
       },
     })
   }
@@ -41,7 +41,7 @@ export function TableElementProperties({ element }: { element: TableElement }) {
           <TextInput
             type="text"
             autoComplete="off"
-            id="value"
+            id="header"
             value={value}
             onChange={handleValueChange}
           />
@@ -59,7 +59,7 @@ export function TableElementProperties({ element }: { element: TableElement }) {
           />
         </div>
       </div>
-      <div className="my-4 h-px bg-gray-300" />
+      <div className="my-4 h-px bg-gray-200" />
       <div className="flex flex-col gap-2 px-4">
         <div className="mt-2 flex items-center justify-between">
           <h4 className="text-sm font-semibold tracking-wide text-gray-600">

@@ -248,7 +248,7 @@ const TableElement = memo(({ element }: { element: TableElement }) => {
     <Card className="flex h-full w-full flex-col gap-6">
       <div className="flex items-center">
         <h3 className="flex-1 font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong">
-          {element.props.name}
+          {element.props.tableHeader}
         </h3>
         <Filters />
       </div>

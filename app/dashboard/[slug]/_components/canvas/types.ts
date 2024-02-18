@@ -12,7 +12,7 @@ interface TextElementProps extends Partial<TextProps> {
 }
 
 interface TableElementProps {
-  name: string
+  tableHeader: string
 }
 
 interface CardElementProps {}
