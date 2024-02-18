@@ -7,7 +7,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { Pencil } from '@/icons'
 import { updateDashboardTitle } from '@/lib/data'
 import { Tables } from '@/types/database'
 
@@ -52,7 +51,7 @@ export function ToolbarTitle({
         <input
           autoFocus
           name="title"
-          className="text-center font-medium focus:border-transparent focus:ring-0"
+          className="border-0 p-0 font-medium focus:border-transparent focus:ring-0"
           onBlur={handleRenamingCancel}
           onKeyDown={handleNameKeyDown}
           onChange={handleNameChange}
@@ -60,19 +59,18 @@ export function ToolbarTitle({
         />
       ) : (
         <>
-          <h3 className="truncate font-medium">{title}</h3>
           <TooltipProvider delayDuration={0}>
             <Tooltip>
               <TooltipTrigger asChild>
-                <button>
-                  <Pencil
-                    className="h-4 w-4 text-slate-400"
-                    onClick={() => setRenaming(true)}
-                  />
-                </button>
+                <h3
+                  className="truncate font-medium hover:rounded-sm hover:ring-1"
+                  onClick={() => setRenaming(true)}
+                >
+                  {title}
+                </h3>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Edit</p>
+                <p>Rename</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

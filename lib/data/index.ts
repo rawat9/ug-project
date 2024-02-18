@@ -1,7 +1,9 @@
 'use server'
 
+// TO FIX
+import { Element } from '@/app/dashboard/[slug]/_components/canvas/types'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
-import { Tables } from '@/types/database'
+import { Json, Tables } from '@/types/database'
 import { revalidatePath, unstable_cache as cache } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
@@ -204,4 +206,42 @@ export const executeSqlite = async (query: string) => {
   }
 
   return data
+}
+
+export const saveCanvas = async (id: string, elements: Element[]) => {
+  const supabase = await createSupabaseServerClient()
+
+  const { error } = await supabase
+    .from('dashboard')
+    .update({
+      content: { elements } as unknown as Json,
+    })
+    .eq('id', id)
+
+  if (error) {
+    console.error(error.message)
+    throw new Error('Error updating dashboard')
+  }
+}
+
+type Canvas = {
+  elements: Element[]
+}
+
+export const fetchCanvas = async (id: string) => {
+  const supabase = await createSupabaseServerClient()
+
+  const { data, error } = await supabase
+    .from('dashboard')
+    .select('content')
+    .eq('id', id)
+    .single()
+
+  if (error) {
+    console.error(error.message)
+    throw new Error('Error fetching data')
+  }
+
+  // FIX ME - This is a hack to get around the type system
+  return data.content as unknown as Canvas
 }

@@ -1,4 +1,4 @@
-import { Cross } from '@/icons'
+import { Cross, Selection } from '@/icons'
 import { useCanvasAtom } from '../canvas/state'
 import { Element } from '../canvas/types'
 import { TextElementProperties } from './_components/text-element-properties'
@@ -18,12 +18,13 @@ export function Properties() {
       {selectedElement ? (
         <>
           <div className="border-b p-2">{selectedElement.name}</div>
-          <div className="px-3 py-4">
+          <div className="py-4">
             <BaseProperties element={selectedElement} />
           </div>
         </>
       ) : (
-        <div className="flex h-[90%] flex-col items-center justify-center p-2 text-gray-500">
+        <div className="flex h-[90%] flex-col items-center justify-center p-2 text-gray-400">
+          <Selection className="my-4 h-12 w-12" />
           Select an element to edit its properties
         </div>
       )}
