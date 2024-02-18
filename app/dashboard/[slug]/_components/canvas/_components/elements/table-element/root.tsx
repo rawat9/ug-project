@@ -8,7 +8,7 @@ import {
   // TableRow,
 } from '@tremor/react'
 import { memo, useState } from 'react'
-import { type TableElement } from '../../types'
+import { type TableElement } from '../../../types'
 import {
   Table,
   TableBody,
@@ -33,7 +33,8 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
-import { CaretDown, CaretSort, CaretUp, Filter } from '@/icons'
+import { CaretDown, CaretSort, CaretUp } from '@/icons'
+import { Filters } from './filters'
 
 type Row = {
   firstName: string
@@ -51,7 +52,7 @@ const data: Row[] = [
     age: 28,
     visits: 93,
     status: 'relationship',
-    progress: '100%',
+    progress: '100',
   },
   {
     firstName: 'Dortha',
@@ -59,7 +60,7 @@ const data: Row[] = [
     age: 35,
     visits: 66,
     status: 'complicated',
-    progress: '67%',
+    progress: '67',
   },
   {
     firstName: 'Eldon',
@@ -67,7 +68,7 @@ const data: Row[] = [
     age: 23,
     visits: 800,
     status: 'complicated',
-    progress: '92%',
+    progress: '92',
   },
   {
     firstName: 'Justen',
@@ -75,7 +76,7 @@ const data: Row[] = [
     age: 18,
     visits: 647,
     status: 'single',
-    progress: '75%',
+    progress: '75',
   },
   {
     firstName: 'Nellie',
@@ -83,7 +84,7 @@ const data: Row[] = [
     age: 34,
     visits: 958,
     status: 'relationship',
-    progress: '60%',
+    progress: '60',
   },
   {
     firstName: 'Mikel',
@@ -91,7 +92,7 @@ const data: Row[] = [
     age: 31,
     visits: 860,
     status: 'relationship',
-    progress: '71%',
+    progress: '71',
   },
   {
     firstName: 'Abigayle',
@@ -99,7 +100,7 @@ const data: Row[] = [
     age: 22,
     visits: 89,
     status: 'relationship',
-    progress: '53%',
+    progress: '53',
   },
   {
     firstName: 'Favian',
@@ -107,7 +108,7 @@ const data: Row[] = [
     age: 26,
     visits: 783,
     status: 'complicated',
-    progress: '39%',
+    progress: '39',
   },
   {
     firstName: 'Sigrid',
@@ -115,7 +116,7 @@ const data: Row[] = [
     age: 22,
     visits: 863,
     status: 'relationship',
-    progress: '43%',
+    progress: '43',
   },
   {
     firstName: 'Zackary',
@@ -123,7 +124,7 @@ const data: Row[] = [
     age: 2,
     visits: 88,
     status: 'relationship',
-    progress: '34%',
+    progress: '34',
   },
   {
     firstName: 'Kathlyn',
@@ -131,7 +132,7 @@ const data: Row[] = [
     age: 29,
     visits: 1000,
     status: 'single',
-    progress: '100%',
+    progress: '100',
   },
   {
     firstName: 'Laurie',
@@ -139,33 +140,11 @@ const data: Row[] = [
     age: 21,
     visits: 190,
     status: 'single',
-    progress: '10%',
+    progress: '10',
   },
 ]
 
 const columns: ColumnDef<Row>[] = [
-  // {
-  //   id: 'select',
-  //   header: ({ table }) => (
-  //     <Checkbox
-  //       checked={
-  //         table.getIsAllPageRowsSelected() ||
-  //         (table.getIsSomePageRowsSelected() && 'indeterminate')
-  //       }
-  //       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-  //       aria-label="Select all"
-  //     />
-  //   ),
-  //   cell: ({ row }) => (
-  //     <Checkbox
-  //       checked={row.getIsSelected()}
-  //       onCheckedChange={(value) => row.toggleSelected(!!value)}
-  //       aria-label="Select row"
-  //     />
-  //   ),
-  //   enableSorting: false,
-  //   enableHiding: false,
-  // },
   {
     accessorKey: 'firstName',
     header: ({ column }) => {
@@ -233,13 +212,13 @@ const TableElement = memo(({ element }: { element: TableElement }) => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
-  const [grouping, setGrouping] = useState<GroupingState>([])
+  // const [grouping, setGrouping] = useState<GroupingState>([])
 
   const table = useReactTable({
     data,
     columns,
     onSortingChange: setSorting,
-    onGroupingChange: setGrouping,
+    // onGroupingChange: setGrouping,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
@@ -257,7 +236,7 @@ const TableElement = memo(({ element }: { element: TableElement }) => {
     },
     state: {
       sorting,
-      grouping,
+      // grouping,
       columnFilters,
       columnVisibility,
       rowSelection,
@@ -271,10 +250,7 @@ const TableElement = memo(({ element }: { element: TableElement }) => {
         <h3 className="flex-1 font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong">
           {element.props.name}
         </h3>
-        <Button variant="outline" className="h-8">
-          <Filter className="mr-1 h-4 w-4" />
-          Filters
-        </Button>
+        <Filters />
       </div>
 
       <div className="h-full overflow-auto rounded-md border bg-white">
@@ -330,11 +306,11 @@ const TableElement = memo(({ element }: { element: TableElement }) => {
                     className="border-b border-r last:border-r-0"
                   >
                     {/* {cell.getIsPlaceholder()
-                      ? null
-                      : flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )} */}
+						? null
+						: flexRender(
+							cell.column.columnDef.cell,
+							cell.getContext(),
+						  )} */}
                     {cell.getIsGrouped() ? (
                       // If it's a grouped cell, add an expander and row count
                       <>
@@ -376,7 +352,7 @@ const TableElement = memo(({ element }: { element: TableElement }) => {
       <div className="flex h-[4%] items-center justify-end space-x-2 px-2">
         <div className="flex-1 text-sm text-slate-500">
           {/* {table.getFilteredSelectedRowModel().rows.length} of{' '}
-          {table.getFilteredRowModel().rows.length} row(s) selected. */}
+			{table.getFilteredRowModel().rows.length} row(s) selected. */}
           {'Showing ' +
             table.getPaginationRowModel().rows.length +
             ' of ' +
