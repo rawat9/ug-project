@@ -1,6 +1,6 @@
 import type { TextProps } from '@tremor/react'
 
-type ElementTypes = 'text' | 'card' | 'area-chart' | 'table'
+type ElementTypes = 'text' | 'table' | 'area-chart' | 'card'
 
 interface TextElementProps extends Partial<TextProps> {
   value: string
@@ -15,19 +15,17 @@ interface TableElementProps {
   name: string
 }
 
-export type BaseElement = {
+interface CardElementProps {}
+
+interface AreaChartElementProps {}
+
+type BaseElement = {
   id: string
   name: string
   x: number
   y: number
   width: number
   height: number
-  type: string
-}
-
-export type TextElement = BaseElement & {
-  type: 'text'
-  props: TextElementProps
 }
 
 export type TableElement = BaseElement & {
@@ -35,23 +33,28 @@ export type TableElement = BaseElement & {
   props: TableElementProps
 }
 
-export type AreaChartElement = BaseElement & {
-  type: 'area-chart'
-  props: {}
+export type TextElement = BaseElement & {
+  type: 'text'
+  props: TextElementProps
 }
 
 export type CardElement = BaseElement & {
   type: 'card'
-  props: {}
+  props: CardElementProps
+}
+
+export type AreaChartElement = BaseElement & {
+  type: 'area-chart'
+  props: AreaChartElementProps
 }
 
 export type Element =
   | TextElement
   | TableElement
-  | AreaChartElement
   | CardElement
+  | AreaChartElement
 
 export interface Canvas {
-  selectedElement: BaseElement | Element | null
+  selectedElement: Element | null
   elements: Element[]
 }
