@@ -16,7 +16,6 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 export function TextElementProperties({ element }: { element: TextElement }) {
   const { value: initialValue, alignment: initialAlignment } = element.props
 
-  const [alignment, setAlignment] = useState(initialAlignment)
   const [value, setValue] = useState(initialValue)
   const { updateElement } = useCanvasAtom()
 
@@ -32,7 +31,6 @@ export function TextElementProperties({ element }: { element: TextElement }) {
   }
 
   function handleJustifyAlignmentChange(value: 'start' | 'center' | 'end') {
-    setAlignment((prev) => ({ ...prev, justify: value }))
     updateElement(element.id, {
       ...element,
       props: {
@@ -46,7 +44,6 @@ export function TextElementProperties({ element }: { element: TextElement }) {
   }
 
   function handleItemsAlignmentChange(value: 'start' | 'center' | 'end') {
-    setAlignment((prev) => ({ ...prev, items: value }))
     updateElement(element.id, {
       ...element,
       props: {

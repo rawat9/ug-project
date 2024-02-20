@@ -12,7 +12,7 @@ export function getElementProps(type: Element['type']): Element['props'] {
         value: 'Dummy text',
         alignment: {
           justify: 'start',
-          items: 'start',
+          items: 'center',
         },
       }
     case 'card':
@@ -20,7 +20,14 @@ export function getElementProps(type: Element['type']): Element['props'] {
     case 'area-chart':
       return {}
     case 'table':
-      return { name: '' }
+      return {
+        tableHeader: '',
+        data: [],
+        enablePagination: true,
+        pageSize: 10,
+        enableSearch: false,
+        enableSorting: true,
+      }
     default:
       throw new Error(`Invalid type: ${type}`)
   }

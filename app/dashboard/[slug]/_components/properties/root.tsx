@@ -7,6 +7,7 @@ import { type Element } from '../canvas/types'
 
 export function Properties() {
   const { selectedElement } = useCanvasAtom()
+  console.log('SELECTED', selectedElement)
 
   return (
     <div className="h-full">

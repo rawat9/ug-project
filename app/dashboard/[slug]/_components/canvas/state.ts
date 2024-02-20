@@ -38,7 +38,7 @@ export const useCanvasAtom = () => {
         const newElements = [...prev.elements]
         const index = newElements.findIndex((el) => el.id === id)
         newElements[index] = element
-        return { ...prev, elements: newElements }
+        return { ...prev, elements: newElements, selectedElement: element }
       })
     },
   }

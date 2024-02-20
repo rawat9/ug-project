@@ -7,11 +7,11 @@ import { Layout } from 'react-grid-layout'
 import { Badge } from '@tremor/react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useClickOutsideSelectedElementButInsideCanvas } from '@/hooks'
-import { useSetAtom } from 'jotai'
+import { useAtom, useSetAtom } from 'jotai'
 import { fetchCanvas } from '@/lib/data'
 import { getElementProps } from '../utils'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { type Element } from './types'
 
 export function Canvas() {
@@ -23,10 +23,10 @@ export function Canvas() {
   const {
     elements,
     addElement,
-    setSelectedElement,
     removeElement,
     updateElement,
     selectedElement,
+    setSelectedElement,
   } = useCanvasAtom()
 
   const [layout, setLayout] = useState<Layout[]>([])

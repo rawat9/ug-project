@@ -13,13 +13,18 @@ interface TextElementProps extends Partial<TextProps> {
 
 interface TableElementProps {
   tableHeader: string
+  data: unknown[]
+  enablePagination: boolean
+  pageSize: number
+  enableSearch: boolean
+  enableSorting: boolean
 }
 
 interface CardElementProps {}
 
 interface AreaChartElementProps {}
 
-type BaseElement = {
+export interface BaseElement {
   id: string
   name: string
   x: number
@@ -28,22 +33,22 @@ type BaseElement = {
   height: number
 }
 
-export type TableElement = BaseElement & {
+export interface TableElement extends BaseElement {
   type: 'table'
   props: TableElementProps
 }
 
-export type TextElement = BaseElement & {
+export interface TextElement extends BaseElement {
   type: 'text'
   props: TextElementProps
 }
 
-export type CardElement = BaseElement & {
+export interface CardElement extends BaseElement {
   type: 'card'
   props: CardElementProps
 }
 
-export type AreaChartElement = BaseElement & {
+export interface AreaChartElement extends BaseElement {
   type: 'area-chart'
   props: AreaChartElementProps
 }

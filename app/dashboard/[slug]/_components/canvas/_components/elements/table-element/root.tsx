@@ -7,8 +7,8 @@ import {
   // TableHeaderCell,
   // TableRow,
 } from '@tremor/react'
-import { memo, useState } from 'react'
-import { type TableElement } from '../../../types'
+import { memo, useMemo, useState } from 'react'
+import { type TableElement as TableElementType } from '../../../types'
 import {
   Table,
   TableBody,
@@ -21,6 +21,7 @@ import {
   ColumnDef,
   ColumnFiltersState,
   GroupingState,
+  PaginationState,
   SortingState,
   VisibilityState,
   flexRender,
@@ -207,19 +208,24 @@ const columns: ColumnDef<Row>[] = [
   },
 ]
 
-const TableElement = memo(({ element }: { element: TableElement }) => {
+const TableElement = memo(({ element }: { element: TableElementType }) => {
+  console.log('TABLE', element)
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
-  // const [grouping, setGrouping] = useState<GroupingState>([])
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: element.props.pageSize,
+  })
+  const [grouping, setGrouping] = useState<GroupingState>([])
 
   const table = useReactTable({
     data,
     columns,
-    onSortingChange: setSorting,
+    // enableSorting: element.props.enableSorting,
     // onGroupingChange: setGrouping,
-    onColumnFiltersChange: setColumnFilters,
+    // onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -235,7 +241,7 @@ const TableElement = memo(({ element }: { element: TableElement }) => {
       },
     },
     state: {
-      sorting,
+      pagination,
       // grouping,
       columnFilters,
       columnVisibility,
@@ -243,6 +249,15 @@ const TableElement = memo(({ element }: { element: TableElement }) => {
     },
     debugTable: true,
   })
+
+  const [state, setState] = useState(table.initialState)
+
+  table.setOptions((prev) => ({
+    ...prev,
+    state,
+    onStateChange: setState,
+    enableSorting: element.props.enableSorting,
+  }))
 
   return (
     <Card className="flex h-full w-full flex-col gap-6">
