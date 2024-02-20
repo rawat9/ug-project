@@ -43,3 +43,13 @@ export * from './Format'
 export * from './integrations/Sqlite'
 export * from './integrations/Postgres'
 export * from './integrations/Connection'
+
+// Icons for element properties
+export * from './AlignLeft'
+export * from './AlignRight'
+export * from './AlignCenter'
+export * from './AlignBottom'
+export * from './AlignTop'
+export * from './AlignMiddle'
+
+export * from './Selection'

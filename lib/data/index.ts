@@ -1,10 +1,9 @@
 'use server'
 
-import {
-  createSupabaseRSCClient,
-  createSupabaseServerActionClient,
-} from '@/lib/supabase/server'
-import { Tables } from '@/types/database'
+// TO FIX
+import { Element } from '@/app/dashboard/[slug]/_components/canvas/types'
+import { createSupabaseServerClient } from '@/lib/supabase/server'
+import { Json, Tables } from '@/types/database'
 import { revalidatePath, unstable_cache as cache } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
@@ -21,7 +20,7 @@ function customFetch(input: RequestInfo | URL, init?: RequestInit) {
 
 export const fetchDashboards = async (): Promise<Dashboard[]> => {
   try {
-    const supabase = await createSupabaseRSCClient()
+    const supabase = await createSupabaseServerClient()
     const { data, error } = await supabase
       .from('dashboard')
       .select()
@@ -53,7 +52,7 @@ export const createDashboard = async (body: FormData) => {
 
   const { title } = result.data
 
-  const supabase = await createSupabaseRSCClient()
+  const supabase = await createSupabaseServerClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -92,7 +91,7 @@ export const getDashboardById = async (
   }
 
   try {
-    const supabase = await createSupabaseRSCClient()
+    const supabase = await createSupabaseServerClient()
     const { data, error } = await supabase
       .from('dashboard')
       .select()
@@ -130,7 +129,7 @@ export const updateDashboardTitle = async ({
     throw new Error('Invalid form data')
   }
 
-  const supabase = await createSupabaseRSCClient()
+  const supabase = await createSupabaseServerClient()
   const { error } = await supabase
     .from('dashboard')
     .update({
@@ -148,7 +147,7 @@ export const updateDashboardTitle = async ({
 
 export const executeQuery = cache(
   async (query: string) => {
-    const supabase = await createSupabaseServerActionClient()
+    const supabase = await createSupabaseServerClient()
     const { data, error } = await supabase.functions.invoke<
       Result['execute-query']
     >('execute-query', {
@@ -171,7 +170,7 @@ export const executeQuery = cache(
 
 export const fetchIntegrations = async (): Promise<Integration[]> => {
   try {
-    const supabase = await createSupabaseRSCClient()
+    const supabase = await createSupabaseServerClient()
     const { data, error } = await supabase
       .from('integration')
       .select()
@@ -189,7 +188,7 @@ export const fetchIntegrations = async (): Promise<Integration[]> => {
 }
 
 export const executeSqlite = async (query: string) => {
-  const supabase = await createSupabaseServerActionClient()
+  const supabase = await createSupabaseServerClient()
   const { data, error } = await supabase.functions.invoke<Result['turso']>(
     'turso',
     {
@@ -207,4 +206,42 @@ export const executeSqlite = async (query: string) => {
   }
 
   return data
+}
+
+export const saveCanvas = async (id: string, elements: Element[]) => {
+  const supabase = await createSupabaseServerClient()
+
+  const { error } = await supabase
+    .from('dashboard')
+    .update({
+      content: { elements } as unknown as Json,
+    })
+    .eq('id', id)
+
+  if (error) {
+    console.error(error.message)
+    throw new Error('Error updating dashboard')
+  }
+}
+
+type Canvas = {
+  elements: Element[]
+}
+
+export const fetchCanvas = async (id: string) => {
+  const supabase = await createSupabaseServerClient()
+
+  const { data, error } = await supabase
+    .from('dashboard')
+    .select('content')
+    .eq('id', id)
+    .single()
+
+  if (error) {
+    console.error(error.message)
+    throw new Error('Error fetching data')
+  }
+
+  // FIX ME - This is a hack to get around the type system
+  return data.content as unknown as Canvas
 }

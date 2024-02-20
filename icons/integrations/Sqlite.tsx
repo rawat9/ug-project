@@ -19,9 +19,9 @@ export function Sqlite(props: SVGProps<SVGSVGElement>) {
           gradientTransform="rotate(90 -90.486 64.634)scale(9.2712)"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0" stop-color="#95d7f4" />
-          <stop offset=".92" stop-color="#0f7fcc" />
-          <stop offset="1" stop-color="#0f7fcc" />
+          <stop offset="0" stopColor="#95d7f4" />
+          <stop offset=".92" stopColor="#0f7fcc" />
+          <stop offset="1" stopColor="#0f7fcc" />
         </linearGradient>
       </defs>
       <path

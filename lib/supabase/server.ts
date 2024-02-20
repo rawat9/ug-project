@@ -1,30 +1,13 @@
+'use server'
+
 import { type CookieOptions, createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { Database } from '@/types/database'
 
 /**
- * Creates a supabase client for server side rendering i.e. React Server Components (RSC)
+ * Creates a Supabase client for Server components, Server Actions & Route handlers
  */
-export async function createSupabaseRSCClient() {
-  const cookieStore = cookies()
-
-  return createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value
-        },
-      },
-    },
-  )
-}
-
-/**
- * Creates a supabase client for server actions
- */
-export async function createSupabaseServerActionClient() {
+export async function createSupabaseServerClient() {
   const cookieStore = cookies()
 
   return createServerClient<Database>(
@@ -36,10 +19,22 @@ export async function createSupabaseServerActionClient() {
           return cookieStore.get(name)?.value
         },
         set(name: string, value: string, options: CookieOptions) {
-          cookieStore.set({ name, value, ...options })
+          try {
+            cookieStore.set({ name, value, ...options })
+          } catch (error) {
+            // The `set` method was called from a Server Component.
+            // This can be ignored if you have middleware refreshing
+            // user sessions.
+          }
         },
         remove(name: string, options: CookieOptions) {
-          cookieStore.set({ name, value: '', ...options })
+          try {
+            cookieStore.set({ name, value: '', ...options })
+          } catch (error) {
+            // The `delete` method was called from a Server Component.
+            // This can be ignored if you have middleware refreshing
+            // user sessions.
+          }
         },
       },
     },

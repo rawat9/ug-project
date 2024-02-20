@@ -18,7 +18,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import { CaretSort, Check } from '@/icons'
+import { Add, CaretSort, Check } from '@/icons'
 
 const frameworks = [
   {
@@ -73,6 +73,12 @@ export function Sources() {
                 />
               </CommandItem>
             ))}
+            <CommandItem className="w-full p-0 pt-2">
+              <Button size="sm" className="w-full">
+                <Add className="mr-1 h-4 w-4" />
+                Create new integration
+              </Button>
+            </CommandItem>
           </CommandGroup>
         </Command>
       </PopoverContent>

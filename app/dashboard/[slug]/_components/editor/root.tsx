@@ -8,36 +8,47 @@ import { Queries } from './queries'
 import { EditorPanel } from './editor-panel'
 import { Provider } from 'jotai'
 
-function Editor() {
+export function Editor({ isOpen }: { isOpen: boolean }) {
   return (
-    <Provider>
-      <div className="h-full w-full rounded-lg bg-slate-100">
-        <ResizablePanelGroup direction="horizontal">
-          <ResizablePanel minSize={20} defaultSize={20} order={1}>
-            <div className="flex h-full w-full justify-center rounded-lg bg-white">
-              <Queries />
+    <>
+      {isOpen && (
+        <ResizablePanel
+          id="editor"
+          defaultSize={40}
+          minSize={30}
+          className="z-90 hidden items-center justify-center shadow-2xl sm:flex"
+          order={2}
+          collapsible
+        >
+          <Provider>
+            <div className="h-full w-full rounded-lg">
+              <ResizablePanelGroup direction="horizontal">
+                <ResizablePanel minSize={20} defaultSize={20} order={1}>
+                  <div className="flex h-full w-full justify-center bg-white">
+                    <Queries />
+                  </div>
+                </ResizablePanel>
+
+                <ResizableHandle />
+
+                <ResizablePanel order={2} defaultSize={60}>
+                  <div className="flex h-full w-full flex-col bg-white">
+                    <EditorPanel />
+                  </div>
+                </ResizablePanel>
+
+                <ResizableHandle />
+
+                <ResizablePanel minSize={20} defaultSize={20} order={3}>
+                  <div className="flex h-full w-full justify-center bg-white">
+                    <SchemaViewer />
+                  </div>
+                </ResizablePanel>
+              </ResizablePanelGroup>
             </div>
-          </ResizablePanel>
-
-          <ResizableHandle className="bg-slate-100 p-1" />
-
-          <ResizablePanel order={2} defaultSize={60}>
-            <div className="flex h-full w-full flex-col gap-4 rounded-lg bg-white">
-              <EditorPanel />
-            </div>
-          </ResizablePanel>
-
-          <ResizableHandle className="bg-slate-100 p-1" />
-
-          <ResizablePanel minSize={20} defaultSize={20} order={3}>
-            <div className="flex h-full w-full justify-center rounded-lg bg-white">
-              <SchemaViewer />
-            </div>
-          </ResizablePanel>
-        </ResizablePanelGroup>
-      </div>
-    </Provider>
+          </Provider>
+        </ResizablePanel>
+      )}
+    </>
   )
 }
-
-export default Editor

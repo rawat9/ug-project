@@ -17,7 +17,7 @@ export function Sidebar() {
 
   return (
     <aside className="fixed z-20 flex">
-      <div className="flex h-screen w-12 flex-col items-center overflow-y-auto border-r bg-white py-8 dark:border-gray-700 dark:bg-gray-900">
+      <div className="flex h-screen w-12 flex-col items-center border-r py-8 dark:border-gray-700 dark:bg-gray-900">
         <nav className="flex flex-1 flex-col justify-center gap-2">
           <TooltipProvider delayDuration={0}>
             <Tooltip>
