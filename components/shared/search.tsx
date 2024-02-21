@@ -25,7 +25,7 @@ function Search() {
       <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
       <Input
         name="search"
-        className="pl-10"
+        className="bg-white pl-10"
         type="search"
         placeholder="Search..."
         onChange={(e) => handleSearch(e.target.value.trim())}
