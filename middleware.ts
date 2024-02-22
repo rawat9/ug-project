@@ -1,54 +1,25 @@
-import { type CookieOptions, createServerClient } from '@supabase/ssr'
-import { NextResponse, NextRequest } from 'next/server'
+import { authMiddleware } from '@clerk/nextjs'
+import { redirectToSignIn } from '@clerk/nextjs/server'
+import { NextResponse } from 'next/server'
 
-export async function middleware(request: NextRequest) {
-  const response = NextResponse.next({
-    request: {
-      headers: request.headers,
-    },
-  })
+export default authMiddleware({
+  publicRoutes: ['/'],
+  afterAuth(auth, req) {
+    // Handle users who aren't authenticated
+    if (!auth.userId && !auth.isPublicRoute) {
+      return redirectToSignIn({ returnBackUrl: req.url })
+    }
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return request.cookies.get(name)?.value
-        },
-        set(name: string, value: string, options: CookieOptions) {
-          response.cookies.set({
-            name,
-            value,
-            ...options,
-          })
-        },
-        remove(name: string, options: CookieOptions) {
-          response.cookies.set({
-            name,
-            value: '',
-            ...options,
-          })
-        },
-      },
-    },
-  )
+    // If the user is logged in, navigate them to the dashboard
+    if (auth.userId && auth.isPublicRoute) {
+      return NextResponse.redirect(new URL('/dashboard', req.url))
+    }
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (
-    user &&
-    (request.nextUrl.pathname === '/auth/login' ||
-      request.nextUrl.pathname === '/')
-  ) {
-    return NextResponse.redirect(new URL('/dashboard', request.url))
-  }
-
-  return response
-}
+    // Allow users visiting public routes to access them
+    return NextResponse.next()
+  },
+})
 
 export const config = {
-  matcher: ['/', '/dashboard', '/integrations', '/auth/login'],
+  matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api)(.*)'],
 }
