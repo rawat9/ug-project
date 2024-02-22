@@ -1,3 +1,4 @@
+// REMOVE THIS FILE
 'use server'
 
 import type { SignInWithPasswordlessCredentials } from '@supabase/supabase-js'
