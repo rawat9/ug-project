@@ -3,7 +3,7 @@ import { CreateFormDialog } from './create-form-dialog'
 
 export function EmptyState() {
   return (
-    <div className="flex flex-col items-center justify-center py-20">
+    <div className="flex flex-col items-center justify-center py-24">
       <Image
         src="/empty-dashboard.svg"
         alt="Empty dashboard"
