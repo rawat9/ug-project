@@ -11,7 +11,7 @@ import { auth } from '@clerk/nextjs/server'
 export async function createSupabaseServerClient() {
   const cookieStore = cookies()
   const { getToken } = auth()
-  const token = await getToken({ template: 'supabase-dev' })
+  const token = await getToken({ template: 'supabase' })
 
   return createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
