@@ -15,7 +15,14 @@ export function Header() {
           <ActiveLink href="/integrations">Integrations</ActiveLink>
         </nav>
       </div>
-      <UserButton afterSignOutUrl="/auth/sign-in" />
+      <UserButton
+        afterSignOutUrl="/auth/sign-in"
+        appearance={{
+          elements: {
+            avatarBox: 'w-9 h-9',
+          },
+        }}
+      />
     </header>
   )
 }
