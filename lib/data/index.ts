@@ -53,20 +53,11 @@ export const createDashboard = async (body: FormData) => {
   const { title } = result.data
 
   const supabase = await createSupabaseServerClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) {
-    console.error('User not logged in')
-    redirect('/login')
-  }
 
   const { data, error } = await supabase
     .from('dashboard')
     .insert({
       title,
-      user_id: user?.id,
     })
     .select('id')
     .single()
