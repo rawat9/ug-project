@@ -1,6 +1,5 @@
 'use client'
 
-import Editor, { OnMount } from '@monaco-editor/react'
 import * as React from 'react'
 import { Sources } from './sources'
 import { Run } from './run'
@@ -12,13 +11,16 @@ import { Button } from '@/components/ui/button'
 import { format } from 'sql-formatter'
 import { Format } from '@/icons'
 
+import { ReactCodeMirrorRef } from '@uiw/react-codemirror'
+import CodeMirrorWrapper from './code-mirror-wrapper'
+
 function CodeEditor() {
-  const editorRef = React.useRef<Parameters<OnMount>[0]>()
+  const editorRef = React.useRef<ReactCodeMirrorRef>(null)
   const set = useSetAtom(editorAtom)
   const setQuery = useSetAtom(queryAtom)
 
   const execute = React.useCallback(async () => {
-    const query = editorRef.current?.getValue()
+    const query = editorRef.current?.view?.state.doc.toString()
     if (!query || query.trim() === '') return
     const { data, error, columns, executionTime } = await executeQuery(
       query.trim(),
@@ -26,24 +28,27 @@ function CodeEditor() {
     set({ query, data, error, columns, executionTime })
   }, [set])
 
-  const handleEditorDidMount: OnMount = (editor) => {
-    editorRef.current = editor
-  }
-
   const handleOnChange = useDebouncedCallback((value?: string) => {
     setQuery(value || '')
   }, 600)
 
-  const formatQuery = React.useCallback(() => {
-    const query = editorRef.current?.getValue()
+  const formatQuery = () => {
+    const query = editorRef.current?.view?.state.doc.toString()
     if (!query || query.trim() === '') return
+
     const formattedQuery = format(query, {
       language: 'postgresql',
       tabWidth: 2,
       keywordCase: 'upper',
     })
-    editorRef.current?.setValue(formattedQuery)
-  }, [])
+    editorRef.current?.view?.dispatch({
+      changes: {
+        from: 0,
+        to: editorRef.current?.view?.state.doc.length,
+        insert: formattedQuery,
+      },
+    })
+  }
 
   return (
     <>
@@ -55,22 +60,12 @@ function CodeEditor() {
         <Sources />
         <Run executionHandler={execute} />
       </div>
-      <Editor
-        height="90%"
-        language="sql"
-        theme="vs-light"
-        className="pr-4"
-        options={{
-          fontSize: 15,
-          minimap: {
-            enabled: false,
-          },
-        }}
-        onMount={handleEditorDidMount}
-        onChange={handleOnChange}
+      <CodeMirrorWrapper
+        editorRef={editorRef}
+        handleOnChange={handleOnChange}
       />
     </>
   )
 }
 
-export default React.memo(CodeEditor)
+export default CodeEditor

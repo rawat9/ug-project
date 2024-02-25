@@ -9,7 +9,7 @@ export function GridLayout(props: ReactGridLayoutProps) {
 
   return (
     <ReactGridLayout
-      style={{ height: '100%' }}
+      style={{ height: '100%', width: '100%'}}
       containerPadding={[10, 20]}
       cols={12}
       rowHeight={30}

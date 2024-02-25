@@ -21,10 +21,10 @@ export function Editor({ isOpen }: { isOpen: boolean }) {
           collapsible
         >
           <Provider>
-            <div className="h-full w-full rounded-lg">
+            <div className="h-full w-full rounded-lg bg-white">
               <ResizablePanelGroup direction="horizontal">
                 <ResizablePanel minSize={20} defaultSize={20} order={1}>
-                  <div className="flex h-full w-full justify-center bg-white">
+                  <div className="flex h-full w-full flex-col">
                     <Queries />
                   </div>
                 </ResizablePanel>
@@ -32,7 +32,7 @@ export function Editor({ isOpen }: { isOpen: boolean }) {
                 <ResizableHandle />
 
                 <ResizablePanel order={2} defaultSize={60}>
-                  <div className="flex h-full w-full flex-col bg-white">
+                  <div className="flex h-full w-full flex-col">
                     <EditorPanel />
                   </div>
                 </ResizablePanel>
@@ -40,9 +40,7 @@ export function Editor({ isOpen }: { isOpen: boolean }) {
                 <ResizableHandle />
 
                 <ResizablePanel minSize={20} defaultSize={20} order={3}>
-                  <div className="flex h-full w-full justify-center bg-white">
-                    <SchemaViewer />
-                  </div>
+                  <SchemaViewer />
                 </ResizablePanel>
               </ResizablePanelGroup>
             </div>
