@@ -3,6 +3,7 @@ import { GeistSans } from 'geist/font/sans'
 import '@/styles/globals.css'
 import { Toaster } from 'react-hot-toast'
 import { ClerkProvider } from '@clerk/nextjs'
+import { JetBrains_Mono } from 'next/font/google'
 
 // Vercel
 import { Analytics } from '@vercel/analytics/react'
@@ -13,6 +14,12 @@ export const metadata: Metadata = {
   description: 'Build a personalized dashboard',
 }
 
+const jetBrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-jetbrains-mono',
+})
+
 export default function RootLayout({
   children,
 }: {
@@ -20,7 +27,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={GeistSans.className} suppressHydrationWarning={true}>
+      <body
+        className={`${GeistSans.className} ${jetBrainsMono.variable}`}
+        suppressHydrationWarning={true}
+      >
         <ClerkProvider
           appearance={{
             variables: { colorPrimary: '#0f172a' },
