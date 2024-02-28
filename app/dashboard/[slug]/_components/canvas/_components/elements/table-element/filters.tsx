@@ -63,7 +63,7 @@ export function Filters() {
               </SelectItem>
             </SelectContent>
           </Select>
-          <Input placeholder="Enter value" />
+          <Input name="value" placeholder="Enter value" />
         </div>
         <div className="mt-1 h-px bg-gray-200" />
         <div className="flex justify-between px-3 py-2">
