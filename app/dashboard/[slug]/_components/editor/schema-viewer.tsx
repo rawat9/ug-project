@@ -1,78 +1,56 @@
-import { ChevronDown } from '@/icons'
-import { cn } from '@/lib/utils'
-import { Disclosure } from '@headlessui/react'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
 
 export function SchemaViewer() {
   return (
     <>
-      <div className="flex h-14 w-full items-center gap-2 border-b px-4">
-        <h1 className="flex-1">Schema</h1>
-      </div>
-      <div className="h-full w-full overflow-y-scroll p-4">
-        {/* <Search /> */}
+      <h1 className="p-3 text-sm text-gray-500">Related tables</h1>
+      <div className="h-full w-full overflow-y-scroll px-4 py-2">
         <div className="flex flex-col space-y-2">
-          <Disclosure>
-            {({ open }) => (
-              <>
-                <Disclosure.Button className="flex text-center font-semibold">
-                  users
-                  <ChevronDown
-                    className={cn(
-                      open ? 'rotate-180 transform' : '',
-                      'ml-auto',
-                    )}
-                  />
-                </Disclosure.Button>
-                <Disclosure.Panel>
-                  <div className="flex justify-between">
-                    <span>id</span>
-                    <span className="text-gray-500">integer</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>age</span>
-                    <span className="text-gray-500">text</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>name</span>
-                    <span className="text-gray-500">text</span>
-                  </div>
-                </Disclosure.Panel>
-              </>
-            )}
-          </Disclosure>
-          <Disclosure>
-            {({ open }) => (
-              <>
-                <Disclosure.Button className="flex text-center font-semibold">
-                  posts
-                  <ChevronDown
-                    className={cn(
-                      open ? 'rotate-180 transform' : '',
-                      'ml-auto',
-                    )}
-                  />
-                </Disclosure.Button>
-                <Disclosure.Panel>
-                  <div className="flex justify-between">
-                    <span>id</span>
-                    <span className="text-gray-500">integer</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>note</span>
-                    <span className="text-gray-500">text</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>analyst_email</span>
-                    <span className="text-gray-500">text</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>user_id</span>
-                    <span className="text-gray-500">integer</span>
-                  </div>
-                </Disclosure.Panel>
-              </>
-            )}
-          </Disclosure>
+          <Accordion type="multiple">
+            <AccordionItem value="item-1">
+              <AccordionTrigger>users</AccordionTrigger>
+              <AccordionContent>
+                <div className="flex justify-between">
+                  <span>id</span>
+                  <span className="text-gray-500">integer</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>note</span>
+                  <span className="text-gray-500">text</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>analyst_email</span>
+                  <span className="text-gray-500">text</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>user_id</span>
+                  <span className="text-gray-500">integer</span>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-2">
+              <AccordionTrigger>posts</AccordionTrigger>
+              <AccordionContent>
+                <div className="flex justify-between">
+                  <span>id</span>
+                  <span className="text-gray-500">integer</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>age</span>
+                  <span className="text-gray-500">text</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>name</span>
+                  <span className="text-gray-500">text</span>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </div>
       </div>
     </>

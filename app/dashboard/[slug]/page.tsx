@@ -57,6 +57,7 @@ export default function Page({
         id="properties"
         order={2}
         defaultSize={20}
+        maxSize={20}
         className="hidden bg-white md:block"
       >
         <Properties />
