@@ -1,20 +1,9 @@
 import Link from 'next/link'
 import { Dashboard } from '@/icons'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Logout } from './logout'
-import { getUser } from '@/lib/actions'
 import { ActiveLink } from './active-link'
+import { UserButton } from '@clerk/nextjs'
 
-export async function Header() {
-  const { user } = await getUser()
+export function Header() {
   return (
     <header className="flex h-14 w-full items-center justify-between border-b bg-white px-4">
       <div className="flex items-center gap-10">
@@ -26,31 +15,14 @@ export async function Header() {
           <ActiveLink href="/integrations">Integrations</ActiveLink>
         </nav>
       </div>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-            <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-              <AvatarFallback>{'cn'}</AvatarFallback>
-            </Avatar>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56" align="end" forceMount>
-          <DropdownMenuLabel className="font-normal">
-            <div className="flex flex-col space-y-1">
-              <p className="text-sm font-semibold">Logged in as</p>
-              <p
-                className="text-xs leading-none text-slate-600"
-                data-testid="user-email"
-              >
-                {user?.email}
-              </p>
-            </div>
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <Logout />
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <UserButton
+        afterSignOutUrl="/auth/sign-in"
+        appearance={{
+          elements: {
+            avatarBox: 'w-9 h-9',
+          },
+        }}
+      />
     </header>
   )
 }

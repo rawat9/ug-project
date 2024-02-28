@@ -3,17 +3,25 @@
 import { type CookieOptions, createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { Database } from '@/types/database'
+import { auth } from '@clerk/nextjs/server'
 
 /**
  * Creates a Supabase client for Server components, Server Actions & Route handlers
  */
 export async function createSupabaseServerClient() {
   const cookieStore = cookies()
+  const { getToken } = auth()
+  const token = await getToken({ template: 'supabase' })
 
   return createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
+      global: {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
       cookies: {
         get(name: string) {
           return cookieStore.get(name)?.value

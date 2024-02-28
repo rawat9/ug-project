@@ -19,7 +19,7 @@ describe('Header RSC', () => {
   })
 
   it('should display header', async () => {
-    const header = await Header()
+    const header = Header()
     render(header)
 
     expect(header).toBeTruthy()
@@ -27,7 +27,7 @@ describe('Header RSC', () => {
 
   it('should display user email', async () => {
     const user = userEvent.setup()
-    const header = await Header()
+    const header = Header()
     render(header)
 
     user.click(screen.getByRole('button'))
