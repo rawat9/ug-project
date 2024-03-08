@@ -27,6 +27,7 @@ export * from './EyeOff'
 export * from './Filter'
 export * from './Help'
 export * from './Options'
+export * from './State'
 
 // Icons for widgets library
 export * from './widgets/Text'
