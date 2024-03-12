@@ -48,7 +48,9 @@ export function EditorPanel() {
       language: 'postgresql',
       tabWidth: 2,
       keywordCase: 'upper',
+      paramTypes: { custom: [{ regex: String.raw`\{\{\s*[\w\.,]+\s*\}\}` }] }, // TODO: complete this
     })
+
     codeEditorRef.current?.view?.dispatch({
       changes: {
         from: 0,
@@ -69,16 +71,22 @@ export function EditorPanel() {
 
   return (
     <>
-      <div className="flex h-14 w-full items-center gap-2 border-b px-4">
-        <h1 className="flex-1">query-name</h1>
-        <Button onClick={formatQuery} variant="outline" className="h-8 px-2">
-          <Format className="h-5 w-5" />
-        </Button>
-        <Sources />
-        <Run executionHandler={execute} />
-      </div>
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel order={1} defaultSize={70}>
+          <div className="flex p-4">
+            <h1 className="flex-1">query-name</h1>
+            <div className="flex gap-2">
+              <Button
+                onClick={formatQuery}
+                variant="outline"
+                className="h-8 px-2"
+              >
+                <Format className="h-5 w-5" />
+              </Button>
+              <Sources />
+              <Run executionHandler={execute} />
+            </div>
+          </div>
           <ResizablePanelGroup direction="vertical">
             <ResizablePanel
               id="code-editor"

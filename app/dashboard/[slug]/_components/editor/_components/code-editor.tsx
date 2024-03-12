@@ -27,7 +27,7 @@ const CodeEditor = React.forwardRef<ReactCodeMirrorRef, ReactCodeMirrorProps>(
     }, 600)
 
     return (
-      <div className="flex items-center p-4">
+      <div className="flex h-[60%] px-4">
         <ReactCodeMirror
           basicSetup={{
             autocompletion: true,
@@ -37,7 +37,7 @@ const CodeEditor = React.forwardRef<ReactCodeMirrorRef, ReactCodeMirrorProps>(
           width="100%"
           height="100%"
           placeholder="Write your query here"
-          className="h-[290px] w-full rounded-md border shadow-sm"
+          className="w-full rounded-md border shadow-sm"
           ref={ref}
           extensions={[
             sql({

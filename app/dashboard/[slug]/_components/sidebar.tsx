@@ -6,7 +6,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { CodeEditor, Settings, Component } from '@/icons'
+import { CodeEditor, Settings, Component, State } from '@/icons'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 export function Sidebar() {
@@ -26,6 +26,9 @@ export function Sidebar() {
                   onClick={() => {
                     if (searchParams.get('widgets') === 'true') {
                       params.delete('widgets')
+                    } else if (searchParams.get('state') === 'true') {
+                      params.delete('state')
+                      params.set('widgets', 'true')
                     } else {
                       params.set('widgets', 'true')
                     }
@@ -65,6 +68,34 @@ export function Sidebar() {
               </TooltipTrigger>
               <TooltipContent side="right">
                 <p>Editor</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          <TooltipProvider delayDuration={0}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={() => {
+                    if (searchParams.get('state') === 'true') {
+                      params.delete('state')
+                    } else if (searchParams.get('widgets') === 'true') {
+                      params.delete('widgets')
+                      params.set('state', 'true')
+                    } else {
+                      params.set('state', 'true')
+                    }
+                    replace(`${pathname}?${params.toString()}`, {
+                      scroll: false,
+                    })
+                  }}
+                  className="rounded-lg p-1.5 text-gray-700 transition-colors duration-200 hover:bg-gray-100 focus:outline-none dark:text-gray-200 dark:hover:bg-gray-800"
+                >
+                  <State className="h-6 w-6" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p>State</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
