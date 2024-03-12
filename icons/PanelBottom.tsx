@@ -6,13 +6,17 @@ export function PanelBottom(props: SVGProps<SVGSVGElement>) {
       xmlns="http://www.w3.org/2000/svg"
       width="1em"
       height="1em"
-      viewBox="0 0 20 20"
+      viewBox="0 0 24 24"
       {...props}
     >
-      <path
-        fill="currentColor"
-        d="M2 6a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3zm3-2a2 2 0 0 0-2 2v5h14V6a2 2 0 0 0-2-2z"
-      ></path>
+      <g fill="currentColor">
+        <path d="M18 13H6v2h12z"></path>
+        <path
+          fillRule="evenodd"
+          d="M2 8a3 3 0 0 1 3-3h14a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3zm3-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1"
+          clipRule="evenodd"
+        ></path>
+      </g>
     </svg>
   )
 }

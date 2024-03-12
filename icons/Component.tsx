@@ -1,20 +1,18 @@
-import { ComponentProps } from 'react'
+import type { SVGProps } from 'react'
 
-export function Component(props: ComponentProps<'svg'>) {
+export function Component(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
+      width="1em"
+      height="1em"
+      viewBox="0 0 15 15"
       {...props}
     >
       <path
         fill="currentColor"
-        fillRule="evenodd"
-        d="m9.675 19.34l-3-2.144c-.821-.586-1.232-.88-1.453-1.31C5 15.456 5 14.95 5 13.942v-3.883c0-.322 0-.592.007-.825L11 13.514v6.717c-.357-.2-.773-.498-1.325-.892M13 20.23c.357-.2.773-.498 1.325-.892l3-2.143c.821-.586 1.232-.88 1.453-1.31c.222-.43.222-.935.222-1.944v-3.883c0-.322 0-.592-.007-.825L13 13.514zm5.128-12.837L12 11.771L5.872 7.394c.212-.168.475-.356.803-.59l3-2.143C10.798 3.859 11.36 3.458 12 3.458c.64 0 1.202.4 2.325 1.203l3 2.143c.329.234.591.422.803.59"
-        clipRule="evenodd"
-      />
+        d="M7.303.04a.5.5 0 0 1 .394 0L14.5 2.956l-7 3l-7-3zM0 3.83v7.67c0 .2.12.38.303.46L7 14.83v-8zm8 3l7-3v7.67a.5.5 0 0 1-.303.46L8 14.83z"
+      ></path>
     </svg>
   )
 }
