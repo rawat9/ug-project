@@ -38,7 +38,7 @@ export function Sidebar() {
                   }}
                   className="self-center rounded-lg p-1.5 text-gray-700 transition-colors duration-200 hover:bg-gray-100 focus:outline-none dark:text-gray-200 dark:hover:bg-gray-800"
                 >
-                  <Widget className="h-6 w-6" />
+                  <Widget className="h-5 w-5" />
                 </button>
               </TooltipTrigger>
               <TooltipContent side="right">
