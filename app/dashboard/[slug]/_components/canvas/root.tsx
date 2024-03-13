@@ -141,7 +141,10 @@ export function Canvas() {
   }
 
   return (
-    <main className="h-full w-full font-canvas" id="canvas">
+    <main
+      className="h-full w-full overflow-y-auto bg-zinc-50 p-2 font-canvas"
+      id="canvas"
+    >
       <GridLayout
         onDrop={onDrop}
         layout={layout}
@@ -151,16 +154,15 @@ export function Canvas() {
         onDragStart={onDragStart}
         onResizeStop={onResizeStop}
         innerRef={canvasRef}
-        useCSSTransforms={true}
       >
         {elements.map((element) => (
           <div
             key={element.id}
             className={cn(
-              'relative flex h-full w-full cursor-pointer select-none items-center rounded-md p-2',
+              'relative flex h-full w-full cursor-pointer select-none items-center rounded-md p-2 hover:ring-1 hover:ring-inset hover:ring-blue-400',
               selectedElement?.id === element?.id &&
                 resizableId &&
-                'border border-dashed border-gray-400 ring-1 ring-inset ring-blue-400',
+                'border border-dashed border-blue-500 ring-1 ring-inset',
               resizableId !== element.id && 'react-resizable-hide',
             )}
             tabIndex={0}

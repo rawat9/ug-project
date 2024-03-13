@@ -12,7 +12,7 @@ export function TextWidget() {
         e.dataTransfer.setData('text/plain', '')
         e.dataTransfer.setData('type', 'text')
         e.dataTransfer.setData('width', '2')
-        e.dataTransfer.setData('height', '2')
+        e.dataTransfer.setData('height', '1')
       }}
     >
       <Text className="h-10 w-10 duration-500 ease-in-out group-hover:scale-125" />
