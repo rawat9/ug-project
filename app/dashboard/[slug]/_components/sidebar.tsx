@@ -6,7 +6,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { CodeEditor, Settings, Component, State } from '@/icons'
+import { CodeEditor, Settings, Widget, State } from '@/icons'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 export function Sidebar() {
@@ -36,9 +36,9 @@ export function Sidebar() {
                       scroll: false,
                     })
                   }}
-                  className="rounded-lg p-1.5 text-gray-700 transition-colors duration-200 hover:bg-gray-100 focus:outline-none dark:text-gray-200 dark:hover:bg-gray-800"
+                  className="self-center rounded-lg p-1.5 text-gray-700 transition-colors duration-200 hover:bg-gray-100 focus:outline-none dark:text-gray-200 dark:hover:bg-gray-800"
                 >
-                  <Component className="h-6 w-6" />
+                  <Widget className="h-6 w-6" />
                 </button>
               </TooltipTrigger>
               <TooltipContent side="right">
@@ -61,9 +61,9 @@ export function Sidebar() {
                       scroll: false,
                     })
                   }}
-                  className="rounded-lg p-1.5 text-gray-700 transition-colors duration-200 hover:bg-gray-100 focus:outline-none dark:text-gray-200 dark:hover:bg-gray-800"
+                  className="self-center rounded-lg p-1.5 text-gray-700 transition-colors duration-200 hover:bg-gray-100 focus:outline-none dark:text-gray-200 dark:hover:bg-gray-800"
                 >
-                  <CodeEditor className="h-6 w-6" />
+                  <CodeEditor className="h-5 w-5" />
                 </button>
               </TooltipTrigger>
               <TooltipContent side="right">
@@ -89,9 +89,9 @@ export function Sidebar() {
                       scroll: false,
                     })
                   }}
-                  className="rounded-lg p-1.5 text-gray-700 transition-colors duration-200 hover:bg-gray-100 focus:outline-none dark:text-gray-200 dark:hover:bg-gray-800"
+                  className="self-center rounded-lg p-1.5 text-gray-700 transition-colors duration-200 hover:bg-gray-100 focus:outline-none dark:text-gray-200 dark:hover:bg-gray-800"
                 >
-                  <State className="h-6 w-6" />
+                  <State className="h-5 w-5" />
                 </button>
               </TooltipTrigger>
               <TooltipContent side="right">

@@ -3,6 +3,12 @@ import { Provider } from 'jotai'
 import { Button } from '@/components/ui/button'
 import { AddCircle, Cross, Postgres, PanelBottom } from '@/icons'
 import { Tab, TabGroup, TabList } from '@tremor/react'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 export function Editor({ isOpen }: { isOpen: boolean }) {
   return (
@@ -15,36 +21,48 @@ export function Editor({ isOpen }: { isOpen: boolean }) {
                 <AddCircle className="mr-1 h-5 w-5" />
                 Create new
               </Button>
-              <div className="my-2 w-px bg-gray-200" />
               <TabGroup className="w-[90%] px-2" defaultIndex={0}>
                 <TabList
                   variant="line"
-                  className="no-scrollbar space-x-2 overflow-y-hidden overflow-x-scroll border-0"
+                  className="no-scrollbar space-x-0 overflow-y-hidden overflow-x-scroll scroll-smooth border-x border-b-0"
                 >
-                  <>
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <div className="flex gap-3" key={i}>
-                        <div className="my-2 w-px bg-gray-200" />
-                        <Tab value="1" className="group flex items-start px-0">
-                          <div className="flex w-full items-center gap-2">
-                            <Postgres />
-                            <p className="max-w-[90px] truncate">
-                              getAllTopics
-                            </p>
-                            <Button variant={'ghost'} className="h-4 p-1">
-                              <Cross className="h-3 w-3 opacity-0 group-hover:opacity-100 group-aria-selected:opacity-100" />
-                            </Button>
-                          </div>
-                        </Tab>
-                      </div>
-                    ))}
-                  </>
-                  <div className="my-2 w-px bg-gray-200" />
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="flex select-none border-l first:border-l-0"
+                    >
+                      <Tab
+                        value="idOfTheQuery"
+                        icon={Postgres}
+                        className="group hover:shadow-inner"
+                      >
+                        <div className="flex gap-1">
+                          <p>getAllTopics</p>
+                          <Cross
+                            className="h-5 w-5 p-1 text-slate-700 opacity-0 group-hover:opacity-100 group-aria-selected:opacity-100"
+                            onClick={() => {
+                              console.log('delete')
+                            }}
+                          />
+                        </div>
+                      </Tab>
+                    </div>
+                  ))}
                 </TabList>
               </TabGroup>
-              <Button className="ml-auto h-7 p-1" variant="ghost">
-                <PanelBottom className="h-6 w-6 text-slate-500 hover:text-slate-700" />
-              </Button>
+
+              <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button className="ml-auto h-7" variant="ghost">
+                      <PanelBottom className="h-6 w-6 text-slate-500 hover:text-slate-700" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    <p>Toggle editor</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
             <EditorPanel />
           </Provider>

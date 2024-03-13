@@ -11,7 +11,7 @@ import { editorAtom } from './state'
 import { QueryResultTable } from './_components/query-result-table'
 import { ImperativePanelHandle } from 'react-resizable-panels'
 import { SchemaViewer } from './schema-viewer'
-import { Format } from '@/icons'
+import { Format, Pencil } from '@/icons'
 import { Button } from '@/components/ui/button'
 import { Sources } from './_components/sources'
 import { Run } from './_components/run'
@@ -20,6 +20,12 @@ import { format } from 'sql-formatter'
 import { executeQuery } from '@/lib/data'
 
 import * as React from 'react'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 export function EditorPanel() {
   const [queryResult, set] = useAtom(editorAtom)
@@ -73,16 +79,28 @@ export function EditorPanel() {
     <>
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel order={1} defaultSize={70}>
-          <div className="flex p-4">
-            <h1 className="flex-1">query-name</h1>
+          <div className="flex p-5">
+            <div className="flex flex-1 items-center">
+              <h1>query-name</h1>
+              <Pencil className="ml-2 h-4 w-4 text-gray-400" />
+            </div>
             <div className="flex gap-2">
-              <Button
-                onClick={formatQuery}
-                variant="outline"
-                className="h-8 px-2"
-              >
-                <Format className="h-5 w-5" />
-              </Button>
+              <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      onClick={formatQuery}
+                      variant="outline"
+                      className="h-8 px-2"
+                    >
+                      <Format className="h-5 w-5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    <p>Format query</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
               <Sources />
               <Run executionHandler={execute} />
             </div>
