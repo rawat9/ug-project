@@ -36,6 +36,7 @@ export * from './widgets/Text'
 export * from './widgets/Button'
 export * from './widgets/Table'
 export * from './widgets/Chart'
+export * from './widgets/Card'
 
 // Icons for editor
 export * from './Run'

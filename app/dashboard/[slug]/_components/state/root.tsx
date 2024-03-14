@@ -14,7 +14,7 @@ export function State({ onCollapse }: { onCollapse: () => void }) {
   const elements = useAtomValue(elementsAtom)
 
   return (
-    <div className="h-full">
+    <div className="h-full pb-1">
       <div className="flex items-center justify-between p-4">
         <h2 className="text-md font-semibold">State</h2>
         <button

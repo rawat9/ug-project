@@ -68,7 +68,7 @@ export default function Page({
               <Widgets
                 onCollapse={() => {
                   param.delete('widgets')
-                  replace(`${pathname}?${param.toString()}`)
+                  replace(`${pathname}?${param.toString()}`, { scroll: false })
                 }}
               />
             )}
@@ -76,7 +76,7 @@ export default function Page({
               <State
                 onCollapse={() => {
                   param.delete('state')
-                  replace(`${pathname}?${param.toString()}`)
+                  replace(`${pathname}?${param.toString()}`, { scroll: false })
                 }}
               />
             )}

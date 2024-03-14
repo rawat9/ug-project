@@ -20,7 +20,7 @@ export function Widgets({ onCollapse }: { onCollapse: () => void }) {
         <div className="relative mb-3">
           <Search />
         </div>
-        <div className="mt-2 grid grid-cols-2 gap-3">
+        <div className="mt-6 grid grid-cols-2 gap-3">
           <TextWidget />
           <CardWidget />
           <AreaChartWidget />

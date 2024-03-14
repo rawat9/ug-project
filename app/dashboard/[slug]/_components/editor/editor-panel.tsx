@@ -17,6 +17,7 @@ import { Sources } from './_components/sources'
 import { Run } from './_components/run'
 import { ReactCodeMirrorRef } from '@uiw/react-codemirror'
 import { format } from 'sql-formatter'
+import Mustache from 'mustache'
 import { executeQuery } from '@/lib/data'
 
 import * as React from 'react'
@@ -56,6 +57,13 @@ export function EditorPanel() {
       keywordCase: 'upper',
       paramTypes: { custom: [{ regex: String.raw`\{\{\s*[\w\.,]+\s*\}\}` }] }, // TODO: complete this
     })
+
+    console.log(
+      Mustache.render(formattedQuery, {
+        user: { name: 'anurag', age: 7 },
+        posts: { title: 'hello' },
+      }),
+    )
 
     codeEditorRef.current?.view?.dispatch({
       changes: {

@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { Card } from '@/icons/widgets/Card'
+import { Card } from '@/icons'
 
 export function CardWidget() {
   return (
