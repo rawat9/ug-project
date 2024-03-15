@@ -1,3 +1,5 @@
+'use client'
+
 import { Cross, Selection } from '@/icons'
 import { useCanvasAtom } from '../canvas/state'
 import { Element } from '../canvas/types'

@@ -1,3 +1,5 @@
+'use client'
+
 import { elementsAtom, useCanvasAtom } from './state'
 import { nanoid } from 'nanoid'
 import { cn } from '@/lib/utils'
