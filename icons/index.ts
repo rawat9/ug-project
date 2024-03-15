@@ -30,6 +30,7 @@ export * from './Help'
 export * from './Options'
 export * from './State'
 export * from './PanelBottom'
+export * from './Menu'
 
 // Icons for widgets library
 export * from './widgets/Text'

@@ -1,3 +1,4 @@
+import { Tables } from '@/types/database'
 import { atom } from 'jotai'
 
 interface PostgresError {
@@ -24,3 +25,7 @@ export const editorAtom = atom<Editor>({
 })
 
 export const queryAtom = atom('')
+
+export const activeQueryAtom = atom<Tables<'queries'> | null>(null)
+
+export const queriesAtom = atom<Tables<'queries'>[]>([])
