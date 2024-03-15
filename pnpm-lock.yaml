@@ -74,6 +74,9 @@ dependencies:
   '@supabase/supabase-js':
     specifier: 2.39.3
     version: 2.39.3
+  '@tanstack/react-query':
+    specifier: 5.28.2
+    version: 5.28.2(react@18.2.0)
   '@tanstack/react-table':
     specifier: 8.11.7
     version: 8.11.7(react-dom@18.2.0)(react@18.2.0)
@@ -175,6 +178,9 @@ devDependencies:
   '@tailwindcss/typography':
     specifier: ^0.5.10
     version: 0.5.10(tailwindcss@3.4.1)
+  '@tanstack/react-query-devtools':
+    specifier: 5.28.2
+    version: 5.28.2(@tanstack/react-query@5.28.2)(react@18.2.0)
   '@testing-library/jest-dom':
     specifier: 6.3.0
     version: 6.3.0(@types/jest@29.5.11)(jest@29.7.0)
@@ -2546,6 +2552,32 @@ packages:
       postcss-selector-parser: 6.0.10
       tailwindcss: 3.4.1
     dev: true
+
+  /@tanstack/query-core@5.28.2:
+    resolution: {integrity: sha512-IvRjNUzoJ0Hn5OSpFkPtMY00zEm+EauCnSKOx/PJPOpME6ucM5hSisFdnIN9oU3WDw5lv6OFWDSpG0rM6lF9rw==}
+
+  /@tanstack/query-devtools@5.27.8:
+    resolution: {integrity: sha512-K94gnqvEe6TsDvi8eZYP2JrnQJOIymhVXRR+Xa0xcsryNqG+PeMIDmQQqjwIqbDq36qyUlPAyT6LxXVvVv1Nyw==}
+    dev: true
+
+  /@tanstack/react-query-devtools@5.28.2(@tanstack/react-query@5.28.2)(react@18.2.0):
+    resolution: {integrity: sha512-GBmOs0jLW71akOUS35q8IPCp0F5uip+mz1pDoUFYz+yYFY3VyN4h4sVAb3grtO2m4jyqXyWzGWkPPHQ7oE5JEg==}
+    peerDependencies:
+      '@tanstack/react-query': ^5.28.2
+      react: ^18.0.0
+    dependencies:
+      '@tanstack/query-devtools': 5.27.8
+      '@tanstack/react-query': 5.28.2(react@18.2.0)
+      react: 18.2.0
+    dev: true
+
+  /@tanstack/react-query@5.28.2(react@18.2.0):
+    resolution: {integrity: sha512-t3th5v5bzyeiw+fzwKwbGVT3ux2qW4wDJRrLy4YLok0qrrEQUYcZ3xsC7dlxkPbFInrIGJ8qLsm1A2sbyy2XZA==}
+    peerDependencies:
+      react: ^18.0.0
+    dependencies:
+      '@tanstack/query-core': 5.28.2
+      react: 18.2.0
 
   /@tanstack/react-table@8.11.7(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-ZbzfMkLjxUTzNPBXJYH38pv2VpC9WUA+Qe5USSHEBz0dysDTv4z/ARI3csOed/5gmlmrPzVUN3UXGuUMbod3Jg==}
