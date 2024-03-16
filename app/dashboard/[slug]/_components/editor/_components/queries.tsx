@@ -3,7 +3,7 @@
 import { Postgres, Cross, Data } from '@/icons'
 import { TabGroup, Tab, TabList } from '@tremor/react'
 import { useAtom } from 'jotai'
-import { activeQueryAtom, queriesAtom } from './state'
+import { activeQueryAtom, queriesAtom } from '../state'
 import { useState } from 'react'
 
 export function Queries() {

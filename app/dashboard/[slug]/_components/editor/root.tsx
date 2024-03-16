@@ -1,7 +1,7 @@
 'use client'
 
 import { EditorPanel } from './_components/editor-panel'
-import { Provider, useAtomValue, useSetAtom, useStore } from 'jotai'
+import { useAtomValue } from 'jotai'
 import { PanelBottom } from '@/icons'
 import {
   Tooltip,
@@ -9,7 +9,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { Queries } from './queries'
+import { Queries } from './_components/queries'
 import { CreateNewQuery } from './_components/create-new-query'
 import { QueryMenu } from './_components/query-menu'
 import { queriesAtom } from './state'

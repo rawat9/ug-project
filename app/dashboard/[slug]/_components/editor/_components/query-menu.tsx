@@ -9,16 +9,16 @@ import {
 import { Menu } from '@/icons'
 import { fetchQueries } from '@/lib/data/queries'
 import { useQuery } from '@tanstack/react-query'
-import { useSetAtom } from 'jotai'
+import { useAtom, useSetAtom } from 'jotai'
 import toast from 'react-hot-toast'
 import { activeQueryAtom, queriesAtom } from '../state'
 
 export function QueryMenu() {
-  const setQueries = useSetAtom(queriesAtom)
+  const [openedQueries, setQueries] = useAtom(queriesAtom)
   const setActive = useSetAtom(activeQueryAtom)
   const { data: queries, isError } = useQuery({
     queryKey: ['queries'],
-    queryFn: () => fetchQueries(),
+    queryFn: fetchQueries,
     select: (it) => it.data,
   })
 
@@ -44,7 +44,7 @@ export function QueryMenu() {
             <DropdownMenuItem
               key={query.id}
               onClick={() => {
-                if (queries.some((it) => it.id === query.id)) {
+                if (openedQueries.some((it) => it.id === query.id)) {
                   return setActive(query)
                 }
 
