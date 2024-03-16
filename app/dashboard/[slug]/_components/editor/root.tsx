@@ -13,14 +13,53 @@ import { Queries } from './_components/queries'
 import { CreateNewQuery } from './_components/create-new-query'
 import { QueryMenu } from './_components/query-menu'
 import { queriesAtom } from './state'
+import * as React from 'react'
+import { clamp } from '@/lib/utils'
 
 export function Editor({ isOpen }: { isOpen: boolean }) {
   const queries = useAtomValue(queriesAtom)
+  const ref = React.useRef<HTMLDivElement>(null)
+  const refTop = React.useRef<HTMLDivElement>(null)
+
+  function handleMouseDown(event: React.MouseEvent<HTMLDivElement>) {
+    const resizable = ref.current
+    if (!resizable) return
+
+    const styles = window.getComputedStyle(resizable)
+    let height = parseInt(styles.height, 10)
+    let y = 0
+
+    const onMouseMoveTopResize = (event: MouseEvent) => {
+      event.preventDefault()
+      const dy = event.clientY - y
+      height = height - dy
+      y = event.clientY
+      resizable.style.height = `${clamp(height, 36, 700)}px` // minH, maxH
+    }
+
+    const onMouseUpTopResize = () => {
+      document.removeEventListener('mousemove', onMouseMoveTopResize)
+      document.removeEventListener('mouseup', onMouseUpTopResize)
+    }
+
+    y = event.clientY
+
+    document.addEventListener('mousemove', onMouseMoveTopResize)
+    document.addEventListener('mouseup', onMouseUpTopResize)
+  }
 
   return (
     <>
       {isOpen && (
-        <div className="absolute bottom-0 z-50 block h-[360px] w-full border-t bg-white shadow-[0px_-2px_5px_-3px_rgba(0,0,0,0.1)]">
+        <div
+          ref={ref}
+          className="absolute bottom-0 z-50 block h-[360px] w-full border-t bg-white shadow-[0px_-2px_5px_-3px_rgba(0,0,0,0.1)]"
+        >
+          <div
+            ref={refTop}
+            className="absolute -inset-y-[2px] left-0 right-0 h-1 cursor-row-resize transition hover:bg-tremor-brand"
+            onMouseDown={handleMouseDown}
+          />
           <div className="flex h-9 w-full items-center border-b px-2">
             <div className="flex w-[85%] items-center">
               <CreateNewQuery />
