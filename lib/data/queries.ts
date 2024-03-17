@@ -7,12 +7,8 @@ export const fetchQueries = async () => {
   return supabase.from('query').select()
 }
 
-export const createQuery = async (query: { name: string }) => {
-  const result = z
-    .object({
-      name: z.string().trim().min(1),
-    })
-    .safeParse({ query: query.name })
+export const createQuery = async (name: string) => {
+  const result = z.string().trim().min(1).safeParse(name)
 
   if (!result.success) {
     throw new Error('Invalid query type')
@@ -22,7 +18,7 @@ export const createQuery = async (query: { name: string }) => {
   return supabase
     .from('query')
     .insert({
-      name: result.data.name,
+      name: result.data,
     })
     .select()
     .single()

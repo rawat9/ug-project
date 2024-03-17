@@ -27,10 +27,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { QueryName } from './query-name'
-import { deleteQuery, updateQuery } from '@/lib/data/queries'
+import { deleteQuery, fetchQueries, updateQuery } from '@/lib/data/queries'
 import { Tables } from '@/types/database'
+import { QuerySidebar } from './query-sidebar'
+import toast from 'react-hot-toast'
 
 export function EditorPanel() {
   const queryClient = useQueryClient()
@@ -130,8 +132,8 @@ export function EditorPanel() {
   }, [set, codeEditorRef])
 
   return (
-    <ResizablePanelGroup direction="horizontal">
-      <ResizablePanel order={1} defaultSize={70}>
+    <>
+      <ResizablePanel order={2} defaultSize={60}>
         <div className="flex p-5">
           <div className="flex flex-1 items-center">
             {activeQuery && (
@@ -219,9 +221,9 @@ export function EditorPanel() {
         </ResizablePanelGroup>
       </ResizablePanel>
       <ResizableHandle />
-      <ResizablePanel minSize={30} maxSize={40} defaultSize={30} order={2}>
+      <ResizablePanel minSize={20} maxSize={40} defaultSize={20} order={3}>
         <SchemaViewer />
       </ResizablePanel>
-    </ResizablePanelGroup>
+    </>
   )
 }

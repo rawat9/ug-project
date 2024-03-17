@@ -1,22 +1,39 @@
 'use client'
 
-import { Postgres, Cross, Data } from '@/icons'
+import { Cross, Data } from '@/icons'
 import { TabGroup, Tab, TabList } from '@tremor/react'
 import { useAtom } from 'jotai'
-import { activeQueryAtom, queriesAtom } from '../state'
-import { useState } from 'react'
+import { activeQueryAtom, queriesAtom, queryAtom } from '../state'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { updateQuery } from '@/lib/data/queries'
 
 export function Queries() {
   const [active, setActive] = useAtom(activeQueryAtom)
   const [queries, setQueries] = useAtom(queriesAtom)
-  const [_, setCurrentIndex] = useState(0)
+
+  const queryClient = useQueryClient()
+
+  const updateMutation = useMutation({
+    mutationFn: updateQuery,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['queries'] }),
+  })
+
+  const handleSaveQuery = () => {
+    if (!active || !active.sql_query) {
+      return
+    }
+
+    queryAtom.remove(active.name)
+    updateMutation.mutate({
+      id: active.id,
+      key: 'sql_query',
+      value: active.sql_query,
+    })
+  }
 
   return (
     <TabGroup
       index={active ? queries.findIndex((it) => it.id === active.id) : 0}
-      onIndexChange={(index) => {
-        setCurrentIndex(index)
-      }}
     >
       <TabList
         variant="line"
@@ -52,6 +69,8 @@ export function Queries() {
                         setActive(queries[activeIndex + 1] ?? null)
                       }
                     }
+                    // save the query
+                    handleSaveQuery()
                   }}
                 />
               </div>

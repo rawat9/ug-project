@@ -29,8 +29,10 @@ export * from './Filter'
 export * from './Help'
 export * from './Options'
 export * from './State'
-export * from './PanelBottom'
-export * from './Menu'
+export * from './PanelBottomOpen'
+export * from './PanelBottomClose'
+export * from './PanelLeftOpen'
+export * from './PanelLeftClose'
 
 // Icons for widgets library
 export * from './widgets/Text'
