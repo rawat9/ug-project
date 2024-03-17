@@ -1,18 +1,16 @@
-'use client'
-
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable'
+
 import { Editor } from './_components/editor'
 import { Canvas } from './_components/canvas'
 import { Widgets } from './_components/widgets'
 import { Properties } from './_components/properties'
-import { elementsAtom } from './_components/canvas/state'
-import { saveCanvas } from '@/lib/data'
-import { useAutosave } from '@/hooks'
-import { useAtomValue } from 'jotai'
+import { State } from './_components/state'
+
+import { Provider as JotaiProvider } from 'jotai'
 
 export default function Page({
   params,
@@ -22,35 +20,28 @@ export default function Page({
   searchParams?: {
     editor?: string
     widgets?: string
+    state?: string
   }
 }) {
-  const elements = useAtomValue(elementsAtom)
-
-  const handleSave = async () => {
-    if (!elements.length) return
-
-    await saveCanvas(params.slug, elements)
-  }
-
-  useAutosave({
-    data: elements,
-    onSave: handleSave,
-  })
-
   return (
     <ResizablePanelGroup
       direction="horizontal"
       autoSaveId="persistance"
-      className="fixed left-12 top-14 z-10 max-h-[calc(100vh_-_3.5rem)] max-w-[calc(100vw_-_3rem)] bg-zinc-50"
+      className="fixed left-12 top-14 z-10 max-h-[calc(100vh_-_3.5rem)] max-w-[calc(100vw_-_3rem)]"
     >
-      <ResizablePanel order={1} defaultSize={80}>
-        <ResizablePanelGroup direction="vertical">
-          <ResizablePanel id="canvas" minSize={60} order={1}>
-            <Canvas />
-          </ResizablePanel>
-          <ResizableHandle />
+      <Widgets isOpen={searchParams?.widgets === 'true'} />
+      <State isOpen={searchParams?.state === 'true'} />
+      <ResizablePanel
+        id="canvas"
+        defaultSize={80}
+        minSize={0}
+        order={1}
+        className="relative"
+      >
+        <Canvas />
+        <JotaiProvider>
           <Editor isOpen={searchParams?.editor === 'true'} />
-        </ResizablePanelGroup>
+        </JotaiProvider>
       </ResizablePanel>
       <ResizableHandle />
       <ResizablePanel
@@ -64,7 +55,6 @@ export default function Page({
       >
         <Properties />
       </ResizablePanel>
-      <Widgets isOpen={searchParams?.widgets === 'true'} />
     </ResizablePanelGroup>
   )
 }

@@ -14,7 +14,7 @@ export default async function Layout({
       <JotaiProvider>
         <Toolbar id={params.slug} />
         <Sidebar />
-        <>{children}</>
+        {children}
       </JotaiProvider>
     </div>
   )

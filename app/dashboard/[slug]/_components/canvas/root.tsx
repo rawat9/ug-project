@@ -1,3 +1,5 @@
+'use client'
+
 import { elementsAtom, useCanvasAtom } from './state'
 import { nanoid } from 'nanoid'
 import { cn } from '@/lib/utils'
@@ -6,13 +8,16 @@ import { BaseElement } from './_components/elements/_base-element'
 import { Layout } from 'react-grid-layout'
 import { Badge } from '@tremor/react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { useClickOutsideSelectedElementButInsideCanvas } from '@/hooks'
-import { useAtom, useSetAtom } from 'jotai'
-import { fetchCanvas } from '@/lib/data'
 import { getElementProps } from '../utils'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { type Element } from './types'
+import {
+  useAutosave,
+  useClickOutsideSelectedElementButInsideCanvas,
+} from '@/hooks'
+import { useSetAtom } from 'jotai'
+import { fetchCanvas, saveCanvas } from '@/lib/data'
 
 export function Canvas() {
   const { replace } = useRouter()
@@ -42,6 +47,18 @@ export function Canvas() {
     }
     fetch()
   }, [set, pathname])
+
+  const handleSave = async () => {
+    if (!elements.length) return
+
+    const id = pathname.split('/')[2] ?? ''
+    await saveCanvas(id, elements)
+  }
+
+  useAutosave({
+    data: elements,
+    onSave: handleSave,
+  })
 
   function onDrop(_layout: Layout[], item: Layout, e: DragEvent) {
     const w = e.dataTransfer?.getData('width')
@@ -137,7 +154,10 @@ export function Canvas() {
   }
 
   return (
-    <main className="h-full w-full font-canvas" id="canvas">
+    <main
+      className="h-full w-full overflow-y-auto bg-zinc-50 p-2 font-canvas"
+      id="canvas"
+    >
       <GridLayout
         onDrop={onDrop}
         layout={layout}
@@ -147,16 +167,15 @@ export function Canvas() {
         onDragStart={onDragStart}
         onResizeStop={onResizeStop}
         innerRef={canvasRef}
-        useCSSTransforms={true}
       >
         {elements.map((element) => (
           <div
             key={element.id}
             className={cn(
-              'relative flex h-full w-full cursor-pointer select-none items-center rounded-md p-2',
+              'relative flex h-full w-full cursor-pointer select-none items-center rounded-md p-2 hover:ring-1 hover:ring-inset hover:ring-blue-400',
               selectedElement?.id === element?.id &&
                 resizableId &&
-                'border border-dashed border-gray-400 ring-1 ring-inset ring-blue-400',
+                'border border-dashed border-blue-500 ring-1 ring-inset',
               resizableId !== element.id && 'react-resizable-hide',
             )}
             tabIndex={0}

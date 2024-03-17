@@ -5,7 +5,7 @@ export function TextWidget() {
   return (
     <Button
       variant="outline"
-      className="flex h-full w-full cursor-grab flex-col items-center gap-4 rounded border p-4"
+      className="group flex h-full w-full cursor-grab flex-col items-center gap-4 rounded-xl border p-4"
       draggable={true}
       unselectable="on"
       onDragStart={(e) => {
@@ -15,7 +15,7 @@ export function TextWidget() {
         e.dataTransfer.setData('height', '1')
       }}
     >
-      <Text className="h-10 w-10" />
+      <Text className="h-10 w-10 duration-500 ease-in-out group-hover:scale-125" />
       <p>Text</p>
     </Button>
   )

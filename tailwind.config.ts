@@ -20,7 +20,7 @@ const config: Config = {
     current: 'currentColor',
     fontFamily: {
       canvas: ['Inter', 'sans-serif'],
-      mono: ['monospace', 'SFMono-Regular'],
+      mono: ['var(--font-jetbrains-mono)'],
     },
     extend: {
       colors: {
