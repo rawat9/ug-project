@@ -1,9 +1,9 @@
 'use client'
 
 import * as React from 'react'
-import { useSetAtom } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { useDebouncedCallback } from 'use-debounce'
-import { queryAtom } from '../state'
+import { activeQueryAtom, queryAtom } from '../state'
 
 import ReactCodeMirror, {
   ReactCodeMirrorRef,
@@ -15,15 +15,16 @@ import { disableGrammarly } from '@/lib/utils'
 
 const CodeEditor = React.forwardRef<ReactCodeMirrorRef, ReactCodeMirrorProps>(
   (_, ref) => {
-    const setQuery = useSetAtom(queryAtom)
+    const activeQuery = useAtomValue(activeQueryAtom)
+    const setQuery = useSetAtom(queryAtom(activeQuery?.name ?? ''))
 
     const dialect = PostgreSQL
     const extensions = [
       dialect.language.data.of({ autocomplete: getExtension }),
     ]
 
-    const handleOnChange = useDebouncedCallback((value?: string) => {
-      setQuery(value || '')
+    const handleOnChange = useDebouncedCallback((value: string) => {
+      setQuery(value)
     }, 600)
 
     return (
@@ -38,6 +39,7 @@ const CodeEditor = React.forwardRef<ReactCodeMirrorRef, ReactCodeMirrorProps>(
           height="100%"
           placeholder="Write your query here"
           className="w-full rounded-md border shadow-sm"
+          value={activeQuery?.sql_query ?? ''}
           ref={ref}
           extensions={[
             sql({

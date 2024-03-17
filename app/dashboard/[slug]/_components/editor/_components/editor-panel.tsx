@@ -30,6 +30,7 @@ import {
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { QueryName } from './query-name'
 import { deleteQuery, updateQuery } from '@/lib/data/queries'
+import { Tables } from '@/types/database'
 
 export function EditorPanel() {
   const queryClient = useQueryClient()
@@ -38,7 +39,7 @@ export function EditorPanel() {
   const resultPanelRef = React.useRef<ImperativePanelHandle>(null)
   const codeEditorRef = React.useRef<ReactCodeMirrorRef>(null)
 
-  const mutation = useMutation({
+  const deleteMutation = useMutation({
     mutationFn: deleteQuery,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['queries'] }),
   })
@@ -50,16 +51,6 @@ export function EditorPanel() {
 
   const [queries, setQueries] = useAtom(queriesAtom)
   const [activeQuery, setActiveQuery] = useAtom(activeQueryAtom)
-
-  if (activeQuery) {
-    codeEditorRef.current?.view?.dispatch({
-      changes: {
-        from: 0,
-        to: codeEditorRef.current?.view?.state.doc.length,
-        insert: activeQuery.query_content ?? '', // TODO: check what the initial value in the editor is when there's a placeholder
-      },
-    })
-  }
 
   const columnDef = React.useMemo(() => {
     return columns.map((column) => ({
@@ -109,8 +100,8 @@ export function EditorPanel() {
         query.id === activeQuery.id ? { ...query, name } : query,
       ),
     )
-    setActiveQuery((prev) => ({ ...prev, name }))
-    updateMutation.mutate({ id: activeQuery.id, name })
+    setActiveQuery((prev) => ({ ...prev, name }) as Tables<'query'>)
+    updateMutation.mutate({ id: activeQuery.id, key: 'name', value: name })
   }
 
   const handleRemove = () => {
@@ -126,7 +117,7 @@ export function EditorPanel() {
     } else {
       setActiveQuery(queries[activeIndex + 1] ?? null)
     }
-    mutation.mutate(activeQuery.id)
+    deleteMutation.mutate(activeQuery.id)
   }
 
   const execute = React.useCallback(async () => {
@@ -144,11 +135,7 @@ export function EditorPanel() {
         <div className="flex p-5">
           <div className="flex flex-1 items-center">
             {activeQuery && (
-              <QueryName
-                id={activeQuery.id}
-                name={activeQuery.name}
-                onRenaming={handleRename}
-              />
+              <QueryName name={activeQuery.name} onRenaming={handleRename} />
             )}
           </div>
           <div className="flex gap-2">

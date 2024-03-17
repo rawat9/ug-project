@@ -10,10 +10,9 @@ import { Tables } from '@/types/database'
 import { ChangeEvent, KeyboardEvent, useCallback, useState } from 'react'
 
 export function QueryName({
-  id,
   name,
   onRenaming,
-}: Pick<Tables<'queries'>, 'id' | 'name'> & {
+}: Pick<Tables<'query'>, 'name'> & {
   onRenaming: (name: string) => void
 }) {
   const [isRenaming, setRenaming] = useState(false)

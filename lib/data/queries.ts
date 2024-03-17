@@ -1,9 +1,10 @@
 import { z } from 'zod'
 import { createSupabaseBrowserClient } from '../supabase/client'
+import { Tables } from '@/types/database'
 
 export const fetchQueries = async () => {
   const supabase = createSupabaseBrowserClient()
-  return supabase.from('queries').select()
+  return supabase.from('query').select()
 }
 
 export const createQuery = async (query: { name: string }) => {
@@ -19,7 +20,7 @@ export const createQuery = async (query: { name: string }) => {
 
   const supabase = createSupabaseBrowserClient()
   return supabase
-    .from('queries')
+    .from('query')
     .insert({
       name: result.data.name,
     })
@@ -27,25 +28,28 @@ export const createQuery = async (query: { name: string }) => {
     .single()
 }
 
-export const updateQuery = async (query: { id: string; name: string }) => {
+export const updateQuery = async (query: {
+  id: string
+  key: keyof Tables<'query'>
+  value: string
+}) => {
   const result = z
     .object({
       id: z.string().uuid(),
-      name: z.string().trim().min(1),
+      value: z.string().trim().min(1),
     })
-    .safeParse({ id: query.id, name: query.name })
+    .safeParse({ id: query.id, value: query.value })
 
   if (!result.success) {
     throw new Error('Invalid parameters')
   }
 
+  const obj = {
+    [`${query.key}`]: result.data.value,
+  }
+
   const supabase = createSupabaseBrowserClient()
-  return supabase
-    .from('queries')
-    .update({
-      name: query.name,
-    })
-    .eq('id', query.id)
+  return supabase.from('query').update(obj).eq('id', query.id)
 }
 
 export const deleteQuery = async (id: string) => {
@@ -56,5 +60,5 @@ export const deleteQuery = async (id: string) => {
   }
 
   const supabase = createSupabaseBrowserClient()
-  return supabase.from('queries').delete().eq('id', id)
+  return supabase.from('query').delete().eq('id', id)
 }
