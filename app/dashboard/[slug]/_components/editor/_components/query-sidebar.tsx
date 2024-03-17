@@ -17,12 +17,10 @@ export function QuerySidebar({
   const setActive = useSetAtom(activeQueryAtom)
 
   return (
-    <div className="flex flex-col gap-3 px-2 py-4">
-      <div>
-        <p className="text-sm font-medium text-slate-600">
-          Queries ({queries.length})
-        </p>
-      </div>
+    <div className="flex h-full flex-col gap-3 overflow-y-auto border-r px-2 py-4">
+      <p className="text-sm font-medium text-slate-600">
+        Queries ({queries.length})
+      </p>
       <div className="space-y-1">
         {queries.map((query) => (
           <Button

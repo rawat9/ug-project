@@ -27,11 +27,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { QueryName } from './query-name'
-import { deleteQuery, fetchQueries, updateQuery } from '@/lib/data/queries'
+import { deleteQuery, updateQuery } from '@/lib/data/queries'
 import { Tables } from '@/types/database'
-import { QuerySidebar } from './query-sidebar'
 import toast from 'react-hot-toast'
 
 export function EditorPanel() {
@@ -43,12 +42,45 @@ export function EditorPanel() {
 
   const deleteMutation = useMutation({
     mutationFn: deleteQuery,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['queries'] }),
+    onSuccess: (_, id) => {
+      setQueries((prev) => prev.filter((query) => query.id !== id))
+      const activeIndex = queries.findIndex((query) => query.id === id)
+
+      if (queries.length - 1 === activeIndex) {
+        setActiveQuery(queries[activeIndex - 1] ?? null)
+      } else {
+        setActiveQuery(queries[activeIndex + 1] ?? null)
+      }
+
+      queryClient.invalidateQueries({ queryKey: ['queries'] })
+    },
+    onError: () => {
+      return toast.error('Error deleting query', {
+        position: 'top-center',
+      })
+    },
   })
 
   const updateMutation = useMutation({
     mutationFn: updateQuery,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['queries'] }),
+    onSuccess: (_, variables) => {
+      setQueries((prev) =>
+        prev.map((query) =>
+          query.id === variables.id
+            ? { ...query, name: variables.value }
+            : query,
+        ),
+      )
+      setActiveQuery(
+        (prev) => ({ ...prev, name: variables.value }) as Tables<'query'>,
+      )
+      queryClient.invalidateQueries({ queryKey: ['queries'] })
+    },
+    onError: () => {
+      return toast.error('Error updating query', {
+        position: 'top-center',
+      })
+    },
   })
 
   const [queries, setQueries] = useAtom(queriesAtom)
@@ -96,29 +128,11 @@ export function EditorPanel() {
 
   const handleRename = (name: string) => {
     if (!activeQuery) return
-
-    setQueries((prev) =>
-      prev.map((query) =>
-        query.id === activeQuery.id ? { ...query, name } : query,
-      ),
-    )
-    setActiveQuery((prev) => ({ ...prev, name }) as Tables<'query'>)
     updateMutation.mutate({ id: activeQuery.id, key: 'name', value: name })
   }
 
-  const handleRemove = () => {
+  const handleDelete = () => {
     if (!activeQuery) return
-
-    setQueries((prev) => prev.filter((query) => query.id !== activeQuery.id))
-    const activeIndex = queries.findIndex(
-      (query) => query.id === activeQuery.id,
-    )
-
-    if (queries.length - 1 === activeIndex) {
-      setActiveQuery(queries[activeIndex - 1] ?? null)
-    } else {
-      setActiveQuery(queries[activeIndex + 1] ?? null)
-    }
     deleteMutation.mutate(activeQuery.id)
   }
 
@@ -161,7 +175,7 @@ export function EditorPanel() {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
-                    onClick={handleRemove}
+                    onClick={handleDelete}
                     variant="ghost"
                     className="h-8 p-1"
                   >

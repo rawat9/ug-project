@@ -49,7 +49,7 @@ export const updateQuery = async (query: {
 }
 
 export const deleteQuery = async (id: string) => {
-  const result = z.string().uuid().safeParse({ id })
+  const result = z.string().uuid().safeParse(id)
 
   if (!result.success) {
     throw new Error('Invalid query id')

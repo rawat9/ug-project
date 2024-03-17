@@ -10,9 +10,12 @@ import { Layout } from 'react-grid-layout'
 import { useEffect, useRef, useState } from 'react'
 import { Badge } from '@tremor/react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { useClickOutsideSelectedElementButInsideCanvas } from '@/hooks'
+import {
+  useAutosave,
+  useClickOutsideSelectedElementButInsideCanvas,
+} from '@/hooks'
 import { useSetAtom } from 'jotai'
-import { fetchCanvas } from '@/lib/data'
+import { fetchCanvas, saveCanvas } from '@/lib/data'
 
 export function Canvas() {
   const { replace } = useRouter()
@@ -42,6 +45,18 @@ export function Canvas() {
     }
     fetch()
   }, [set, pathname])
+
+  const handleSave = async () => {
+    if (!elements.length) return
+
+    const id = pathname.split('/')[2] ?? ''
+    await saveCanvas(id, elements)
+  }
+
+  useAutosave({
+    data: elements,
+    onSave: handleSave,
+  })
 
   function onDrop(_layout: Layout[], item: Layout, e: DragEvent) {
     const w = e.dataTransfer?.getData('width')

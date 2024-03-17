@@ -10,34 +10,19 @@ import { Widgets } from './_components/widgets'
 import { Properties } from './_components/properties'
 import { State } from './_components/state'
 
-import { elementsAtom } from './_components/canvas/state'
-import { saveCanvas } from '@/lib/data'
-import { useAutosave } from '@/hooks'
-import { Provider, useAtomValue } from 'jotai'
+import { Provider as JotaiProvider } from 'jotai'
 
 export default function Page({
+  params,
   searchParams,
 }: {
+  params: { slug: string }
   searchParams?: {
     editor?: string
     widgets?: string
     state?: string
   }
 }) {
-  // const pathname = usePathname()
-  // const elements = useAtomValue(elementsAtom)
-
-  // const handleSave = async () => {
-  //   if (!elements.length) return
-
-  //   await saveCanvas(params.slug, elements)
-  // }
-
-  // useAutosave({
-  //   data: elements,
-  //   onSave: handleSave,
-  // })
-
   return (
     <ResizablePanelGroup
       direction="horizontal"
@@ -54,9 +39,9 @@ export default function Page({
         className="relative"
       >
         <Canvas />
-        <Provider>
+        <JotaiProvider>
           <Editor isOpen={searchParams?.editor === 'true'} />
-        </Provider>
+        </JotaiProvider>
       </ResizablePanel>
       <ResizableHandle />
       <ResizablePanel
