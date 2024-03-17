@@ -15,6 +15,7 @@ import { QueryMenu } from './_components/query-menu'
 import { queriesAtom } from './state'
 import * as React from 'react'
 import { clamp } from '@/lib/utils'
+import { AnimatePresence, motion } from 'framer-motion'
 
 export function Editor({ isOpen }: { isOpen: boolean }) {
   const queries = useAtomValue(queriesAtom)
@@ -49,9 +50,17 @@ export function Editor({ isOpen }: { isOpen: boolean }) {
   }
 
   return (
-    <>
+    <AnimatePresence>
       {isOpen && (
-        <div
+        <motion.div
+          initial={{ opacity: 0, y: '100%' }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: '100%' }}
+          transition={{
+            type: 'tween',
+            ease: 'easeInOut',
+            duration: 0.4,
+          }}
           ref={ref}
           className="absolute bottom-0 z-50 block h-[360px] w-full border-t bg-white shadow-[0px_-2px_5px_-3px_rgba(0,0,0,0.1)]"
         >
@@ -91,8 +100,8 @@ export function Editor({ isOpen }: { isOpen: boolean }) {
               </div>
             </div>
           )}
-        </div>
+        </motion.div>
       )}
-    </>
+    </AnimatePresence>
   )
 }

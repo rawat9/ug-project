@@ -6,10 +6,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { Pencil } from '@/icons'
-import { updateQuery } from '@/lib/data/queries'
 import { Tables } from '@/types/database'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ChangeEvent, KeyboardEvent, useCallback, useState } from 'react'
 
 export function QueryName({
@@ -79,7 +76,6 @@ export function QueryName({
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-          <Pencil className="ml-2 h-4 w-4 text-gray-500" />
         </>
       )}
     </>
