@@ -5,9 +5,9 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable'
-import { useAtom } from 'jotai'
+import { useAtom, useSetAtom } from 'jotai'
 import CodeEditor from './code-editor'
-import { activeQueryAtom, editorAtom, queriesAtom } from '../state'
+import { activeQueryAtom, editorAtom, queriesAtom, queryAtom } from '../state'
 import { QueryResultTable } from './query-result-table'
 import { ImperativePanelHandle } from 'react-resizable-panels'
 import { SchemaViewer } from './schema-viewer'
@@ -39,6 +39,9 @@ export function EditorPanel() {
   const { data, error, columns, executionTime } = queryResult
   const resultPanelRef = React.useRef<ImperativePanelHandle>(null)
   const codeEditorRef = React.useRef<ReactCodeMirrorRef>(null)
+  const [queries, setQueries] = useAtom(queriesAtom)
+  const [activeQuery, setActiveQuery] = useAtom(activeQueryAtom)
+  const setQuery = useSetAtom(queryAtom(activeQuery?.name ?? ''))
 
   const deleteMutation = useMutation({
     mutationFn: deleteQuery,
@@ -83,9 +86,6 @@ export function EditorPanel() {
     },
   })
 
-  const [queries, setQueries] = useAtom(queriesAtom)
-  const [activeQuery, setActiveQuery] = useAtom(activeQueryAtom)
-
   const columnDef = React.useMemo(() => {
     return columns.map((column) => ({
       header: column,
@@ -110,20 +110,12 @@ export function EditorPanel() {
       paramTypes: { custom: [{ regex: String.raw`\{\{\s*[\w\.,]+\s*\}\}` }] }, // TODO: complete this
     })
 
-    console.log(
-      Mustache.render(formattedQuery, {
-        user: { name: 'anurag', age: 7 },
-        posts: { title: 'hello' },
-      }),
-    )
+    // Mustache.render(formattedQuery, {
+    //   user: { name: 'anurag', age: 7 },
+    //   posts: { title: 'hello' },
+    // })
 
-    codeEditorRef.current?.view?.dispatch({
-      changes: {
-        from: 0,
-        to: codeEditorRef.current?.view?.state.doc.length,
-        insert: formattedQuery,
-      },
-    })
+    setQuery(formattedQuery)
   }
 
   const handleRename = (name: string) => {

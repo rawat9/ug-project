@@ -4,9 +4,13 @@ import { Button } from '@/components/ui/button'
 import { AddCircle } from '@/icons'
 import { createQuery } from '@/lib/data/queries'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useAtomValue, useSetAtom } from 'jotai'
+import { useSetAtom } from 'jotai'
 import { activeQueryAtom, queriesAtom } from '../state'
+import * as React from 'react'
 import toast from 'react-hot-toast'
+
+import { type Tables } from '@/types/database'
+import { type PostgrestSingleResponse } from '@supabase/supabase-js'
 
 export function CreateNewQuery() {
   const setQueries = useSetAtom(queriesAtom)
@@ -31,7 +35,21 @@ export function CreateNewQuery() {
       className="h-7 px-1"
       variant="ghost"
       onClick={() => {
-        mutation.mutate({ name: 'Untitled' })
+        const defaultName = 'query'
+        const queries = queryClient.getQueryData<
+          PostgrestSingleResponse<Tables<'query'>[]>
+        >(['queries'])
+
+        let startsWithDefault = 0
+        if (queries && queries.data) {
+          startsWithDefault = Math.max(
+            ...queries.data
+              .filter((query) => query.name.startsWith(defaultName))
+              .map((query) => Number(query.name.charAt(defaultName.length))),
+          )
+        }
+
+        mutation.mutate(`query${startsWithDefault + 1}`)
       }}
     >
       <AddCircle className="mr-1 h-5 w-5" />
