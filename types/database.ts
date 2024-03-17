@@ -31,15 +31,7 @@ export type Database = {
           title?: string
           user_id?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: 'dashboard_user_id_fkey'
-            columns: ['user_id']
-            isOneToOne: false
-            referencedRelation: 'users'
-            referencedColumns: ['id']
-          },
-        ]
+        Relationships: []
       }
       integration: {
         Row: {
@@ -60,12 +52,39 @@ export type Database = {
           title?: string
           user_id?: string | null
         }
+        Relationships: []
+      }
+      query: {
+        Row: {
+          created_at: string
+          id: string
+          integration_id: string | null
+          name: string
+          sql_query: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          integration_id?: string | null
+          name?: string | null
+          sql_query?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          integration_id?: string | null
+          name?: string | null
+          sql_query?: string | null
+          user_id?: string | null
+        }
         Relationships: [
           {
-            foreignKeyName: 'integration_user_id_fkey'
-            columns: ['user_id']
+            foreignKeyName: 'public_query_integration_id_fkey'
+            columns: ['integration_id']
             isOneToOne: false
-            referencedRelation: 'users'
+            referencedRelation: 'integration'
             referencedColumns: ['id']
           },
         ]
@@ -75,6 +94,24 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      auth_user_id: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      convert_to_uuid: {
+        Args: {
+          input_value: string
+        }
+        Returns: string
+      }
+      get_default_content: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
+      requesting_user_id: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       search: {
         Args: {
           search_term: string

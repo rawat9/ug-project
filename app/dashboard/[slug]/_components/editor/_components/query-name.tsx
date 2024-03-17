@@ -1,38 +1,38 @@
 'use client'
 
-import { ChangeEvent, KeyboardEvent, useCallback, useState } from 'react'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { updateDashboardTitle } from '@/lib/data'
 import { Tables } from '@/types/database'
+import { ChangeEvent, KeyboardEvent, useCallback, useState } from 'react'
 
-export function ToolbarTitle({
-  id,
-  title,
-}: Pick<Tables<'dashboard'>, 'id' | 'title'>) {
+export function QueryName({
+  name,
+  onRenaming,
+}: Pick<Tables<'query'>, 'name'> & {
+  onRenaming: (name: string) => void
+}) {
   const [isRenaming, setRenaming] = useState(false)
-  const [currentTitle, setCurrentTitle] = useState(title)
-
+  const [currentName, setCurrentName] = useState(name)
   const handleNameChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
-      setCurrentTitle(event.target.value)
+      setCurrentName(event.target.value)
     },
     [],
   )
 
   const handleRenamingCancel = useCallback(() => {
-    setCurrentTitle(title)
+    setCurrentName(name)
     setRenaming(false)
-  }, [title])
+  }, [name])
 
-  const handleRenamingSave = useCallback(async () => {
-    await updateDashboardTitle({ id, title: currentTitle })
+  const handleRenamingSave = useCallback(() => {
+    onRenaming(currentName)
     setRenaming(false)
-  }, [id, currentTitle])
+  }, [onRenaming, currentName])
 
   const handleNameKeyDown = useCallback(
     (event: KeyboardEvent<HTMLInputElement>) => {
@@ -50,12 +50,13 @@ export function ToolbarTitle({
       {isRenaming ? (
         <input
           autoFocus
-          name="title"
+          autoComplete="off"
+          name="name"
           className="p-0 font-medium focus:outline-none"
           onBlur={handleRenamingCancel}
           onKeyDown={handleNameKeyDown}
           onChange={handleNameChange}
-          defaultValue={title}
+          defaultValue={name}
         />
       ) : (
         <>
@@ -66,7 +67,7 @@ export function ToolbarTitle({
                   className="truncate font-medium hover:rounded-sm hover:ring-1"
                   onClick={() => setRenaming(true)}
                 >
-                  {title}
+                  {name}
                 </h3>
               </TooltipTrigger>
               <TooltipContent>

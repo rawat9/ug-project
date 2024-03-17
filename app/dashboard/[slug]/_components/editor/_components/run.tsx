@@ -14,7 +14,7 @@ export function Run({
   return (
     <Button
       variant="outline"
-      className="h-8 text-sm"
+      className="h-8 px-3 text-sm"
       onClick={async () => {
         setLoading(true)
         await executionHandler()

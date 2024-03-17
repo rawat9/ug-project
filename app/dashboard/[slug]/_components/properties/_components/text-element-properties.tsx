@@ -1,3 +1,5 @@
+'use client'
+
 import { Label } from '@/components/ui/label'
 import { useCanvasAtom } from '../../canvas/state'
 import { Element } from '../../canvas/types'
