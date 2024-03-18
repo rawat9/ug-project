@@ -13,10 +13,8 @@ import { State } from './_components/state'
 import { Provider as JotaiProvider } from 'jotai'
 
 export default function Page({
-  params,
   searchParams,
 }: {
-  params: { slug: string }
   searchParams?: {
     editor?: string
     widgets?: string
