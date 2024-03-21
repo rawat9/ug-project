@@ -7,6 +7,7 @@ export * from './Data'
 export * from './Github'
 export * from './Box'
 export * from './ChevronLeft'
+export * from './ChevronRight'
 export * from './ChevronDown'
 export * from './Search'
 export * from './Add'
@@ -36,6 +37,8 @@ export * from './PanelBottomOpen'
 export * from './PanelBottomClose'
 export * from './PanelLeftOpen'
 export * from './PanelLeftClose'
+export * from './ExpandLeft'
+export * from './ExpandRight'
 
 // Icons for widgets library
 export * from './widgets/Text'
@@ -62,3 +65,6 @@ export * from './AlignTop'
 export * from './AlignMiddle'
 
 export * from './Selection'
+
+// Table element properties
+export * from './Sigma'
