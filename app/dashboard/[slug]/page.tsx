@@ -24,7 +24,7 @@ export default function Page({
   return (
     <ResizablePanelGroup
       direction="horizontal"
-      autoSaveId="persistance"
+      autoSaveId="main-layout"
       className="fixed left-12 top-14 z-10 max-h-[calc(100vh_-_3.5rem)] max-w-[calc(100vw_-_3rem)]"
     >
       <Widgets isOpen={searchParams?.widgets === 'true'} />
@@ -37,12 +37,12 @@ export default function Page({
         className="relative"
       >
         <Canvas />
-        <JotaiProvider>
-          <Editor isOpen={searchParams?.editor === 'true'} />
-        </JotaiProvider>
+        {/* <JotaiProvider> */}
+        <Editor isOpen={searchParams?.editor === 'true'} />
+        {/* </JotaiProvider> */}
       </ResizablePanel>
       <ResizableHandle />
-      <ResizablePanel
+      {/* <ResizablePanel
         id="properties"
         order={2}
         defaultSize={20}
@@ -50,9 +50,9 @@ export default function Page({
         minSize={20}
         className="hidden bg-white md:block"
         collapsible
-      >
-        <Properties />
-      </ResizablePanel>
+      > */}
+      <Properties />
+      {/* </ResizablePanel> */}
     </ResizablePanelGroup>
   )
 }

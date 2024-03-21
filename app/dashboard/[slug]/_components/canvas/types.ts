@@ -1,3 +1,11 @@
+import type {
+  ColumnDef,
+  OnChangeFn,
+  SortingState,
+  TableOptions,
+  TableState,
+  VisibilityState,
+} from '@tanstack/react-table'
 import type { TextProps } from '@tremor/react'
 
 type ElementTypes = 'text' | 'table' | 'area-chart' | 'card'
@@ -13,11 +21,16 @@ interface TextElementProps extends Partial<TextProps> {
 
 interface TableElementProps {
   tableHeader: string
-  data: unknown[]
   enablePagination: boolean
   pageSize: number
   enableSearch: boolean
   enableSorting: boolean
+  data: unknown[]
+  columns: ColumnDef<unknown>[]
+  state: Partial<TableState>
+  options: TableOptions<unknown>
+  onSortingChange: OnChangeFn<SortingState>
+  onColumnVisibilityChange: OnChangeFn<VisibilityState>
 }
 
 interface CardElementProps {}
@@ -31,6 +44,7 @@ export interface BaseElement {
   y: number
   width: number
   height: number
+  minHeight: number
 }
 
 export interface TableElement extends BaseElement {
