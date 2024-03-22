@@ -22,10 +22,11 @@ export function getElementProps(type: Element['type']): Element['props'] {
     case 'table':
       return {
         tableHeader: '',
+        dataSource: '',
         data: [],
+        columns: [],
         enablePagination: true,
         pageSize: 10,
-        enableSearch: false,
         enableSorting: true,
       }
     default:

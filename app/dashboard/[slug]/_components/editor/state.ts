@@ -17,12 +17,28 @@ type Editor = {
   executionTime: number
 }
 
-export const editorAtom = atom<Editor>({
+const initialState: Editor = {
   query: '',
   columns: [],
   data: [],
   error: null,
   executionTime: 0,
+}
+
+export const editorAtom = atom(initialState, (get, set, newValue: Editor) => {
+  set(editorAtom, newValue)
+  set(queriesAtom, (prev) => {
+    return prev.map((query) => {
+      if (query.name === get(activeQueryAtom)?.name) {
+        return {
+          ...query,
+          data: newValue.data,
+          columns: newValue.columns,
+        }
+      }
+      return query
+    })
+  })
 })
 
 export const queryAtom = atomFamily((queryName: string) =>
@@ -49,6 +65,11 @@ export const queryAtom = atomFamily((queryName: string) =>
   }),
 )
 
-export const activeQueryAtom = atom<Tables<'query'> | null>(null)
+interface Query extends Tables<'query'> {
+  data?: unknown[]
+  columns?: string[]
+}
 
-export const queriesAtom = atom<Tables<'query'>[]>([])
+export const activeQueryAtom = atom<Query | null>(null)
+
+export const queriesAtom = atom<Query[]>([])

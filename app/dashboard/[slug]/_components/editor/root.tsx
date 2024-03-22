@@ -18,7 +18,11 @@ import { CreateNewQuery } from './_components/create-new-query'
 import * as React from 'react'
 import { clamp } from '@/lib/utils'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from '@/components/ui/resizable'
 import { QuerySidebar } from './_components/query-sidebar'
 import toast from 'react-hot-toast'
 import { useQuery } from '@tanstack/react-query'
@@ -127,7 +131,7 @@ export function Editor({ isOpen }: { isOpen: boolean }) {
             duration: 0.4,
           }}
           ref={ref}
-          className="absolute bottom-0 block h-[360px] w-full border-t bg-white shadow-[0px_-2px_5px_-3px_rgba(0,0,0,0.1)]"
+          className="absolute bottom-0 z-[50] block h-[360px] w-full border-t bg-white shadow-[0px_-2px_5px_-3px_rgba(0,0,0,0.1)]"
         >
           <div
             ref={refTop}
@@ -171,9 +175,10 @@ export function Editor({ isOpen }: { isOpen: boolean }) {
           </div>
           <ResizablePanelGroup direction="horizontal">
             <ResizablePanel
+              id="sidebar"
               defaultSize={20}
-              minSize={20}
               maxSize={20}
+              minSize={15}
               ref={sidebarRef}
               order={1}
               collapsedSize={0}
@@ -191,10 +196,15 @@ export function Editor({ isOpen }: { isOpen: boolean }) {
                 </div>
               )}
             </ResizablePanel>
+            <ResizableHandle />
             {activeQuery ? (
               <EditorPanel />
             ) : (
-              <ResizablePanel className="bg-zinc-50" />
+              <ResizablePanel
+                id="placeholder"
+                order={2}
+                className="bg-zinc-50"
+              />
             )}
           </ResizablePanelGroup>
         </motion.div>

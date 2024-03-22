@@ -1,29 +1,21 @@
 import {
   Card,
-  // Table,
-  // TableBody,
-  // TableCell,
-  // TableHead,
-  // TableHeaderCell,
-  // TableRow,
-} from '@tremor/react'
-import { memo, useMemo, useState } from 'react'
-import { type TableElement as TableElementType } from '../../../types'
-import {
   Table,
   TableBody,
   TableCell,
   TableHead,
-  TableHeader,
+  TableHeaderCell,
   TableRow,
-} from '@/components/ui/table'
+} from '@tremor/react'
+import React, { memo } from 'react'
+import { type TableElement as TableElementType } from '../../../types'
 import {
   ColumnDef,
   ColumnFiltersState,
+  ExpandedState,
   GroupingState,
   PaginationState,
   SortingState,
-  VisibilityState,
   flexRender,
   getCoreRowModel,
   getExpandedRowModel,
@@ -34,228 +26,154 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
-import { CaretDown, CaretSort, CaretUp } from '@/icons'
 import { Filters } from './filters'
+import {
+  CaretDown,
+  CaretSort,
+  CaretUp,
+  ChevronDown,
+  ChevronRight,
+} from '@/icons'
 
-type Row = {
-  firstName: string
-  lastName: string
-  age: number
-  visits: number
-  status: string
-  progress: string
-}
-
-const data: Row[] = [
-  {
-    firstName: 'Marcella',
-    lastName: 'Muller',
-    age: 28,
-    visits: 93,
-    status: 'relationship',
-    progress: '100',
-  },
-  {
-    firstName: 'Dortha',
-    lastName: 'Crist',
-    age: 35,
-    visits: 66,
-    status: 'complicated',
-    progress: '67',
-  },
-  {
-    firstName: 'Eldon',
-    lastName: 'Hane',
-    age: 23,
-    visits: 800,
-    status: 'complicated',
-    progress: '92',
-  },
-  {
-    firstName: 'Justen',
-    lastName: 'Larkin',
-    age: 18,
-    visits: 647,
-    status: 'single',
-    progress: '75',
-  },
-  {
-    firstName: 'Nellie',
-    lastName: 'Zieme',
-    age: 34,
-    visits: 958,
-    status: 'relationship',
-    progress: '60',
-  },
-  {
-    firstName: 'Mikel',
-    lastName: 'Grant',
-    age: 31,
-    visits: 860,
-    status: 'relationship',
-    progress: '71',
-  },
-  {
-    firstName: 'Abigayle',
-    lastName: 'Barrows',
-    age: 22,
-    visits: 89,
-    status: 'relationship',
-    progress: '53',
-  },
-  {
-    firstName: 'Favian',
-    lastName: 'Hagenes',
-    age: 26,
-    visits: 783,
-    status: 'complicated',
-    progress: '39',
-  },
-  {
-    firstName: 'Sigrid',
-    lastName: 'Windler',
-    age: 22,
-    visits: 863,
-    status: 'relationship',
-    progress: '43',
-  },
-  {
-    firstName: 'Zackary',
-    lastName: 'Casper',
-    age: 2,
-    visits: 88,
-    status: 'relationship',
-    progress: '34',
-  },
-  {
-    firstName: 'Kathlyn',
-    lastName: 'Koss',
-    age: 29,
-    visits: 1000,
-    status: 'single',
-    progress: '100',
-  },
-  {
-    firstName: 'Laurie',
-    lastName: 'Kerluke',
-    age: 21,
-    visits: 190,
-    status: 'single',
-    progress: '10',
-  },
-]
-
-const columns: ColumnDef<Row>[] = [
-  {
-    accessorKey: 'firstName',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting()}
-          className="p-0"
-        >
-          <p className="font-semibold">first_name</p>
-          {column.getIsSorted() ? (
-            column.getIsSorted() === 'asc' ? (
-              <CaretUp className="ml-1 h-5 w-5" />
-            ) : (
-              <CaretDown className="ml-1 h-5 w-5" />
-            )
-          ) : (
-            <CaretSort className="ml-1 h-5 w-5" />
-          )}
-        </Button>
-      )
-    },
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue('firstName')}</div>
-    ),
-  },
-  {
-    accessorKey: 'lastName',
-    header: () => <p className="font-semibold">last_name</p>,
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue('lastName')}</div>
-    ),
-  },
-  {
-    accessorKey: 'age',
-    header: () => <p className="font-semibold">age</p>,
-    cell: ({ row }) => <div>{row.getValue('age')}</div>,
-    aggregatedCell: ({ getValue }) =>
-      Math.round(getValue<number>() * 100) / 100,
-    aggregationFn: 'median',
-  },
-  {
-    accessorKey: 'visits',
-    header: () => <p className="font-semibold">visits</p>,
-    cell: ({ row }) => <div>{row.getValue('visits')}</div>,
-    aggregationFn: 'sum',
-  },
-  {
-    accessorKey: 'status',
-    header: () => <p className="font-semibold">status</p>,
-    cell: ({ row }) => <div>{row.getValue('status')}</div>,
-  },
-  {
-    accessorKey: 'progress',
-    header: () => <div className="font-medium">progress</div>,
-    cell: ({ getValue }) => Math.round(getValue<number>() * 100) / 100 + '%',
-    aggregationFn: 'mean',
-    aggregatedCell: ({ getValue }) =>
-      Math.round(getValue<number>() * 100) / 100 + '%',
-  },
-]
+// const columns: ColumnDef<Row>[] = [
+//   {
+//     accessorKey: 'firstName',
+//     header: ({ column }) => {
+//       return (
+//         <Button
+//           variant="ghost"
+//           onClick={() => column.toggleSorting()}
+//           className="p-0"
+//         >
+//           <p className="font-semibold">first_name</p>
+//           {column.getIsSorted() ? (
+//             column.getIsSorted() === 'asc' ? (
+//               <CaretUp className="ml-1 h-5 w-5" />
+//             ) : (
+//               <CaretDown className="ml-1 h-5 w-5" />
+//             )
+//           ) : (
+//             <CaretSort className="ml-1 h-5 w-5" />
+//           )}
+//         </Button>
+//       )
+//     },
+//     cell: ({ row }) => (
+//       <div className="capitalize">{row.getValue('firstName')}</div>
+//     ),
+//   },
+//   {
+//     accessorKey: 'lastName',
+//     header: () => <p className="font-semibold">last_name</p>,
+//     cell: ({ row }) => (
+//       <div className="capitalize">{row.getValue('lastName')}</div>
+//     ),
+//   },
+//   {
+//     accessorKey: 'age',
+//     header: () => <p className="font-semibold">age</p>,
+//     cell: ({ row }) => <div>{row.getValue('age')}</div>,
+//     aggregatedCell: ({ getValue }) =>
+//       Math.round(getValue<number>() * 100) / 100,
+//     aggregationFn: 'median',
+//   },
+//   {
+//     accessorKey: 'visits',
+//     header: () => <p className="font-semibold">visits</p>,
+//     cell: ({ row }) => <div>{row.getValue('visits')}</div>,
+//     aggregationFn: 'sum',
+//   },
+//   {
+//     accessorKey: 'status',
+//     header: () => <p className="font-semibold">status</p>,
+//     cell: ({ row }) => <div>{row.getValue('status')}</div>,
+//   },
+//   {
+//     accessorKey: 'progress',
+//     header: () => <div className="font-medium">progress</div>,
+//     cell: ({ getValue }) => Math.round(getValue<number>() * 100) / 100 + '%',
+//     aggregationFn: 'mean',
+//     aggregatedCell: ({ getValue }) =>
+//       Math.round(getValue<number>() * 100) / 100 + '%',
+//   },
+// ]
 
 const TableElement = memo(({ element }: { element: TableElementType }) => {
-  console.log('TABLE', element)
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = useState({})
-  const [pagination, setPagination] = useState<PaginationState>({
+  const data = element.props.data
+  const columns = element.props.columns
+
+  const columnDef: ColumnDef<unknown>[] = React.useMemo(
+    () =>
+      columns?.map((columnName) => ({
+        accessorKey: columnName,
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              className="p-0"
+              onClick={column.getToggleSortingHandler()}
+            >
+              <p className="font-semibold">{columnName}</p>
+              {column.getCanSort() ? (
+                column.getIsSorted() ? (
+                  column.getIsSorted() === 'asc' ? (
+                    <CaretUp className="ml-1 h-5 w-5" />
+                  ) : (
+                    <CaretDown className="ml-1 h-5 w-5" />
+                  )
+                ) : (
+                  <CaretSort className="ml-1 h-5 w-5" />
+                )
+              ) : null}
+            </Button>
+          )
+        },
+        // aggregationFn: ,
+        cell: ({ row }) => (
+          <div className="capitalize">{row.getValue(columnName)}</div>
+        ),
+      })),
+    [columns],
+  )
+
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    [],
+  )
+  const [expanded, setExpanded] = React.useState<ExpandedState>({})
+  const [grouping, setGrouping] = React.useState<GroupingState>([])
+  const [sorting, setSorting] = React.useState<SortingState>([])
+  const [pagination, setPagination] = React.useState<PaginationState>({
     pageIndex: 0,
-    pageSize: element.props.pageSize,
+    pageSize: 10,
   })
-  const [grouping, setGrouping] = useState<GroupingState>([])
 
   const table = useReactTable({
     data,
-    columns,
-    // enableSorting: element.props.enableSorting,
-    // onGroupingChange: setGrouping,
-    // onColumnFiltersChange: setColumnFilters,
+    columns: columnDef,
     getCoreRowModel: getCoreRowModel(),
-    getExpandedRowModel: getExpandedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
     getGroupedRowModel: getGroupedRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    initialState: {
-      pagination: {
-        pageIndex: 0,
-        pageSize: 10,
-      },
-    },
-    state: {
-      pagination,
-      // grouping,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
-    },
-    debugTable: true,
   })
 
-  const [state, setState] = useState(table.initialState)
-
-  table.setOptions((prev) => ({
-    ...prev,
-    state,
-    onStateChange: setState,
+  table.setOptions((options) => ({
+    ...options,
+    state: {
+      sorting,
+      pagination,
+      columnFilters,
+      grouping,
+      expanded,
+      ...element.props.state,
+    },
+    onExpandedChange: setExpanded,
+    onGroupingChange: setGrouping,
+    onColumnFiltersChange: setColumnFilters,
+    onPaginationChange: setPagination,
+    onSortingChange: setSorting,
+    rowCount: data && data.length,
     enableSorting: element.props.enableSorting,
   }))
 
@@ -268,137 +186,130 @@ const TableElement = memo(({ element }: { element: TableElementType }) => {
         <Filters />
       </div>
 
-      <div className="h-full overflow-auto rounded-md border bg-white">
-        <Table>
-          <TableHeader className="sticky top-0 z-30 bg-slate-100">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="border-b-4">
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead
-                      key={header.id}
-                      className="h-11 border-r last:border-r-0"
+      {!table || !data.length || !columns.length ? (
+        <div className="flex h-full items-center justify-center">
+          <p className="text-slate-500">No data to display</p>
+        </div>
+      ) : (
+        <>
+          <Table
+            style={{ height: '100%' }}
+            className="h-full overflow-auto rounded-md border bg-white"
+          >
+            <TableHead className="sticky top-0 z-30 bg-slate-100">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id} className="border-b-2">
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHeaderCell
+                        key={header.id}
+                        className="border-r px-2 py-1 text-dark-tremor-content last:border-r-0"
+                      >
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
+                      </TableHeaderCell>
+                    )
+                  })}
+                </TableRow>
+              ))}
+            </TableHead>
+            <TableBody>
+              {table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && 'selected'}
+                  className="hover:bg-slate-100"
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell
+                      key={cell.id}
+                      className="border-r px-2 py-1 last:border-r-0"
                     >
-                      {header.isPlaceholder ? null : (
-                        <div>
-                          {header.column.getCanGroup() ? (
-                            // If the header can be grouped, let's add a toggle
-                            <button
-                              {...{
-                                onClick:
-                                  header.column.getToggleGroupingHandler(),
-                                style: {
-                                  cursor: 'pointer',
-                                },
-                              }}
-                            >
-                              {header.column.getIsGrouped()
-                                ? `🛑(${header.column.getGroupedIndex()}) `
-                                : `👊 `}
-                            </button>
-                          ) : null}{' '}
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                        </div>
-                      )}
-                    </TableHead>
-                  )
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && 'selected'}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell
-                    key={cell.id}
-                    className="border-b border-r last:border-r-0"
-                  >
-                    {/* {cell.getIsPlaceholder()
-						? null
-						: flexRender(
-							cell.column.columnDef.cell,
-							cell.getContext(),
-						  )} */}
-                    {cell.getIsGrouped() ? (
-                      // If it's a grouped cell, add an expander and row count
-                      <>
-                        <button
-                          {...{
-                            onClick: row.getToggleExpandedHandler(),
-                            style: {
-                              cursor: row.getCanExpand() ? 'pointer' : 'normal',
-                            },
-                          }}
-                        >
-                          {row.getIsExpanded() ? '👇' : '👉'}{' '}
-                          {flexRender(
+                      {cell.getIsGrouped() ? (
+                        // If it's a grouped cell, add an expander and row count
+                        <>
+                          <button
+                            {...{
+                              onClick: row.getToggleExpandedHandler(),
+                              style: {
+                                cursor: row.getCanExpand()
+                                  ? 'pointer'
+                                  : 'normal',
+                              },
+                            }}
+                            className="flex items-center gap-2"
+                          >
+                            {row.getIsExpanded() ? (
+                              <ChevronDown />
+                            ) : (
+                              <ChevronRight />
+                            )}
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext(),
+                            )}{' '}
+                            ({row.subRows.length})
+                          </button>
+                        </>
+                      ) : cell.getIsAggregated() ? (
+                        // If the cell is aggregated, use the Aggregated
+                        // renderer for cell
+                        flexRender(
+                          cell.column.columnDef.aggregatedCell ??
                             cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )}{' '}
-                          ({row.subRows.length})
-                        </button>
-                      </>
-                    ) : cell.getIsAggregated() ? (
-                      // If the cell is aggregated, use the Aggregated
-                      // renderer for cell
-                      flexRender(
-                        cell.column.columnDef.aggregatedCell ??
+                          cell.getContext(),
+                        )
+                      ) : cell.getIsPlaceholder() ? null : (
+                        flexRender(
                           cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )
-                    ) : cell.getIsPlaceholder() ? null : ( // For cells with repeated values, render null
-                      // Otherwise, just render the regular cell
-                      flexRender(cell.column.columnDef.cell, cell.getContext())
-                    )}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-      <div className="flex h-[4%] items-center justify-end space-x-2 px-2">
-        <div className="flex-1 text-sm text-slate-500">
-          {/* {table.getFilteredSelectedRowModel().rows.length} of{' '}
-			{table.getFilteredRowModel().rows.length} row(s) selected. */}
-          {'Showing ' +
-            table.getPaginationRowModel().rows.length +
-            ' of ' +
-            data.length +
-            ' rows'}
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-6"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <p className="text-xs">
-            Page {table.getState().pagination.pageIndex + 1} of{' '}
-            {table.getPageCount()}
-          </p>
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-6"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
+                          cell.getContext(),
+                        )
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          <div className="flex h-[4%] items-center justify-end space-x-2 px-2">
+            <div className="flex-1 text-sm text-slate-500">
+              {'Showing ' +
+                table?.getPaginationRowModel().rows.length +
+                ' of ' +
+                data.length +
+                ' rows'}
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-6"
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+              >
+                Previous
+              </Button>
+              <p className="text-xs">
+                Page {table.getState().pagination.pageIndex + 1} of{' '}
+                {table.getPageCount()}
+              </p>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-6"
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        </>
+      )}
     </Card>
   )
 })

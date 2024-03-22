@@ -2,23 +2,13 @@ import { Label } from '@/components/ui/label'
 import { useCanvasAtom } from '../../../canvas/state'
 import * as React from 'react'
 import { NumberInput, TextInput } from '@tremor/react'
-import {
-  Add,
-  Eye,
-  EyeOff,
-  Pencil,
-  DragHandle,
-  CaretUp,
-  CaretDown,
-  CaretSort,
-} from '@/icons'
+import { Add, Eye, EyeOff, Pencil, DragHandle } from '@/icons'
 import { Switch } from '@/components/ui/switch'
 import _ from 'lodash'
 
 import { type TableElement } from '../../../canvas/types'
 import { Reorder } from 'framer-motion'
-import { ColumnDef, GroupingState } from '@tanstack/react-table'
-import { Button } from '@/components/ui/button'
+import { GroupingState, VisibilityState } from '@tanstack/react-table'
 import {
   Tooltip,
   TooltipContent,
@@ -27,65 +17,28 @@ import {
 } from '@/components/ui/tooltip'
 import { Grouping } from './grouping'
 import { useAtomValue } from 'jotai'
-import { editorAtom } from '../../../editor/state'
+import { queriesAtom } from '../../../editor/state'
 
 export function TableElementProperties({ element }: { element: TableElement }) {
-  const { tableHeader, pageSize } = element.props
-  console.log('rendering table')
+  const { tableHeader, pageSize, dataSource, columns } = element.props
 
-  const [tableDataValue, setTableDataValue] = React.useState('')
+  const [dataSourceValue, setDataSourceValue] = React.useState(dataSource)
   const [tableHeaderValue, setTableHeaderValue] = React.useState(tableHeader)
   const [pageSizeValue, setPageSizeValue] = React.useState(pageSize)
 
   const { updateElement } = useCanvasAtom()
   const [draggable, setDraggable] = React.useState(false)
 
-  const editor = useAtomValue(editorAtom)
-  const [columns, setColumns] = React.useState(editor.columns)
-
-  const columnDef: ColumnDef<unknown>[] = React.useMemo(
-    () =>
-      columns.map((columnName) => ({
-        accessorKey: columnName,
-        header: ({ column }) => {
-          return (
-            <Button
-              variant="ghost"
-              className="p-0"
-              onClick={column.getToggleSortingHandler()}
-            >
-              <p className="font-semibold">{columnName}</p>
-              {column.getCanSort() ? (
-                column.getIsSorted() ? (
-                  column.getIsSorted() === 'asc' ? (
-                    <CaretUp className="ml-1 h-5 w-5" />
-                  ) : (
-                    <CaretDown className="ml-1 h-5 w-5" />
-                  )
-                ) : (
-                  <CaretSort className="ml-1 h-5 w-5" />
-                )
-              ) : null}
-            </Button>
-          )
-        },
-        // aggregationFn: ,
-        cell: ({ row }) => (
-          <div className="capitalize">{row.getValue(columnName)}</div>
-        ),
-      })),
-    [columns],
-  )
+  const queries = useAtomValue(queriesAtom)
+  const [cols, setCols] = React.useState<string[]>(columns)
 
   React.useEffect(() => {
     updateElement(element.id, {
       ...element,
       props: {
         ...element.props,
-        data: [],
-        columns: [],
         state: {
-          columnOrder: columns,
+          columnOrder: cols,
           columnSizing: {},
           columnSizingInfo: {
             startOffset: null,
@@ -104,7 +57,7 @@ export function TableElementProperties({ element }: { element: TableElement }) {
             top: [],
             bottom: [],
           },
-          columnVisibility: columns.reduce((acc, column) => {
+          columnVisibility: cols.reduce<VisibilityState>((acc, column) => {
             acc[column] = true
             return acc
           }, {}),
@@ -114,24 +67,27 @@ export function TableElementProperties({ element }: { element: TableElement }) {
   }, [columns]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleDataChange(value: string) {
-    setTableDataValue(value)
+    setDataSourceValue(value)
     try {
       const interpolate = /{{\s*([^{}]+?)\s*}}/g
       const match = value.match(interpolate)
 
       if (match) {
         const result = match[0].replace(/{{\s*|\s*}}/g, '')
-        const res = _.result(editor, result)
+        const res = _.result(_.keyBy(queries, 'name'), result) as
+          | { data: unknown[]; columns: string[] }
+          | undefined
         if (res) {
-          // setTableData(res as unknown[])
           updateElement(element.id, {
             ...element,
             props: {
               ...element.props,
-              data: res as unknown[],
-              columns: columnDef,
+              data: res.data,
+              dataSource: value,
+              columns: res.columns,
             },
           })
+          setCols(res.columns)
         }
       }
     } catch {}
@@ -188,7 +144,7 @@ export function TableElementProperties({ element }: { element: TableElement }) {
           ...element.props.state,
           columnVisibility: {
             ...element.props.state.columnVisibility,
-            [column]: !element.props.state.columnVisibility[column],
+            [column]: !element.props.state?.columnVisibility?.[column],
           },
         },
       },
@@ -233,7 +189,7 @@ export function TableElementProperties({ element }: { element: TableElement }) {
             id="data"
             placeholder="{{ getOrders.data }}"
             className="font-mono text-xs placeholder:font-mono"
-            value={tableDataValue}
+            value={dataSourceValue}
             onValueChange={handleDataChange}
           />
         </div>
@@ -251,7 +207,7 @@ export function TableElementProperties({ element }: { element: TableElement }) {
         <Reorder.Group
           axis="y"
           values={columns}
-          onReorder={setColumns}
+          onReorder={setCols}
           className="flex flex-col space-y-2 rounded-lg border py-2"
         >
           {columns.map((column) => (
@@ -337,7 +293,7 @@ export function TableElementProperties({ element }: { element: TableElement }) {
       </div>
       <div className="my-4 h-px bg-gray-200" />
       <Grouping
-        columns={columns}
+        columns={cols}
         value={element.props.state?.grouping as GroupingState}
         handleValueChange={handleGroupingChange}
       />

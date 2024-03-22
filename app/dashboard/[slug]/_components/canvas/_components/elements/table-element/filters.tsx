@@ -24,13 +24,6 @@ export function Filters() {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-96 p-0">
-        {/* <div className="grid gap-4"> */}
-        {/* <div className="space-y-2">
-            <h4 className="font-medium leading-none"></h4>
-            <p className="text-muted-foreground text-sm">
-              Set the dimensions for the layer.
-            </p>
-          </div> */}
         <div className="grid grid-cols-[150px_80px_auto] items-center gap-2 p-3">
           <Select defaultValue="first_name">
             <SelectTrigger>

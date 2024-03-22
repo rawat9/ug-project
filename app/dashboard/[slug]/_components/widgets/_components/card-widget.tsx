@@ -1,7 +1,11 @@
 import { Button } from '@/components/ui/button'
 import { Card } from '@/icons'
+import { useSetAtom } from 'jotai'
+import { draggedWidget } from '../state'
 
 export function CardWidget() {
+  const setDraggedWidget = useSetAtom(draggedWidget)
+
   return (
     <Button
       variant="outline"
@@ -9,6 +13,11 @@ export function CardWidget() {
       draggable={true}
       unselectable="on"
       onDragStart={(e) => {
+        setDraggedWidget({
+          i: 'card',
+          w: 3,
+          h: 4,
+        })
         e.dataTransfer.setData('text/plain', '')
         e.dataTransfer.setData('type', 'card')
         e.dataTransfer.setData('width', '3')

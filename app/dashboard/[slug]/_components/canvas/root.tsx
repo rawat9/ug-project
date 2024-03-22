@@ -16,8 +16,9 @@ import {
   useAutosave,
   useClickOutsideSelectedElementButInsideCanvas,
 } from '@/hooks'
-import { useSetAtom } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { fetchCanvas, saveCanvas } from '@/lib/data'
+import { draggedWidget } from '../widgets/state'
 
 export function Canvas() {
   const { replace } = useRouter()
@@ -36,6 +37,8 @@ export function Canvas() {
 
   const [layout, setLayout] = useState<Layout[]>([])
   const [resizableId, setResizableId] = useState('')
+  const activeWidget = useAtomValue(draggedWidget)
+
   const set = useSetAtom(elementsAtom)
 
   useEffect(() => {
@@ -55,19 +58,21 @@ export function Canvas() {
     await saveCanvas(id, elements)
   }
 
-  useAutosave({
-    data: elements,
-    onSave: handleSave,
-  })
+  // useAutosave({
+  //   data: elements,
+  //   onSave: handleSave,
+  // })
 
   function onDrop(_layout: Layout[], item: Layout, e: DragEvent) {
     const w = e.dataTransfer?.getData('width')
     const h = e.dataTransfer?.getData('height')
+    const minH = e.dataTransfer?.getData('minHeight')
     const type = (e.dataTransfer?.getData('type') ?? '') as Element['type']
     const count = elements.length === 0 ? 1 : elements.length + 1
 
     item.w = w ? parseInt(w) : 1
     item.h = h ? parseInt(h) : 1
+    item.minH = minH ? parseInt(minH) : undefined
     const element = {
       id: nanoid(),
       name: `${type}${count}`,
@@ -75,6 +80,7 @@ export function Canvas() {
       y: item.y,
       width: item.w,
       height: item.h,
+      minHeight: item.minH,
       type,
       props: getElementProps(type),
     } as Element
@@ -98,6 +104,7 @@ export function Canvas() {
       y: element.y,
       w: element.width,
       h: element.height,
+      minH: element.minHeight,
     }
   }
 
@@ -119,6 +126,13 @@ export function Canvas() {
 
     if (params.has('widgets')) {
       params.delete('widgets')
+      replace(`${pathname}?${params.toString()}`, {
+        scroll: false,
+      })
+    }
+
+    if (params.has('state')) {
+      params.delete('state')
       replace(`${pathname}?${params.toString()}`, {
         scroll: false,
       })
@@ -147,6 +161,17 @@ export function Canvas() {
     updateElement(newItem.i, selectedElement)
   }
 
+  function onDropDragOver() {
+    switch (activeWidget?.i) {
+      case 'table':
+        return { w: activeWidget.w, h: activeWidget.h }
+      case 'card':
+        return { w: activeWidget.w, h: activeWidget.h }
+      case 'text':
+        return { w: activeWidget.w, h: activeWidget.h }
+    }
+  }
+
   function remove(id: string) {
     setSelectedElement(null)
     setLayout((prev) => prev.filter((el) => el.i !== id))
@@ -155,45 +180,55 @@ export function Canvas() {
 
   return (
     <main
-      className="h-full w-full overflow-y-auto bg-zinc-50 p-2 font-canvas"
+      className="h-full w-full bg-zinc-100 px-20 py-4 font-canvas"
       id="canvas"
     >
-      <GridLayout
-        onDrop={onDrop}
-        layout={layout}
-        onLayoutChange={onLayoutChange}
-        onDrag={onDrag}
-        onDragStop={onDragStop}
-        onDragStart={onDragStart}
-        onResizeStop={onResizeStop}
-        innerRef={canvasRef}
+      <div
+        className="h-full w-full overflow-auto rounded-sm border bg-zinc-50 shadow-sm"
+        ref={canvasRef}
       >
-        {elements.map((element) => (
-          <div
-            key={element.id}
-            className={cn(
-              'relative flex h-full w-full cursor-pointer select-none items-center rounded-md p-2 hover:ring-1 hover:ring-inset hover:ring-blue-400',
-              selectedElement?.id === element?.id &&
-                resizableId &&
-                'border border-dashed border-blue-500 ring-1 ring-inset',
-              resizableId !== element.id && 'react-resizable-hide',
-            )}
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === 'Backspace') {
-                remove(element.id)
-              }
-            }}
-          >
-            {selectedElement?.id === element.id && resizableId && (
-              <Badge size="xs" className="fixed -left-[1px] -top-[30px]">
-                {element.name}
-              </Badge>
-            )}
-            <BaseElement element={element} />
-          </div>
-        ))}
-      </GridLayout>
+        <GridLayout
+          onDrop={onDrop}
+          layout={layout}
+          onLayoutChange={onLayoutChange}
+          onDrag={onDrag}
+          onDragStop={onDragStop}
+          onDragStart={onDragStart}
+          onResizeStop={onResizeStop}
+          innerRef={canvasRef}
+          onDropDragOver={onDropDragOver}
+        >
+          {elements.map((element) => (
+            <div
+              key={element.id}
+              className={cn(
+                'flex h-full w-full cursor-pointer select-none items-center rounded-md p-1 hover:ring-1 hover:ring-inset hover:ring-blue-400',
+                selectedElement?.id === element?.id &&
+                  resizableId &&
+                  'border border-dashed border-blue-500 ring-1 ring-inset',
+                resizableId !== element.id && 'react-resizable-hide',
+                !selectedElement && 'react-resizable-hide',
+              )}
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Backspace') {
+                  remove(element.id)
+                }
+              }}
+            >
+              {selectedElement?.id === element.id && resizableId && (
+                <Badge
+                  size="sm"
+                  className="fixed -left-[1px] -top-[30px] block shadow-sm"
+                >
+                  {element.name}
+                </Badge>
+              )}
+              <BaseElement element={element} />
+            </div>
+          ))}
+        </GridLayout>
+      </div>
     </main>
   )
 }

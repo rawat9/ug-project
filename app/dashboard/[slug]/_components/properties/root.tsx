@@ -8,18 +8,24 @@ import * as React from 'react'
 
 import { type Element } from '../canvas/types'
 import { ExpandLeft } from '@/icons'
-import { usePrevious } from '@/hooks'
 
 export function Properties() {
   const { selectedElement } = useCanvasAtom()
   const [expanded, setExpanded] = React.useState(false)
-  const previous = usePrevious(selectedElement)
+
+  React.useEffect(() => {
+    if (selectedElement) {
+      setExpanded(true)
+    } else {
+      setExpanded(false)
+    }
+  }, [selectedElement])
 
   return (
     <>
       {expanded ? (
         <div className="absolute right-4 top-4 z-50 block h-[550px] w-[300px] rounded-lg bg-white shadow-md">
-          <div className="flex items-center p-2">
+          <div className="flex h-9 items-center p-2">
             {selectedElement ? (
               <>
                 <div className="flex-1">{selectedElement.name}</div>
@@ -28,7 +34,9 @@ export function Properties() {
                 </button>
               </>
             ) : (
-              <div className="flex-1 text-slate-500">No element selected</div>
+              <div className="flex-1 text-sm text-slate-500">
+                No element selected
+              </div>
             )}
             <button onClick={() => setExpanded(false)}>
               <ExpandRight className="h-5 w-5 text-gray-400 hover:text-gray-600" />

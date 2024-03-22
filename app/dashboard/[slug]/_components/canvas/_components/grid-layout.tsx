@@ -18,6 +18,7 @@ export function GridLayout(props: ReactGridLayoutProps) {
       preventCollision={true}
       compactType={null}
       useCSSTransforms={true}
+      measureBeforeMount={true}
       {...props}
     >
       {props.children}

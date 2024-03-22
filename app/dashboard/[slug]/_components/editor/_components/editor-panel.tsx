@@ -17,7 +17,6 @@ import { Sources } from './sources'
 import { Run } from './run'
 import { ReactCodeMirrorRef } from '@uiw/react-codemirror'
 import { format } from 'sql-formatter'
-import Mustache from 'mustache'
 import { executeQuery } from '@/lib/data'
 
 import * as React from 'react'
@@ -93,12 +92,6 @@ export function EditorPanel() {
     }))
   }, [columns])
 
-  React.useEffect(() => {
-    if ((data.length > 0 || error) && resultPanelRef.current?.isCollapsed()) {
-      resultPanelRef.current?.resize(50)
-    }
-  }, [data, error])
-
   const formatQuery = () => {
     const query = codeEditorRef.current?.view?.state.doc.toString()
     if (!query || query.trim() === '') return
@@ -109,11 +102,6 @@ export function EditorPanel() {
       keywordCase: 'upper',
       paramTypes: { custom: [{ regex: String.raw`\{\{\s*[\w\.,]+\s*\}\}` }] }, // TODO: complete this
     })
-
-    // Mustache.render(formattedQuery, {
-    //   user: { name: 'anurag', age: 7 },
-    //   posts: { title: 'hello' },
-    // })
 
     setQuery(formattedQuery)
   }
@@ -128,18 +116,18 @@ export function EditorPanel() {
     deleteMutation.mutate(activeQuery.id)
   }
 
-  const execute = React.useCallback(async () => {
+  const execute = async () => {
     const query = codeEditorRef.current?.view?.state.doc.toString()
     if (!query || query.trim() === '') return
     const { data, error, columns, executionTime } = await executeQuery(
       query.trim(),
     )
     set({ query, data, error, columns, executionTime })
-  }, [set, codeEditorRef])
+  }
 
   return (
     <>
-      <ResizablePanel order={2} defaultSize={60}>
+      <ResizablePanel id="editor" order={2} defaultSize={60}>
         <div className="flex p-5">
           <div className="flex flex-1 items-center">
             {activeQuery && (
@@ -183,24 +171,18 @@ export function EditorPanel() {
             <Run executionHandler={execute} />
           </div>
         </div>
-        <ResizablePanelGroup direction="vertical">
-          <ResizablePanel
-            id="code-editor"
-            minSize={50}
-            defaultSize={100}
-            order={1}
-          >
+        <ResizablePanelGroup autoSaveId="editor+result" direction="vertical">
+          <ResizablePanel id="code-editor" defaultSize={100} order={1}>
             <CodeEditor ref={codeEditorRef} />
           </ResizablePanel>
-          <ResizableHandle />
+          <ResizableHandle className="cursor-row-resize transition hover:bg-tremor-brand" />
           <ResizablePanel
             id="result"
             order={2}
-            defaultSize={0}
+            defaultSize={60}
             minSize={30}
             ref={resultPanelRef}
             style={{ overflow: 'auto' }}
-            collapsible
           >
             <div className="sticky top-0 z-20 flex h-8 w-full items-center gap-2 border-b bg-white px-4">
               <h1 className="text-sm font-semibold text-slate-600">Result</h1>
@@ -227,7 +209,13 @@ export function EditorPanel() {
         </ResizablePanelGroup>
       </ResizablePanel>
       <ResizableHandle />
-      <ResizablePanel minSize={20} maxSize={40} defaultSize={20} order={3}>
+      <ResizablePanel
+        id="schema-viewer"
+        minSize={20}
+        maxSize={40}
+        defaultSize={20}
+        order={3}
+      >
         <SchemaViewer />
       </ResizablePanel>
     </>

@@ -21,12 +21,12 @@ interface TextElementProps extends Partial<TextProps> {
 
 interface TableElementProps {
   tableHeader: string
+  dataSource: string
   enablePagination: boolean
   pageSize: number
-  enableSearch: boolean
   enableSorting: boolean
   data: unknown[]
-  columns: ColumnDef<unknown>[]
+  columns: string[]
   state: Partial<TableState>
   options: TableOptions<unknown>
   onSortingChange: OnChangeFn<SortingState>
