@@ -3,9 +3,9 @@
 import { elementsAtom, useCanvasAtom } from './state'
 import { nanoid } from 'nanoid'
 import { cn } from '@/lib/utils'
-import { GridLayout } from './_components/grid-layout'
+import GridLayout from './_components/grid-layout'
 import { BaseElement } from './_components/elements/_base-element'
-import { Layout } from 'react-grid-layout'
+import { type Layout } from 'react-grid-layout'
 import { Badge } from '@tremor/react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { getElementProps } from '../utils'
@@ -29,7 +29,6 @@ export function Canvas() {
   const {
     elements,
     addElement,
-    removeElement,
     updateElement,
     selectedElement,
     setSelectedElement,
@@ -49,7 +48,7 @@ export function Canvas() {
       setLayout(elements.map(addNewLayoutItem))
     }
     fetch()
-  }, [set, pathname])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSave = async () => {
     if (!elements.length) return
@@ -169,13 +168,9 @@ export function Canvas() {
         return { w: activeWidget.w, h: activeWidget.h }
       case 'text':
         return { w: activeWidget.w, h: activeWidget.h }
+      default:
+        return { w: 1, h: 1 }
     }
-  }
-
-  function remove(id: string) {
-    setSelectedElement(null)
-    setLayout((prev) => prev.filter((el) => el.i !== id))
-    removeElement(id)
   }
 
   return (
@@ -184,7 +179,7 @@ export function Canvas() {
       id="canvas"
     >
       <div
-        className="h-full w-full overflow-auto rounded-sm border bg-zinc-50 shadow-sm"
+        className="h-full w-full overflow-y-auto rounded-sm border bg-zinc-50 shadow-sm"
         ref={canvasRef}
       >
         <GridLayout
@@ -209,12 +204,6 @@ export function Canvas() {
                 resizableId !== element.id && 'react-resizable-hide',
                 !selectedElement && 'react-resizable-hide',
               )}
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === 'Backspace') {
-                  remove(element.id)
-                }
-              }}
             >
               {selectedElement?.id === element.id && resizableId && (
                 <Badge

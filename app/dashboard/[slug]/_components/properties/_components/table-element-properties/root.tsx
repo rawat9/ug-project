@@ -1,36 +1,31 @@
 import { Label } from '@/components/ui/label'
 import { useCanvasAtom } from '../../../canvas/state'
 import * as React from 'react'
-import { NumberInput, TextInput } from '@tremor/react'
-import { Add, Eye, EyeOff, Pencil, DragHandle } from '@/icons'
+import { TextInput } from '@tremor/react'
 import { Switch } from '@/components/ui/switch'
-import _ from 'lodash'
+import lodashKeyBy from 'lodash/keyBy'
+import lodashResult from 'lodash/result'
 
 import { type TableElement } from '../../../canvas/types'
-import { Reorder } from 'framer-motion'
-import { GroupingState, VisibilityState } from '@tanstack/react-table'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+import { VisibilityState } from '@tanstack/react-table'
 import { Grouping } from './grouping'
+import { Columns } from './columns'
+import { Pagination } from './pagination'
+
 import { useAtomValue } from 'jotai'
 import { queriesAtom } from '../../../editor/state'
 
 export function TableElementProperties({ element }: { element: TableElement }) {
-  const { tableHeader, pageSize, dataSource, columns } = element.props
+  const { tableHeader, pageSize, dataSource } = element.props
 
   const [dataSourceValue, setDataSourceValue] = React.useState(dataSource)
   const [tableHeaderValue, setTableHeaderValue] = React.useState(tableHeader)
   const [pageSizeValue, setPageSizeValue] = React.useState(pageSize)
 
   const { updateElement } = useCanvasAtom()
-  const [draggable, setDraggable] = React.useState(false)
 
   const queries = useAtomValue(queriesAtom)
-  const [cols, setCols] = React.useState<string[]>(columns)
+  const [cols, setCols] = React.useState<string[]>([])
 
   React.useEffect(() => {
     updateElement(element.id, {
@@ -64,30 +59,42 @@ export function TableElementProperties({ element }: { element: TableElement }) {
         },
       },
     })
-  }, [columns]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [cols]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleDataChange(value: string) {
     setDataSourceValue(value)
+    updateElement(element.id, {
+      ...element,
+      props: {
+        ...element.props,
+        dataSource: value,
+      },
+    })
     try {
       const interpolate = /{{\s*([^{}]+?)\s*}}/g
       const match = value.match(interpolate)
 
       if (match) {
-        const result = match[0].replace(/{{\s*|\s*}}/g, '')
-        const res = _.result(_.keyBy(queries, 'name'), result) as
-          | { data: unknown[]; columns: string[] }
+        const result = lodashResult(
+          lodashKeyBy(queries, 'name'),
+          match[0].replace(/{{\s*|\s*}}/g, ''),
+        ) as
+          | {
+              data: unknown[]
+              columns: { id: string; name: string; dtype: string }[]
+            }
           | undefined
-        if (res) {
+
+        if (result) {
           updateElement(element.id, {
             ...element,
             props: {
               ...element.props,
-              data: res.data,
-              dataSource: value,
-              columns: res.columns,
+              data: result.data,
+              columns: result.columns,
             },
           })
-          setCols(res.columns)
+          setCols(result.columns.map((c) => c.name))
         }
       }
     } catch {}
@@ -165,7 +172,7 @@ export function TableElementProperties({ element }: { element: TableElement }) {
   }
 
   return (
-    <div className="flex h-full flex-col gap-1">
+    <div className="flex flex-col gap-1">
       <div className="flex flex-col gap-2 px-4">
         <div className="mb-3">
           <Label htmlFor="header" className="text-xs text-slate-500">
@@ -180,14 +187,14 @@ export function TableElementProperties({ element }: { element: TableElement }) {
           />
         </div>
         <div>
-          <Label htmlFor="data" className="text-xs text-slate-500">
+          <Label htmlFor="data-source" className="text-xs text-slate-500">
             Table data
           </Label>
           <TextInput
             type="text"
             autoComplete="off"
-            id="data"
-            placeholder="{{ getOrders.data }}"
+            id="data-source"
+            placeholder="{{ getOrders }}"
             className="font-mono text-xs placeholder:font-mono"
             value={dataSourceValue}
             onValueChange={handleDataChange}
@@ -195,63 +202,13 @@ export function TableElementProperties({ element }: { element: TableElement }) {
         </div>
       </div>
       <div className="my-4 h-px bg-gray-200" />
-      <div className="flex flex-col gap-2 px-4">
-        <div className="mb-1 flex items-center justify-between">
-          <h4 className="text-sm font-medium text-slate-500">
-            Columns ({columns.length})
-          </h4>
-          <button type="button" className="text-sm">
-            <Add className="h-4 w-4" />
-          </button>
-        </div>
-        <Reorder.Group
-          axis="y"
-          values={columns}
-          onReorder={setCols}
-          className="flex flex-col space-y-2 rounded-lg border py-2"
-        >
-          {columns.map((column) => (
-            <Reorder.Item key={column} value={column} dragListener={draggable}>
-              <div className="flex items-center justify-center px-2">
-                <DragHandle
-                  key={column}
-                  className="mr-1 h-4 w-4 cursor-grab"
-                  onMouseEnter={() => setDraggable(true)}
-                  onMouseLeave={() => setDraggable(false)}
-                />
-                <span className="flex-grow text-sm">{column}</span>
-                <div className="flex gap-2">
-                  <TooltipProvider delayDuration={0}>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button
-                          className="cursor-pointer"
-                          onClick={() => handleColumnVisibility(column)}
-                        >
-                          {element.props.state?.columnVisibility?.[column] ? (
-                            <Eye className="h-4 w-4 text-gray-400" />
-                          ) : (
-                            <EyeOff className="h-4 w-4 text-gray-400" />
-                          )}
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent side="left">
-                        {element.props.state?.columnVisibility?.[column] ? (
-                          <p>Hide</p>
-                        ) : (
-                          <p>Unhide</p>
-                        )}
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                  <Pencil className="h-4 w-4 text-gray-400" />
-                </div>
-              </div>
-            </Reorder.Item>
-          ))}
-        </Reorder.Group>
-      </div>
-      <div className="my-3 h-px bg-gray-200" />
+      <Columns
+        columns={cols}
+        setCols={setCols}
+        columnVisibility={element.props.state?.columnVisibility}
+        handleColumnVisibility={handleColumnVisibility}
+      />
+      <div className="my-4 h-px bg-gray-200" />
       <h3 className="mb-4 px-4 text-sm font-medium text-slate-500">Sorting</h3>
       <div className="flex items-center justify-between px-4">
         <label className="block text-sm" htmlFor="enable-sorting">
@@ -264,38 +221,17 @@ export function TableElementProperties({ element }: { element: TableElement }) {
         />
       </div>
       <div className="my-4 h-px bg-gray-200" />
-      <h3 className="mb-4 px-4 text-sm font-medium text-slate-500">
-        Pagination
-      </h3>
-      <div className="flex items-center justify-between px-4">
-        <label className="text-sm" htmlFor="enable-pagination">
-          Enable pagination
-        </label>
-        <Switch
-          id="enable-pagination"
-          defaultChecked={element.props.enablePagination}
-          onCheckedChange={handleEnablePagination}
-        />
-      </div>
-      <div className="mt-3 grid grid-cols-3 items-center gap-4 px-4">
-        <label htmlFor="pageSize" className="text-sm">
-          Page Size
-        </label>
-        <NumberInput
-          autoComplete="off"
-          min={10}
-          step={10}
-          id="pageSize"
-          value={pageSizeValue}
-          onValueChange={handlePageSizeChange}
-          className="col-span-2"
-        />
-      </div>
+      <Pagination
+        defaultEnablePagination={element.props.enablePagination}
+        handleEnablePagination={handleEnablePagination}
+        pageSizeValue={pageSizeValue}
+        handlePageSizeChange={handlePageSizeChange}
+      />
       <div className="my-4 h-px bg-gray-200" />
       <Grouping
         columns={cols}
-        value={element.props.state?.grouping as GroupingState}
-        handleValueChange={handleGroupingChange}
+        groups={element.props.state?.grouping}
+        handleGroupingChange={handleGroupingChange}
       />
     </div>
   )

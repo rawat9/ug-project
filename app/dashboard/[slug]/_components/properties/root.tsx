@@ -10,7 +10,7 @@ import { type Element } from '../canvas/types'
 import { ExpandLeft } from '@/icons'
 
 export function Properties() {
-  const { selectedElement } = useCanvasAtom()
+  const { selectedElement, setSelectedElement, removeElement } = useCanvasAtom()
   const [expanded, setExpanded] = React.useState(false)
 
   React.useEffect(() => {
@@ -21,6 +21,13 @@ export function Properties() {
     }
   }, [selectedElement])
 
+  function handleRemove() {
+    if (selectedElement) {
+      removeElement(selectedElement.id)
+      setSelectedElement(null)
+    }
+  }
+
   return (
     <>
       {expanded ? (
@@ -29,7 +36,7 @@ export function Properties() {
             {selectedElement ? (
               <>
                 <div className="flex-1">{selectedElement.name}</div>
-                <button>
+                <button onClick={handleRemove}>
                   <Delete className="mr-1 h-5 w-5 text-gray-400 hover:text-gray-600" />
                 </button>
               </>
