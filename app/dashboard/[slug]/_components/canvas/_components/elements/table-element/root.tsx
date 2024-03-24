@@ -35,104 +35,44 @@ import {
   ChevronRight,
 } from '@/icons'
 
-// const columns: ColumnDef<Row>[] = [
-//   {
-//     accessorKey: 'firstName',
-//     header: ({ column }) => {
-//       return (
-//         <Button
-//           variant="ghost"
-//           onClick={() => column.toggleSorting()}
-//           className="p-0"
-//         >
-//           <p className="font-semibold">first_name</p>
-//           {column.getIsSorted() ? (
-//             column.getIsSorted() === 'asc' ? (
-//               <CaretUp className="ml-1 h-5 w-5" />
-//             ) : (
-//               <CaretDown className="ml-1 h-5 w-5" />
-//             )
-//           ) : (
-//             <CaretSort className="ml-1 h-5 w-5" />
-//           )}
-//         </Button>
-//       )
-//     },
-//     cell: ({ row }) => (
-//       <div className="capitalize">{row.getValue('firstName')}</div>
-//     ),
-//   },
-//   {
-//     accessorKey: 'lastName',
-//     header: () => <p className="font-semibold">last_name</p>,
-//     cell: ({ row }) => (
-//       <div className="capitalize">{row.getValue('lastName')}</div>
-//     ),
-//   },
-//   {
-//     accessorKey: 'age',
-//     header: () => <p className="font-semibold">age</p>,
-//     cell: ({ row }) => <div>{row.getValue('age')}</div>,
-//     aggregatedCell: ({ getValue }) =>
-//       Math.round(getValue<number>() * 100) / 100,
-//     aggregationFn: 'median',
-//   },
-//   {
-//     accessorKey: 'visits',
-//     header: () => <p className="font-semibold">visits</p>,
-//     cell: ({ row }) => <div>{row.getValue('visits')}</div>,
-//     aggregationFn: 'sum',
-//   },
-//   {
-//     accessorKey: 'status',
-//     header: () => <p className="font-semibold">status</p>,
-//     cell: ({ row }) => <div>{row.getValue('status')}</div>,
-//   },
-//   {
-//     accessorKey: 'progress',
-//     header: () => <div className="font-medium">progress</div>,
-//     cell: ({ getValue }) => Math.round(getValue<number>() * 100) / 100 + '%',
-//     aggregationFn: 'mean',
-//     aggregatedCell: ({ getValue }) =>
-//       Math.round(getValue<number>() * 100) / 100 + '%',
-//   },
-// ]
-
 const TableElement = memo(({ element }: { element: TableElementType }) => {
   const data = element.props.data
   const columns = element.props.columns
 
   const columnDef: ColumnDef<unknown>[] = React.useMemo(
     () =>
-      columns?.map((columnName) => ({
-        accessorKey: columnName,
-        header: ({ column }) => {
-          return (
-            <Button
-              variant="ghost"
-              className="p-0"
-              onClick={column.getToggleSortingHandler()}
-            >
-              <p className="font-semibold">{columnName}</p>
-              {column.getCanSort() ? (
-                column.getIsSorted() ? (
-                  column.getIsSorted() === 'asc' ? (
-                    <CaretUp className="ml-1 h-5 w-5" />
-                  ) : (
-                    <CaretDown className="ml-1 h-5 w-5" />
-                  )
-                ) : (
-                  <CaretSort className="ml-1 h-5 w-5" />
-                )
-              ) : null}
-            </Button>
-          )
-        },
-        // aggregationFn: ,
-        cell: ({ row }) => (
-          <div className="capitalize">{row.getValue(columnName)}</div>
-        ),
-      })),
+      columns.map(
+        (col) =>
+          ({
+            id: col.name,
+            accessorKey: col.name,
+            header: ({ column }) => {
+              return (
+                <Button
+                  variant="ghost"
+                  className="p-0"
+                  onClick={column.getToggleSortingHandler()}
+                >
+                  <p className="font-semibold">{col.name}</p>
+                  {column.getCanSort() &&
+                    (column.getIsSorted() ? (
+                      column.getIsSorted() === 'asc' ? (
+                        <CaretUp className="ml-1 h-5 w-5" />
+                      ) : (
+                        <CaretDown className="ml-1 h-5 w-5" />
+                      )
+                    ) : (
+                      <CaretSort className="ml-1 h-5 w-5" />
+                    ))}
+                </Button>
+              )
+            },
+            aggregationFn: 'auto',
+            cell: ({ row }) => (
+              <div className="capitalize">{row.getValue(col.name)}</div>
+            ),
+          }) satisfies ColumnDef<unknown>,
+      ),
     [columns],
   )
 

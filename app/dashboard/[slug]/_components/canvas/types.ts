@@ -1,5 +1,5 @@
+import { Column } from '@/types'
 import type {
-  ColumnDef,
   OnChangeFn,
   SortingState,
   TableOptions,
@@ -26,7 +26,7 @@ interface TableElementProps {
   pageSize: number
   enableSorting: boolean
   data: unknown[]
-  columns: string[]
+  columns: Column[]
   state: Partial<TableState>
   options: TableOptions<unknown>
   onSortingChange: OnChangeFn<SortingState>

@@ -8,7 +8,6 @@ import {
 export function SchemaViewer() {
   return (
     <div className="h-full overflow-y-scroll">
-      <h1 className="p-3 text-sm text-gray-500">Related tables</h1>
       <div className="flex h-full flex-col space-y-2 px-4">
         <Accordion type="multiple">
           <AccordionItem value="item-1">

@@ -10,7 +10,7 @@ export function Grouping({
   handleGroupingChange,
 }: {
   columns: string[]
-  groups?: GroupingState
+  groups: GroupingState
   handleGroupingChange: (value: string[]) => void
 }) {
   const [aggregatedValues, setAggegatedValues] = React.useState<string[]>([])
@@ -81,7 +81,7 @@ export function Grouping({
           </Listbox>
         </div>
         <div className="flex flex-col gap-1 rounded-lg border border-dashed bg-neutral-50 p-2">
-          {!groups ? (
+          {!groups.length ? (
             <p className="text-center align-bottom text-sm text-slate-400">
               Add fields here to group
             </p>

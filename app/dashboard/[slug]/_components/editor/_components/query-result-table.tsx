@@ -30,7 +30,7 @@ export function QueryResultTable({
 
   return (
     <Table>
-      <TableHeader className="sticky top-8 z-30 bg-slate-100">
+      <TableHeader className="sticky top-0 z-30 bg-slate-100">
         {table.getHeaderGroups().map((headerGroup) => (
           <TableRow key={headerGroup.id}>
             {headerGroup.headers.map((header) => {

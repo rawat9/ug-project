@@ -14,6 +14,7 @@ import { Pagination } from './pagination'
 
 import { useAtomValue } from 'jotai'
 import { queriesAtom } from '../../../editor/state'
+import { Column } from '@/types'
 
 export function TableElementProperties({ element }: { element: TableElement }) {
   const { tableHeader, pageSize, dataSource } = element.props
@@ -81,7 +82,7 @@ export function TableElementProperties({ element }: { element: TableElement }) {
         ) as
           | {
               data: unknown[]
-              columns: { id: string; name: string; dtype: string }[]
+              columns: Column[]
             }
           | undefined
 
@@ -201,14 +202,14 @@ export function TableElementProperties({ element }: { element: TableElement }) {
           />
         </div>
       </div>
-      <div className="my-4 h-px bg-gray-200" />
+      <div className="my-4 bg-gray-200" />
       <Columns
         columns={cols}
         setCols={setCols}
         columnVisibility={element.props.state?.columnVisibility}
         handleColumnVisibility={handleColumnVisibility}
       />
-      <div className="my-4 h-px bg-gray-200" />
+      <div className="my-3 bg-gray-200" />
       <h3 className="mb-4 px-4 text-sm font-medium text-slate-500">Sorting</h3>
       <div className="flex items-center justify-between px-4">
         <label className="block text-sm" htmlFor="enable-sorting">
@@ -220,17 +221,17 @@ export function TableElementProperties({ element }: { element: TableElement }) {
           onCheckedChange={handleEnableSorting}
         />
       </div>
-      <div className="my-4 h-px bg-gray-200" />
+      <div className="my-4 bg-gray-200" />
       <Pagination
         defaultEnablePagination={element.props.enablePagination}
         handleEnablePagination={handleEnablePagination}
         pageSizeValue={pageSizeValue}
         handlePageSizeChange={handlePageSizeChange}
       />
-      <div className="my-4 h-px bg-gray-200" />
+      <div className="my-4 bg-gray-200" />
       <Grouping
         columns={cols}
-        groups={element.props.state?.grouping}
+        groups={element.props.state?.grouping ?? []}
         handleGroupingChange={handleGroupingChange}
       />
     </div>
