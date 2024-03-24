@@ -29,8 +29,6 @@ interface TableElementProps {
   columns: Column[]
   state: Partial<TableState>
   options: TableOptions<unknown>
-  onSortingChange: OnChangeFn<SortingState>
-  onColumnVisibilityChange: OnChangeFn<VisibilityState>
 }
 
 interface CardElementProps {}
