@@ -161,15 +161,13 @@ export function Canvas() {
   }
 
   function onDropDragOver() {
-    switch (activeWidget?.i) {
-      case 'table':
-        return { w: activeWidget.w, h: activeWidget.h }
-      case 'card':
-        return { w: activeWidget.w, h: activeWidget.h }
-      case 'text':
-        return { w: activeWidget.w, h: activeWidget.h }
-      default:
-        return { w: 1, h: 1 }
+    if (!activeWidget) {
+      return { w: 1, h: 1 }
+    }
+
+    return {
+      w: activeWidget.w,
+      h: activeWidget.h,
     }
   }
 

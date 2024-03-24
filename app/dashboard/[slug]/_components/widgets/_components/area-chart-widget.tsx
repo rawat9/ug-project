@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { Chart } from '@/icons'
+import { AreaChart } from '@/icons'
 
 export function AreaChartWidget() {
   return (
@@ -15,7 +15,7 @@ export function AreaChartWidget() {
         e.dataTransfer.setData('height', '10')
       }}
     >
-      <Chart className="h-10 w-10 duration-500 ease-in-out group-hover:scale-125" />
+      <AreaChart className="h-10 w-10 duration-500 ease-in-out group-hover:scale-125" />
       <p>Area Chart</p>
     </Button>
   )

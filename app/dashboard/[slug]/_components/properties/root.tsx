@@ -2,12 +2,15 @@
 
 import { Delete, ExpandRight, Selection } from '@/icons'
 import { useCanvasAtom } from '../canvas/state'
-import { TextElementProperties } from './_components/text-element-properties'
-import { TableElementProperties } from './_components/table-element-properties/root'
 import * as React from 'react'
 
 import { type Element } from '../canvas/types'
 import { ExpandLeft } from '@/icons'
+
+import { TextElementProperties } from './_components/text-element-properties'
+import { TableElementProperties } from './_components/table-element-properties/root'
+import { LineChartElementProperties } from './_components/line-chart-element-properties'
+import { BarChartElementProperties } from './_components/bar-chart-element-properties'
 
 export function Properties() {
   const { selectedElement, setSelectedElement, removeElement } = useCanvasAtom()
@@ -87,6 +90,10 @@ function BaseProperties({ element }: { element: Element | null }) {
       return <div>Card properties</div>
     case 'area-chart':
       return <div>Area chart properties</div>
+    case 'line-chart':
+      return <LineChartElementProperties element={element} />
+    case 'bar-chart':
+      return <BarChartElementProperties element={element} />
     default:
       throw new Error('Invalid type')
   }

@@ -1,14 +1,14 @@
 import { Column } from '@/types'
-import type {
-  OnChangeFn,
-  SortingState,
-  TableOptions,
-  TableState,
-  VisibilityState,
-} from '@tanstack/react-table'
+import type { TableOptions, TableState } from '@tanstack/react-table'
 import type { TextProps } from '@tremor/react'
 
-type ElementTypes = 'text' | 'table' | 'area-chart' | 'card'
+type ElementTypes =
+  | 'text'
+  | 'table'
+  | 'area-chart'
+  | 'card'
+  | 'line-chart'
+  | 'bar-chart'
 
 interface TextElementProps extends Partial<TextProps> {
   value: string
@@ -34,6 +34,17 @@ interface TableElementProps {
 interface CardElementProps {}
 
 interface AreaChartElementProps {}
+
+interface LineChartElementProps {
+  header: string
+  data: unknown[]
+  xAxis: string
+  yAxis: string
+}
+
+interface BarChartElementProps {
+  header: string
+}
 
 export interface BaseElement {
   id: string
@@ -65,11 +76,23 @@ export interface AreaChartElement extends BaseElement {
   props: AreaChartElementProps
 }
 
+export interface LineChartElement extends BaseElement {
+  type: 'line-chart'
+  props: LineChartElementProps
+}
+
+export interface BarChartElement extends BaseElement {
+  type: 'bar-chart'
+  props: BarChartElementProps
+}
+
 export type Element =
   | TextElement
   | TableElement
   | CardElement
   | AreaChartElement
+  | LineChartElement
+  | BarChartElement
 
 export interface Canvas {
   selectedElement: Element | null

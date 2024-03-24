@@ -8,6 +8,8 @@ import { TableWidget } from './_components/table-widget'
 import { Cross } from '@/icons'
 import { AnimatePresence, motion } from 'framer-motion'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { LineChartWidget } from './_components/line-chart-widget'
+import { BarChartWidget } from './_components/bar-chart-widget'
 
 export function Widgets({ isOpen }: { isOpen: boolean }) {
   const searchParams = useSearchParams()
@@ -49,8 +51,10 @@ export function Widgets({ isOpen }: { isOpen: boolean }) {
               <div className="mt-6 grid grid-cols-2 gap-3">
                 <TextWidget />
                 <CardWidget />
-                <AreaChartWidget />
                 <TableWidget />
+                <AreaChartWidget />
+                <LineChartWidget />
+                <BarChartWidget />
               </div>
             </div>
           </div>

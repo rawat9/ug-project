@@ -44,7 +44,9 @@ export * from './ExpandRight'
 export * from './widgets/Text'
 export * from './widgets/Button'
 export * from './widgets/Table'
-export * from './widgets/Chart'
+export * from './widgets/LineChart'
+export * from './widgets/AreaChart'
+export * from './widgets/BarChart'
 export * from './widgets/Card'
 
 // Icons for editor

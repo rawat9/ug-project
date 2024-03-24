@@ -29,6 +29,10 @@ export function getElementProps(type: Element['type']): Element['props'] {
         pageSize: 10,
         enableSorting: true,
       }
+    case 'line-chart':
+      return {}
+    case 'bar-chart':
+      return {}
     default:
       throw new Error(`Invalid type: ${type}`)
   }
