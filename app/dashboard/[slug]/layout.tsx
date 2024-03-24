@@ -1,6 +1,8 @@
 import { Toolbar } from './_components/toolbar'
 import { Sidebar } from './_components/sidebar'
 import { Provider as JotaiProvider } from 'jotai'
+import { Suspense } from 'react'
+import { Loading } from './_components/skeleton-loader'
 
 export default async function Layout({
   children,
@@ -12,9 +14,11 @@ export default async function Layout({
   return (
     <div className="m-0 min-h-screen overflow-hidden">
       <JotaiProvider>
-        <Toolbar id={params.slug} />
-        <Sidebar />
-        {children}
+        <Suspense fallback={<Loading />}>
+          <Toolbar id={params.slug} />
+          <Sidebar />
+          {children}
+        </Suspense>
       </JotaiProvider>
     </div>
   )

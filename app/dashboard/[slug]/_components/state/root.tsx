@@ -13,6 +13,7 @@ import { useAtomValue } from 'jotai'
 import { elementsAtom } from '../canvas/state'
 import { AnimatePresence, motion } from 'framer-motion'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { queriesAtom } from '../editor/state'
 
 export function State({ isOpen }: { isOpen: boolean }) {
   const searchParams = useSearchParams()
@@ -20,6 +21,7 @@ export function State({ isOpen }: { isOpen: boolean }) {
   const router = useRouter()
   const pathname = usePathname()
   const elements = useAtomValue(elementsAtom)
+  const queries = useAtomValue(queriesAtom)
 
   const handleCollapse = () => {
     params.delete('state')
@@ -30,14 +32,13 @@ export function State({ isOpen }: { isOpen: boolean }) {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          initial={{ opacity: 0, x: '-100%' }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: '-100%' }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
           transition={{
-            type: 'tween',
             duration: 0.2,
           }}
-          className="absolute left-2 top-2 z-50 block h-[550px] w-[300px] rounded-md bg-white shadow-md"
+          className="absolute left-4 top-4 z-50 block h-[550px] w-[300px] rounded-md bg-white shadow-md"
         >
           <div className="h-full pb-1">
             <div className="flex items-center justify-between p-4">
@@ -56,12 +57,12 @@ export function State({ isOpen }: { isOpen: boolean }) {
                     Widgets
                   </AccordionTrigger>
                   <AccordionContent className="py-2">
-                    {elements.map((el) => (
+                    {elements.map((element) => (
                       <JsonView
-                        key={el.id}
-                        value={el}
+                        key={element.id}
+                        value={element}
                         collapsed={true}
-                        keyName={el.name}
+                        keyName={element.name}
                         displayDataTypes={false}
                         displayObjectSize={false}
                         style={{ fontSize: '0.845rem', fontFamily: 'inherit' }}
@@ -79,18 +80,26 @@ export function State({ isOpen }: { isOpen: boolean }) {
                     Queries
                   </AccordionTrigger>
                   <AccordionContent className="py-2">
-                    <div className="flex justify-between">
-                      <span>id</span>
-                      <span className="text-gray-500">integer</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>age</span>
-                      <span className="text-gray-500">text</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>name</span>
-                      <span className="text-gray-500">text</span>
-                    </div>
+                    {queries.map((query) => (
+                      <JsonView
+                        key={query.id}
+                        keyName={query.name}
+                        value={{
+                          name: query.name,
+                          data: query.data,
+                          columns: query.columns,
+                          sql: query.sql_query,
+                        }}
+                        collapsed={true}
+                        displayDataTypes={false}
+                        displayObjectSize={false}
+                        style={{ fontSize: '0.845rem', fontFamily: 'inherit' }}
+                      >
+                        <JsonView.Arrow>
+                          <TriangleArrow />
+                        </JsonView.Arrow>
+                      </JsonView>
+                    ))}
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>

@@ -1,8 +1,8 @@
 import { Card, Metric, Text } from '@tremor/react'
 import { memo } from 'react'
-import { Element } from '../../types'
+import { type CardElement } from '../../types'
 
-const CardElement = memo(({ element }: { element: Element }) => {
+const CardElement = memo(({ element }: { element: CardElement }) => {
   return (
     <Card className="h-full" decoration="top" decorationColor="indigo">
       <Text>Sales</Text>

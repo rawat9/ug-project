@@ -1,5 +1,5 @@
 import { atom, useAtom } from 'jotai'
-import { Canvas, Element } from './types'
+import type { Canvas, Element } from './types'
 
 const canvasAtom = atom<Canvas>({
   selectedElement: null,
@@ -38,7 +38,7 @@ export const useCanvasAtom = () => {
         const newElements = [...prev.elements]
         const index = newElements.findIndex((el) => el.id === id)
         newElements[index] = element
-        return { ...prev, elements: newElements }
+        return { ...prev, elements: newElements, selectedElement: element }
       })
     },
   }

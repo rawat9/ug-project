@@ -4,6 +4,7 @@ import Search from '@/components/shared/search'
 import { TextWidget } from './_components/text-widget'
 import { CardWidget } from './_components/card-widget'
 import { AreaChartWidget } from './_components/area-chart-widget'
+import { TableWidget } from './_components/table-widget'
 import { Cross } from '@/icons'
 import { AnimatePresence, motion } from 'framer-motion'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -23,14 +24,13 @@ export function Widgets({ isOpen }: { isOpen: boolean }) {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          initial={{ opacity: 0, x: '-100%' }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: '-100%' }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
           transition={{
-            type: 'tween',
             duration: 0.2,
           }}
-          className="absolute left-2 top-2 z-50 block h-[550px] w-[300px] rounded-md bg-white shadow-md"
+          className="absolute left-4 top-4 z-50 block h-[550px] w-[300px] rounded-md bg-white shadow-md"
         >
           <div className="h-full">
             <div className="flex items-center justify-between p-4">
@@ -50,6 +50,7 @@ export function Widgets({ isOpen }: { isOpen: boolean }) {
                 <TextWidget />
                 <CardWidget />
                 <AreaChartWidget />
+                <TableWidget />
               </div>
             </div>
           </div>

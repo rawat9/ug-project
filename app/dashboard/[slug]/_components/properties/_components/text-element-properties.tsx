@@ -2,7 +2,7 @@
 
 import { Label } from '@/components/ui/label'
 import { useCanvasAtom } from '../../canvas/state'
-import { Element } from '../../canvas/types'
+import { TextElement } from '../../canvas/types'
 import { useState } from 'react'
 import { TextInput } from '@tremor/react'
 import {
@@ -15,37 +15,30 @@ import {
 } from '@/icons'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 
-export function TextElementProperties({
-  selectedElement,
-}: {
-  selectedElement: Element
-}) {
-  const { value: initialValue, alignment: initialAlignment } =
-    selectedElement.props
+export function TextElementProperties({ element }: { element: TextElement }) {
+  const { value: initialValue, alignment: initialAlignment } = element.props
 
-  const [alignment, setAlignment] = useState(initialAlignment)
   const [value, setValue] = useState(initialValue)
   const { updateElement } = useCanvasAtom()
 
   function handleValueChange(e: React.ChangeEvent<HTMLInputElement>) {
     setValue(e.target.value)
-    updateElement(selectedElement.id, {
-      ...selectedElement,
+    updateElement(element.id, {
+      ...element,
       props: {
-        ...selectedElement.props,
+        ...element.props,
         value: e.target.value,
       },
     })
   }
 
   function handleJustifyAlignmentChange(value: 'start' | 'center' | 'end') {
-    setAlignment((prev) => ({ ...prev, justify: value }))
-    updateElement(selectedElement.id, {
-      ...selectedElement,
+    updateElement(element.id, {
+      ...element,
       props: {
-        ...selectedElement.props,
+        ...element.props,
         alignment: {
-          ...selectedElement.props.alignment,
+          ...element.props.alignment,
           justify: value,
         },
       },
@@ -53,13 +46,12 @@ export function TextElementProperties({
   }
 
   function handleItemsAlignmentChange(value: 'start' | 'center' | 'end') {
-    setAlignment((prev) => ({ ...prev, items: value }))
-    updateElement(selectedElement.id, {
-      ...selectedElement,
+    updateElement(element.id, {
+      ...element,
       props: {
-        ...selectedElement.props,
+        ...element.props,
         alignment: {
-          ...selectedElement.props.alignment,
+          ...element.props.alignment,
           items: value,
         },
       },

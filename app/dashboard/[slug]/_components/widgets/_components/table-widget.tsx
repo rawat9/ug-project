@@ -1,9 +1,9 @@
 import { Button } from '@/components/ui/button'
-import { Card } from '@/icons'
+import { Table } from '@/icons'
 import { useSetAtom } from 'jotai'
 import { draggedWidget } from '../state'
 
-export function CardWidget() {
+export function TableWidget() {
   const setDraggedWidget = useSetAtom(draggedWidget)
 
   return (
@@ -14,18 +14,19 @@ export function CardWidget() {
       unselectable="on"
       onDragStart={(e) => {
         setDraggedWidget({
-          i: 'card',
-          w: 3,
-          h: 4,
+          i: 'table',
+          w: 6,
+          h: 14,
         })
         e.dataTransfer.setData('text/plain', '')
-        e.dataTransfer.setData('type', 'card')
-        e.dataTransfer.setData('width', '3')
-        e.dataTransfer.setData('height', '4')
+        e.dataTransfer.setData('type', 'table')
+        e.dataTransfer.setData('width', '6')
+        e.dataTransfer.setData('height', '14')
+        e.dataTransfer.setData('minHeight', '13')
       }}
     >
-      <Card className="h-10 w-10 duration-500 ease-in-out group-hover:scale-125" />
-      <p>Card</p>
+      <Table className="h-10 w-10 duration-500 ease-in-out group-hover:scale-125" />
+      <p>Table</p>
     </Button>
   )
 }

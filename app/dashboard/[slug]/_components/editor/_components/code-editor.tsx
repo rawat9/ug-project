@@ -28,7 +28,7 @@ const CodeEditor = React.forwardRef<ReactCodeMirrorRef, ReactCodeMirrorProps>(
     }, 600)
 
     return (
-      <div className="flex h-[60%] px-4">
+      <div className="flex h-[60%] min-h-[200px] px-4">
         <ReactCodeMirror
           basicSetup={{
             autocompletion: true,

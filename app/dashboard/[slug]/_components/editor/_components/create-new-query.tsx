@@ -41,11 +41,11 @@ export function CreateNewQuery() {
         >(['queries'])
 
         let startsWithDefault = 0
-        if (queries && queries.data) {
+        if (queries && queries.data?.length) {
           startsWithDefault = Math.max(
             ...queries.data
               .filter((query) => query.name.startsWith(defaultName))
-              .map((query) => Number(query.name.charAt(defaultName.length))),
+              .map((query) => Number(query.name[query.name.length - 1])),
           )
         }
 

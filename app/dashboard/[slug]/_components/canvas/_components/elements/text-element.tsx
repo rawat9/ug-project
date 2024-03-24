@@ -1,8 +1,9 @@
 import { memo } from 'react'
-import { Element } from '../../types'
 import Markdown from 'react-markdown'
 
-const TextElement = memo(({ element }: { element: Element }) => {
+import { type TextElement } from '../../types'
+
+const TextElement = memo(({ element }: { element: TextElement }) => {
   const { value, alignment } = element.props
   const alignmentStyle = {
     alignItems: alignment.items,

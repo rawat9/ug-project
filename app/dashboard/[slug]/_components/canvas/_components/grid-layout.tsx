@@ -1,11 +1,11 @@
-import { useMemo } from 'react'
+import * as React from 'react'
 import RGL, {
   WidthProvider,
   type ReactGridLayoutProps,
 } from 'react-grid-layout'
 
-export function GridLayout(props: ReactGridLayoutProps) {
-  const ReactGridLayout = useMemo(() => WidthProvider(RGL), [])
+function GridLayout(props: ReactGridLayoutProps) {
+  const ReactGridLayout = React.useMemo(() => WidthProvider(RGL), [])
 
   return (
     <ReactGridLayout
@@ -18,9 +18,12 @@ export function GridLayout(props: ReactGridLayoutProps) {
       preventCollision={true}
       compactType={null}
       useCSSTransforms={true}
+      measureBeforeMount={true}
       {...props}
     >
       {props.children}
     </ReactGridLayout>
   )
 }
+
+export default React.memo(GridLayout)

@@ -1,14 +1,20 @@
-interface PostgresError {
+export interface PostgresError {
   name: string
   message: string
   position: string
   hint?: string
 }
 
-interface Result {
+export type Column = {
+  id: number
+  name: string
+  type: string
+}
+
+export interface Result {
   'execute-query': {
     data: unknown[]
-    columns: string[]
+    columns: Column[]
     error: PostgresError | null
     executionTime: number
   }

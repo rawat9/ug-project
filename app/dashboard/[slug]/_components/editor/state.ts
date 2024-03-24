@@ -1,28 +1,38 @@
+import type { Column, PostgresError } from '@/types'
 import { Tables } from '@/types/database'
 import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 
-interface PostgresError {
-  name: string
-  message: string
-  position: string
-  hint?: string
-}
-
 type Editor = {
   query: string
-  columns: string[]
+  columns: Column[]
   data: unknown[]
   error: PostgresError | null
   executionTime: number
 }
 
-export const editorAtom = atom<Editor>({
+const initialState: Editor = {
   query: '',
   columns: [],
   data: [],
   error: null,
   executionTime: 0,
+}
+
+export const editorAtom = atom(initialState, (get, set, newValue: Editor) => {
+  set(editorAtom, newValue)
+  set(queriesAtom, (prev) => {
+    return prev.map((query) => {
+      if (query.name === get(activeQueryAtom)?.name) {
+        return {
+          ...query,
+          data: newValue.data,
+          columns: newValue.columns,
+        }
+      }
+      return query
+    })
+  })
 })
 
 export const queryAtom = atomFamily((queryName: string) =>
@@ -49,6 +59,11 @@ export const queryAtom = atomFamily((queryName: string) =>
   }),
 )
 
-export const activeQueryAtom = atom<Tables<'query'> | null>(null)
+interface Query extends Tables<'query'> {
+  data?: unknown[]
+  columns?: Column[]
+}
 
-export const queriesAtom = atom<Tables<'query'>[]>([])
+export const activeQueryAtom = atom<Query | null>(null)
+
+export const queriesAtom = atom<Query[]>([])

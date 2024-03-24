@@ -1,10 +1,6 @@
 'use client'
 
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from '@/components/ui/resizable'
+import { ResizableHandle, ResizablePanel } from '@/components/ui/resizable'
 import { useAtom, useSetAtom } from 'jotai'
 import CodeEditor from './code-editor'
 import { activeQueryAtom, editorAtom, queriesAtom, queryAtom } from '../state'
@@ -17,7 +13,6 @@ import { Sources } from './sources'
 import { Run } from './run'
 import { ReactCodeMirrorRef } from '@uiw/react-codemirror'
 import { format } from 'sql-formatter'
-import Mustache from 'mustache'
 import { executeQuery } from '@/lib/data'
 
 import * as React from 'react'
@@ -32,6 +27,7 @@ import { QueryName } from './query-name'
 import { deleteQuery, updateQuery } from '@/lib/data/queries'
 import { Tables } from '@/types/database'
 import toast from 'react-hot-toast'
+import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@tremor/react'
 
 export function EditorPanel() {
   const queryClient = useQueryClient()
@@ -88,16 +84,10 @@ export function EditorPanel() {
 
   const columnDef = React.useMemo(() => {
     return columns.map((column) => ({
-      header: column,
-      accessorKey: column,
+      header: column.name,
+      accessorKey: column.name,
     }))
   }, [columns])
-
-  React.useEffect(() => {
-    if ((data.length > 0 || error) && resultPanelRef.current?.isCollapsed()) {
-      resultPanelRef.current?.resize(50)
-    }
-  }, [data, error])
 
   const formatQuery = () => {
     const query = codeEditorRef.current?.view?.state.doc.toString()
@@ -109,11 +99,6 @@ export function EditorPanel() {
       keywordCase: 'upper',
       paramTypes: { custom: [{ regex: String.raw`\{\{\s*[\w\.,]+\s*\}\}` }] }, // TODO: complete this
     })
-
-    // Mustache.render(formattedQuery, {
-    //   user: { name: 'anurag', age: 7 },
-    //   posts: { title: 'hello' },
-    // })
 
     setQuery(formattedQuery)
   }
@@ -128,18 +113,18 @@ export function EditorPanel() {
     deleteMutation.mutate(activeQuery.id)
   }
 
-  const execute = React.useCallback(async () => {
+  const execute = async () => {
     const query = codeEditorRef.current?.view?.state.doc.toString()
     if (!query || query.trim() === '') return
     const { data, error, columns, executionTime } = await executeQuery(
       query.trim(),
     )
     set({ query, data, error, columns, executionTime })
-  }, [set, codeEditorRef])
+  }
 
   return (
     <>
-      <ResizablePanel order={2} defaultSize={60}>
+      <ResizablePanel id="editor" order={2} defaultSize={60}>
         <div className="flex p-5">
           <div className="flex flex-1 items-center">
             {activeQuery && (
@@ -183,52 +168,58 @@ export function EditorPanel() {
             <Run executionHandler={execute} />
           </div>
         </div>
-        <ResizablePanelGroup direction="vertical">
-          <ResizablePanel
-            id="code-editor"
-            minSize={50}
-            defaultSize={100}
-            order={1}
-          >
-            <CodeEditor ref={codeEditorRef} />
-          </ResizablePanel>
-          <ResizableHandle />
-          <ResizablePanel
-            id="result"
-            order={2}
-            defaultSize={0}
-            minSize={30}
-            ref={resultPanelRef}
-            style={{ overflow: 'auto' }}
-            collapsible
-          >
-            <div className="sticky top-0 z-20 flex h-8 w-full items-center gap-2 border-b bg-white px-4">
-              <h1 className="text-sm font-semibold text-slate-600">Result</h1>
-              <p className="ml-auto text-xs text-slate-600">
-                Ran successfully in {executionTime} ms
-              </p>
-            </div>
-            {error ? (
-              <div className="flex flex-col gap-1 p-4">
-                <h1 className="text-sm text-slate-600">
-                  ERROR: {error.message}
-                </h1>
-                <h1 className="text-sm text-slate-600">
-                  LINE: {error.position}
-                </h1>
-                {error.hint && (
-                  <h1 className="text-sm text-slate-600">HINT: {error.hint}</h1>
-                )}
-              </div>
-            ) : (
-              <QueryResultTable columns={columnDef} data={data} />
-            )}
-          </ResizablePanel>
-        </ResizablePanelGroup>
+        <div className="h-full" id="code-editor">
+          <CodeEditor ref={codeEditorRef} />
+        </div>
       </ResizablePanel>
       <ResizableHandle />
-      <ResizablePanel minSize={20} maxSize={40} defaultSize={20} order={3}>
-        <SchemaViewer />
+      <ResizablePanel
+        id="schema-viewer"
+        minSize={20}
+        maxSize={40}
+        defaultSize={20}
+        order={3}
+      >
+        <TabGroup className="h-full">
+          <TabList variant="line">
+            <Tab className="ui-selected:border-slate-600 ui-selected:text-slate-800">
+              Schema
+            </Tab>
+            <Tab className="ui-selected:border-slate-600 ui-selected:text-slate-800">
+              Output
+            </Tab>
+          </TabList>
+          <TabPanels className="h-full">
+            <TabPanel className="p-2">
+              <SchemaViewer />
+            </TabPanel>
+            <TabPanel className="mt-0 h-full overflow-auto">
+              {error ? (
+                <div className="flex flex-col gap-1 p-4">
+                  <h1 className="text-sm text-slate-600">
+                    ERROR: {error.message}
+                  </h1>
+                  <h1 className="text-sm text-slate-600">
+                    LINE: {error.position}
+                  </h1>
+                  {error.hint && (
+                    <h1 className="text-sm text-slate-600">
+                      HINT: {error.hint}
+                    </h1>
+                  )}
+                </div>
+              ) : !data.length ? (
+                <div className="flex h-44 items-center justify-center p-4">
+                  <p className="text-center text-sm text-slate-500">
+                    Run a query to see the output
+                  </p>
+                </div>
+              ) : (
+                <QueryResultTable columns={columnDef} data={data} />
+              )}
+            </TabPanel>
+          </TabPanels>
+        </TabGroup>
       </ResizablePanel>
     </>
   )

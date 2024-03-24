@@ -1,7 +1,11 @@
 import { Button } from '@/components/ui/button'
 import { Text } from '@/icons'
+import { useSetAtom } from 'jotai'
+import { draggedWidget } from '../state'
 
 export function TextWidget() {
+  const setDraggedWidget = useSetAtom(draggedWidget)
+
   return (
     <Button
       variant="outline"
@@ -9,6 +13,11 @@ export function TextWidget() {
       draggable={true}
       unselectable="on"
       onDragStart={(e) => {
+        setDraggedWidget({
+          i: 'text',
+          w: 2,
+          h: 1,
+        })
         e.dataTransfer.setData('text/plain', '')
         e.dataTransfer.setData('type', 'text')
         e.dataTransfer.setData('width', '2')

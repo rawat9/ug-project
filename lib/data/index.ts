@@ -3,20 +3,15 @@
 // TO FIX
 import { Element } from '@/app/dashboard/[slug]/_components/canvas/types'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
-import { Json, Tables } from '@/types/database'
 import { revalidatePath, unstable_cache as cache } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
 
+import type { Result } from '@/types'
+import type { Json, Tables } from '@/types/database'
+
 type Dashboard = Tables<'dashboard'>
 type Integration = Tables<'integration'>
-
-function customFetch(input: RequestInfo | URL, init?: RequestInit) {
-  return fetch(input as URL, {
-    ...init,
-    cache: 'force-cache',
-  })
-}
 
 export const fetchDashboards = async (): Promise<Dashboard[]> => {
   try {
@@ -136,28 +131,25 @@ export const updateDashboardTitle = async ({
   revalidatePath('/dashboard')
 }
 
-export const executeQuery = cache(
-  async (query: string) => {
-    const supabase = await createSupabaseServerClient()
-    const { data, error } = await supabase.functions.invoke<
-      Result['execute-query']
-    >('execute-query', {
-      method: 'POST',
-      body: { query },
-    })
+export const executeQuery = async (query: string) => {
+  const supabase = await createSupabaseServerClient()
+  const { data, error } = await supabase.functions.invoke<
+    Result['execute-query']
+  >('execute-query', {
+    method: 'POST',
+    body: { query },
+  })
 
-    if (error) {
-      throw error
-    }
+  if (error) {
+    throw error
+  }
 
-    if (!data) {
-      throw new Error('No data returned')
-    }
+  if (!data) {
+    throw new Error('No data returned')
+  }
 
-    return data
-  },
-  ['sql-query'],
-)
+  return data
+}
 
 export const fetchIntegrations = async (): Promise<Integration[]> => {
   try {
