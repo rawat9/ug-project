@@ -28,11 +28,17 @@ export function getElementProps(type: Element['type']): Element['props'] {
         enablePagination: true,
         pageSize: 10,
         enableSorting: true,
+        aggregatedValues: [],
       }
     case 'line-chart':
       return {}
     case 'bar-chart':
-      return {}
+      return {
+        data: [],
+        columns: [],
+        xAxis: '',
+        categories: [],
+      }
     default:
       throw new Error(`Invalid type: ${type}`)
   }

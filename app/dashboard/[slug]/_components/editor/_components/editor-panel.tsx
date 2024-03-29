@@ -193,7 +193,7 @@ export function EditorPanel() {
             <TabPanel className="p-2">
               <SchemaViewer />
             </TabPanel>
-            <TabPanel className="mt-0 h-full overflow-auto">
+            <TabPanel className="mt-0 h-full w-full">
               {error ? (
                 <div className="flex flex-col gap-1 p-4">
                   <h1 className="text-sm text-slate-600">

@@ -78,9 +78,9 @@ const LineChartElement = memo(({ element }: { element: LineChartElement }) => {
       </h3>
       <LineChart
         className="h-full w-full py-4"
-        data={chartdata}
-        index="date"
-        categories={['SemiAnalysis', 'The Pragmatic Engineer']}
+        data={element.props.data}
+        index={element.props.xAxis}
+        categories={element.props.yAxis}
         colors={['indigo', 'rose']}
         valueFormatter={valueFormatter}
         onValueChange={(v) => console.log(v)}

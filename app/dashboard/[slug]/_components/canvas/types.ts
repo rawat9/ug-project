@@ -1,5 +1,9 @@
-import { Column } from '@/types'
-import type { TableOptions, TableState } from '@tanstack/react-table'
+import type { Column } from '@/types'
+import type {
+  AggregationFn,
+  TableOptions,
+  TableState,
+} from '@tanstack/react-table'
 import type { TextProps } from '@tremor/react'
 
 type ElementTypes =
@@ -29,6 +33,7 @@ interface TableElementProps {
   columns: Column[]
   state: Partial<TableState>
   options: TableOptions<unknown>
+  aggregatedValues: { column: Column; aggFn: AggregationFn<any> }[]
 }
 
 interface CardElementProps {}
@@ -37,13 +42,21 @@ interface AreaChartElementProps {}
 
 interface LineChartElementProps {
   header: string
-  data: unknown[]
   xAxis: string
-  yAxis: string
+  yAxis: string[]
+  data: unknown[]
+  dataKey: string
 }
 
 interface BarChartElementProps {
   header: string
+  data: unknown[]
+  dataKey: string
+  xAxis: string
+  categories: string[]
+  columns: Column[]
+  groupBy: string
+  yAggregation: string
 }
 
 export interface BaseElement {
