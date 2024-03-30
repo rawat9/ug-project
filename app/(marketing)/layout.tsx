@@ -1,6 +1,7 @@
 import { buttonVariants } from '@/components/ui/button'
 import { Dashboard, Login } from '@/icons'
 import Link from 'next/link'
+import { Header } from './_components/Header'
 
 interface MarketingLayoutProps {
   children: React.ReactNode
@@ -9,20 +10,16 @@ interface MarketingLayoutProps {
 export default function Layout({ children }: MarketingLayoutProps) {
   return (
     <div className="flex min-h-screen flex-col">
-      <h2
-        aria-label="Announcement"
-        className="bg-black text-center font-sans text-sm text-white antialiased"
-      >
-        Under active development 🏃🏻‍♂️
-      </h2>
-      <header className="border-b">
-        <div className="mx-auto flex h-16 max-w-screen-lg items-center justify-between px-4">
+      <header>
+        <div className="mx-auto flex h-20 max-w-screen-xl items-center justify-between px-4">
           <Link
             href="/"
-            className={'flex items-center gap-2 text-xl font-bold'}
+            className={
+              'flex items-center gap-2 text-xl font-semibold tracking-wide'
+            }
           >
-            DashCMS
             <Dashboard className="h-5 w-5" />
+            dashly
           </Link>
           <Link
             href={'/auth/login'}

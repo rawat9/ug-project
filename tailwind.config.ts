@@ -111,6 +111,10 @@ const config: Config = {
         'tremor-metric': ['1.875rem', { lineHeight: '2.25rem' }],
       },
       keyframes: {
+        'fade-in': {
+          from: { opacity: '0', transform: 'translateY(-10px)' },
+          to: { opacity: '1', transform: 'none' },
+        },
         'accordion-down': {
           from: { height: '0' },
           to: { height: 'var(--radix-accordion-content-height)' },
@@ -121,6 +125,7 @@ const config: Config = {
         },
       },
       animation: {
+        'fade-in': 'fade-in 1000ms var(--animation-delay, 0ms) ease forwards',
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
       },
