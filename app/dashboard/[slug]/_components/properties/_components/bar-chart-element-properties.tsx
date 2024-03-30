@@ -29,6 +29,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { Input } from '@/components/ui/input'
+import { Eye } from '@/icons'
 
 export function BarChartElementProperties({
   element,
@@ -144,11 +145,27 @@ export function BarChartElementProperties({
 
   function handleGroupByChange(value: string) {
     const index = element.props.xAxis
-    const existingGroup = lodashGroupBy(
-      element.props.originalData,
-      index,
-    )
+    const existingGroup = lodashGroupBy(element.props.originalData, index)
+    // const categories = new Set()
     const results = lodashMap(existingGroup, (g, key) => {
+      // let aggFn = null
+
+      // if (value === 'Count') {
+      //   aggFn = lodashCountBy
+      // } else if (value === 'Sum') {
+      //   aggFn = lodashSumBy
+      // } else if (value === 'Average') {
+      //   aggFn = (g, value) => {
+      //     return {
+      //       [value]: lodashSumBy(g, value) / g.length,
+      //     }
+      //   }
+      // }
+
+      // const cols = lodashCountBy(g, 'gender')
+      // const keys = Object.keys(cols)
+      // keys.map((k) => categories.add(k))
+
       return {
         [index]: key,
         ...lodashCountBy(g, value),
@@ -163,6 +180,7 @@ export function BarChartElementProperties({
         ...element.props,
         groupBy: value,
         data: results,
+        categories: ['Male', 'Female'],
       },
     })
   }
@@ -223,9 +241,15 @@ export function BarChartElementProperties({
                 <div className="flex h-8 w-full cursor-pointer items-center gap-2 rounded-md border border-slate-100 bg-gray-50 p-2">
                   <div className="h-4 w-4 rounded-md bg-fuchsia-800" />
                   <p className="text-sm text-slate-500">name</p>
+                  <button className="ml-auto">
+                    <Eye className="h-4 w-4 text-slate-400" />
+                  </button>
                 </div>
               </PopoverTrigger>
-              <PopoverContent className="-translate-x-full">
+              <PopoverContent
+                className="-translate-x-full"
+                onInteractOutside={(e) => e.preventDefault()}
+              >
                 <div className="grid gap-4">
                   <div className="grid items-center gap-2">
                     <Label
@@ -240,13 +264,23 @@ export function BarChartElementProperties({
                     <Label htmlFor="agg-fn" className="text-xs text-slate-500">
                       Aggregation Function
                     </Label>
-                    <Input id="agg-fn" defaultValue={'Sum'} />
+                    <Select defaultValue="Sum">
+                      <SelectTrigger id="agg-fn">
+                        <SelectValue placeholder="Select an aggregation function" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="None">None</SelectItem>
+                        <SelectItem value="Sum">Sum</SelectItem>
+                        <SelectItem value="Count">Count</SelectItem>
+                        <SelectItem value="Average">Average</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="grid items-center gap-2">
                     <Label htmlFor="color" className="text-xs text-slate-500">
                       Color
                     </Label>
-                    <Input id="color" defaultValue={'#3459US'} />
+                    <Input id="color" type="color" defaultValue={'#3459US'} />
                   </div>
                 </div>
               </PopoverContent>

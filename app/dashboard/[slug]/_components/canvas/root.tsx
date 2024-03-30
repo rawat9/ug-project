@@ -195,10 +195,10 @@ export function Canvas() {
             <div
               key={element.id}
               className={cn(
-                'flex h-full w-full cursor-pointer select-none items-center rounded-md p-1 hover:ring-1 hover:ring-inset hover:ring-blue-400',
+                'flex h-full w-full cursor-pointer select-none items-center p-1 hover:rounded-tremor-default hover:ring-1 hover:ring-inset hover:ring-blue-500',
                 selectedElement?.id === element?.id &&
                   resizableId &&
-                  'border border-dashed border-blue-500 ring-1 ring-inset',
+                  'ring-1 ring-inset ring-blue-500 hover:rounded-none',
                 resizableId !== element.id && 'react-resizable-hide',
                 !selectedElement && 'react-resizable-hide',
               )}
@@ -206,7 +206,7 @@ export function Canvas() {
               {selectedElement?.id === element.id && resizableId && (
                 <Badge
                   size="sm"
-                  className="fixed -left-[1px] -top-[30px] block shadow-sm"
+                  className="fixed -left-[1px] -top-[30px] shadow-sm"
                 >
                   {element.name}
                 </Badge>

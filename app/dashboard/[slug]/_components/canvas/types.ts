@@ -4,7 +4,7 @@ import type {
   TableOptions,
   TableState,
 } from '@tanstack/react-table'
-import type { EventProps, TextProps } from '@tremor/react'
+import type { BarChartProps, EventProps, TextProps } from '@tremor/react'
 
 type ElementTypes =
   | 'text'
@@ -48,15 +48,14 @@ interface LineChartElementProps {
   dataKey: string
 }
 
-interface BarChartElementProps {
+interface BarChartElementProps extends BarChartProps {
   header: string
-  data: unknown[]
   originalData: unknown[]
   dataKey: string
   xAxis: string
-  categories: string[]
   columns: Column[]
   groupBy: string
+  groupByColumns: string[]
   yAggregation: string
   selected: EventProps
 }
