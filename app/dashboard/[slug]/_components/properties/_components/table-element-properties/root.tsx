@@ -7,7 +7,7 @@ import lodashKeyBy from 'lodash/keyBy'
 import lodashResult from 'lodash/result'
 
 import { type TableElement } from '../../../canvas/types'
-import { VisibilityState } from '@tanstack/react-table'
+import { ColumnDef, VisibilityState } from '@tanstack/react-table'
 import { Grouping } from './grouping'
 import { Columns } from './columns'
 import { Pagination } from './pagination'
@@ -15,18 +15,24 @@ import { Pagination } from './pagination'
 import { useAtomValue } from 'jotai'
 import { queriesAtom } from '../../../editor/state'
 import { Column } from '@/types'
+import { aggregationFns } from './aggregationFns'
+import { Button } from '@/components/ui/button'
+import { CaretDown, CaretSort, CaretUp } from '@/icons'
 
 export function TableElementProperties({ element }: { element: TableElement }) {
-  const { tableHeader, pageSize, dataSource } = element.props
+  const { tableHeader, pageSize } = element.props
 
-  const [dataSourceValue, setDataSourceValue] = React.useState(dataSource)
+  // const [dataSourceValue, setDataSourceValue] = React.useState(dataSource)
   const [tableHeaderValue, setTableHeaderValue] = React.useState(tableHeader)
   const [pageSizeValue, setPageSizeValue] = React.useState(pageSize)
 
   const { updateElement } = useCanvasAtom()
 
   const queries = useAtomValue(queriesAtom)
-  const [cols, setCols] = React.useState<string[]>([])
+  // const [columns, setColumns] = React.useState<Column[]>([])
+  const [columns, setColumns] = React.useState(
+    element.props.columns.map((c) => c.name),
+  )
 
   React.useEffect(() => {
     updateElement(element.id, {
@@ -34,7 +40,7 @@ export function TableElementProperties({ element }: { element: TableElement }) {
       props: {
         ...element.props,
         state: {
-          columnOrder: cols,
+          columnOrder: columns,
           columnSizing: {},
           columnSizingInfo: {
             startOffset: null,
@@ -53,17 +59,17 @@ export function TableElementProperties({ element }: { element: TableElement }) {
             top: [],
             bottom: [],
           },
-          columnVisibility: cols.reduce<VisibilityState>((acc, column) => {
+          columnVisibility: columns.reduce<VisibilityState>((acc, column) => {
             acc[column] = true
             return acc
           }, {}),
         },
       },
     })
-  }, [cols]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [columns]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleDataChange(value: string) {
-    setDataSourceValue(value)
+    // setDataSourceValue(value)
     updateElement(element.id, {
       ...element,
       props: {
@@ -93,9 +99,10 @@ export function TableElementProperties({ element }: { element: TableElement }) {
               ...element.props,
               data: result.data,
               columns: result.columns,
+              dataSource: value,
             },
           })
-          setCols(result.columns.map((c) => c.name))
+          setColumns(result.columns.map((c) => c.name))
         }
       }
     } catch {}
@@ -172,6 +179,42 @@ export function TableElementProperties({ element }: { element: TableElement }) {
     })
   }
 
+  // function handleAggregatedValuesChange(value: Column[]) {
+  //   setColumns((prev) => {
+  //     return prev.map((col) => {
+  //       if (value.find((v) => v.name === col)) {
+  //         return {
+  //           aggregationFn: value.find((v) => v.name === col)?.aggregationFn,
+  //         }
+  //       }
+  //       return col
+  //     })
+  //   })
+
+  // updateElement(element.id, {
+  //   ...element,
+  //   props: {
+  //     ...element.props,
+  //     columns:
+  //     // aggregatedValues: value.map((v) => {
+  //     //   return {
+  //     //     column: v,
+  //     //     aggFn: () => {
+  //     //       if (v.dtype === 'text') {
+  //     //         return aggregationFns['count']
+  //     //       }
+  //     //       if (v.dtype.startsWith('int')) {
+  //     //         return aggregationFns['sum']
+  //     //       }
+  //     //       return 0
+  //     //       // return aggregationFns['count']
+  //     //     },
+  //     //   }
+  //     // }),
+  //   },
+  // })
+  // }
+
   return (
     <div className="flex flex-col gap-1">
       <div className="flex flex-col gap-2 px-4">
@@ -195,17 +238,17 @@ export function TableElementProperties({ element }: { element: TableElement }) {
             type="text"
             autoComplete="off"
             id="data-source"
-            placeholder="{{ getOrders }}"
+            placeholder="{{ getData }}"
             className="font-mono text-xs placeholder:font-mono"
-            value={dataSourceValue}
+            defaultValue={element.props.dataSource}
             onValueChange={handleDataChange}
           />
         </div>
       </div>
       <div className="my-4 bg-gray-200" />
       <Columns
-        columns={cols}
-        setCols={setCols}
+        columns={columns}
+        setCols={setColumns}
         columnVisibility={element.props.state?.columnVisibility}
         handleColumnVisibility={handleColumnVisibility}
       />
@@ -230,9 +273,13 @@ export function TableElementProperties({ element }: { element: TableElement }) {
       />
       <div className="my-4 bg-gray-200" />
       <Grouping
-        columns={cols}
+        columns={columns}
         groups={element.props.state?.grouping ?? []}
         handleGroupingChange={handleGroupingChange}
+        aggregatedValues={
+          element.props?.aggregatedValues?.map((v) => v.column) ?? []
+        }
+        handleAggregatedValuesChange={(value) => {}}
       />
     </div>
   )

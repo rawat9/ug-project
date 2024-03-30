@@ -19,3 +19,7 @@ export function disableGrammarly() {
 export function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value))
 }
+
+export function isNumberArray(arr: any): arr is number[] {
+  return Array.isArray(arr) && arr.every((val) => typeof val === 'number')
+}

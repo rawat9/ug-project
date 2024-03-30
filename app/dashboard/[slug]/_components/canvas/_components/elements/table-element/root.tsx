@@ -8,7 +8,7 @@ import {
   TableRow,
 } from '@tremor/react'
 import React, { memo } from 'react'
-import { type TableElement as TableElementType } from '../../../types'
+import type { TableElement } from '../../../types'
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -35,44 +35,50 @@ import {
   ChevronRight,
 } from '@/icons'
 
-const TableElement = memo(({ element }: { element: TableElementType }) => {
+const TableElement = memo(({ element }: { element: TableElement }) => {
   const data = element.props.data
   const columns = element.props.columns
 
   const columnDef: ColumnDef<unknown>[] = React.useMemo(
     () =>
-      columns.map(
-        (col) =>
-          ({
-            id: col.name,
-            accessorKey: col.name,
-            header: ({ column }) => {
-              return (
-                <Button
-                  variant="ghost"
-                  className="p-0"
-                  onClick={column.getToggleSortingHandler()}
-                >
-                  <p className="font-semibold">{col.name}</p>
-                  {column.getCanSort() &&
-                    (column.getIsSorted() ? (
-                      column.getIsSorted() === 'asc' ? (
-                        <CaretUp className="ml-1 h-5 w-5" />
-                      ) : (
-                        <CaretDown className="ml-1 h-5 w-5" />
-                      )
-                    ) : (
-                      <CaretSort className="ml-1 h-5 w-5" />
-                    ))}
-                </Button>
-              )
-            },
-            aggregationFn: 'auto',
-            cell: ({ row }) => (
-              <div className="capitalize">{row.getValue(col.name)}</div>
-            ),
-          }) satisfies ColumnDef<unknown>,
-      ),
+      columns.map((col) => ({
+        id: col.name,
+        accessorKey: col.name,
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              className="p-0"
+              onClick={column.getToggleSortingHandler()}
+            >
+              <p className="font-semibold">{col.name}</p>
+              {column.getCanSort() &&
+                (column.getIsSorted() ? (
+                  column.getIsSorted() === 'asc' ? (
+                    <CaretUp className="ml-1 h-5 w-5" />
+                  ) : (
+                    <CaretDown className="ml-1 h-5 w-5" />
+                  )
+                ) : (
+                  <CaretSort className="ml-1 h-5 w-5" />
+                ))}
+            </Button>
+          )
+        },
+        aggregationFn: () => col.aggregationFn,
+        // aggregationFn: (columnId) => {
+        //   const values = element.props.aggregatedValues
+        //   const value = values.find((v) => v.column.name === columnId)
+        //   console.log(value?.aggFn)
+        //   return value?.aggFn
+        // },
+        aggregatedCell: ({ row }) => (
+          <div className="font-medium">{row.getValue(col.name)}</div>
+        ),
+        cell: ({ row }) => (
+          <div className="capitalize">{row.getValue(col.name)}</div>
+        ),
+      })),
     [columns],
   )
 

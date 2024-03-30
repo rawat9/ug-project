@@ -21,10 +21,11 @@ const BarChartElement = memo(({ element }: { element: BarChartElement }) => {
         // valueFormatter={dataFormatter}
         // yAxisWidth={48}
         onValueChange={(event) => {
-          console.log('value changed', event)
+          element.props.selected = event
         }}
         showXAxis={true}
         showYAxis={true}
+        showGridLines={true}
       />
     </Card>
   )

@@ -1,9 +1,20 @@
 import postgres from 'postgres'
 import { Logger } from 'logger'
 
-const sql = postgres('secret', {
-  max: 1,
-})
+const sql = postgres(
+  'postgresql://postgres:postgres@172.17.0.1:54322/postgres',
+  {
+    max: 1,
+    types: {
+      int8: {
+        to: 20,
+        from: [20],
+        serialize: (value: string) => Number(value),
+        parse: (value: number) => Number(value),
+      },
+    },
+  },
+)
 
 const logger = new Logger()
 
@@ -53,8 +64,8 @@ Deno.serve(async (req) => {
     const executionTime = end - start
     logger.info(`Query took ${executionTime}ms`)
 
-    return new Response(
-      JSON.stringify({ data: result, columns, error: null, executionTime }),
+    return Response.json(
+      { data: result, columns, error: null, executionTime },
       {
         headers: { 'Content-Type': 'application/json' },
         status: 200,
@@ -86,7 +97,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    return new Response(JSON.stringify(errorResponse), {
+    return Response.json(errorResponse, {
       headers: { 'Content-Type': 'application/json' },
     })
   }

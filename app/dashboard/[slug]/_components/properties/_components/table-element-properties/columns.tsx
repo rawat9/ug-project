@@ -7,6 +7,7 @@ import {
   TooltipContent,
 } from '@/components/ui/tooltip'
 import { Add, DragHandle, Pencil, Eye, EyeOff } from '@/icons'
+import { Column } from '@/types'
 import { VisibilityState } from '@tanstack/react-table'
 import { Reorder } from 'framer-motion'
 import * as React from 'react'

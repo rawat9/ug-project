@@ -1,20 +1,23 @@
 import { Switch } from '@/components/ui/switch'
 import { Add, Check, Sigma } from '@/icons'
+import { Column } from '@/types'
 import { Listbox, Transition } from '@headlessui/react'
-import { GroupingState } from '@tanstack/react-table'
+import type { GroupingState } from '@tanstack/react-table'
 import * as React from 'react'
 
 export function Grouping({
   columns,
   groups,
   handleGroupingChange,
+  aggregatedValues,
+  handleAggregatedValuesChange,
 }: {
   columns: string[]
   groups: GroupingState
-  handleGroupingChange: (value: string[]) => void
+  handleGroupingChange: (value: GroupingState) => void
+  aggregatedValues: Column[]
+  handleAggregatedValuesChange: (value: Column[]) => void
 }) {
-  const [aggregatedValues, setAggegatedValues] = React.useState<string[]>([])
-
   return (
     <>
       <h3 className="mb-4 px-4 text-sm font-medium text-slate-500">Grouping</h3>
@@ -103,7 +106,7 @@ export function Grouping({
           <h3 className="flex-1 text-sm font-medium text-slate-500">Values</h3>
           <Listbox
             value={aggregatedValues}
-            onChange={setAggegatedValues}
+            onChange={handleAggregatedValuesChange}
             multiple
           >
             <div className="mt-1">
@@ -158,12 +161,12 @@ export function Grouping({
               Add fields here to aggregate
             </p>
           )}
-          {aggregatedValues.map((group) => (
+          {aggregatedValues.map((value, index) => (
             <div
-              key={group}
+              key={index}
               className="flex items-center rounded-md border bg-neutral-100 px-2 py-1 group-hover:opacity-20"
             >
-              <p className="flex-1 text-sm text-slate-500">sum({group})</p>
+              <p className="flex-1 text-sm text-slate-500">sum({value.name})</p>
             </div>
           ))}
         </div>

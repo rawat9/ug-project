@@ -100,17 +100,18 @@ export function BarChartElementProperties({
           const end = performance.now()
           console.log('It took: ', end - start)
           console.log(results.length)
-          // updateElement(element.id, {
-          //   ...element,
-          //   props: {
-          //     ...element.props,
-          //     data: results,
-          //     dataKey: value,
-          //     columns: result.columns,
-          //     xAxis: guessXAxis,
-          //     categories: integerColumns.map((c) => c.name),
-          //   },
-          // })
+          updateElement(element.id, {
+            ...element,
+            props: {
+              ...element.props,
+              data: results,
+              originalData: result.data,
+              dataKey: value,
+              columns: result.columns,
+              xAxis: guessXAxis,
+              categories: integerColumns.map((c) => c.name),
+            },
+          })
           setColumns(result.columns)
         }
       }
@@ -118,21 +119,50 @@ export function BarChartElementProperties({
   }
 
   function handleXAxisChange(value: string) {
+    const newGroup = lodashGroupBy(element.props.originalData, value)
+    const integerColumns = columns.filter((col) => col.dtype.startsWith('int'))
+    const results = lodashMap(newGroup, (g, key) => {
+      const cols = integerColumns.reduce((acc, col) => {
+        return { ...acc, [col.name]: lodashSumBy(g, col.name) }
+      }, {})
+
+      return {
+        [value]: key,
+        ...cols,
+      }
+    })
+
     updateElement(element.id, {
       ...element,
       props: {
         ...element.props,
         xAxis: value,
+        data: results,
       },
     })
   }
 
   function handleGroupByChange(value: string) {
+    const index = element.props.xAxis
+    const existingGroup = lodashGroupBy(
+      element.props.originalData,
+      index,
+    )
+    const results = lodashMap(existingGroup, (g, key) => {
+      return {
+        [index]: key,
+        ...lodashCountBy(g, value),
+      }
+    })
+
+    console.log(results)
+
     updateElement(element.id, {
       ...element,
       props: {
         ...element.props,
         groupBy: value,
+        data: results,
       },
     })
   }
@@ -170,10 +200,7 @@ export function BarChartElementProperties({
           <Label htmlFor="x-axis" className="text-xs text-slate-500">
             X Axis
           </Label>
-          <Select
-            defaultValue={element.props.xAxis}
-            onValueChange={handleXAxisChange}
-          >
+          <Select value={element.props.xAxis} onValueChange={handleXAxisChange}>
             <SelectTrigger id="x-axis" className="text-slate-500">
               <SelectValue placeholder="Select a column" />
             </SelectTrigger>
@@ -186,11 +213,11 @@ export function BarChartElementProperties({
             </SelectContent>
           </Select>
         </div>
-        <div>
-          <Label htmlFor="categories" className="text-xs text-slate-500">
+        <div className="space-y-1">
+          <p className="text-xs font-medium leading-none text-slate-500 peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
             Categories
-          </Label>
-          <div className="grid gap-1" id="categories">
+          </p>
+          <div className="grid gap-1">
             <Popover>
               <PopoverTrigger asChild>
                 <div className="flex h-8 w-full cursor-pointer items-center gap-2 rounded-md border border-slate-100 bg-gray-50 p-2">
@@ -213,7 +240,7 @@ export function BarChartElementProperties({
                     <Label htmlFor="agg-fn" className="text-xs text-slate-500">
                       Aggregation Function
                     </Label>
-                    <Input id="agg-fn" defaultValue={'name'} />
+                    <Input id="agg-fn" defaultValue={'Sum'} />
                   </div>
                   <div className="grid items-center gap-2">
                     <Label htmlFor="color" className="text-xs text-slate-500">
