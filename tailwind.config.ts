@@ -1,13 +1,18 @@
-import type { Config } from 'tailwindcss'
+import { Config } from 'tailwindcss'
 import colors from 'tailwindcss/colors'
+import svgToDataUri from 'mini-svg-data-uri'
 
-const config: Config = {
+const {
+  default: flattenColorPalette,
+} = require('tailwindcss/lib/util/flattenColorPalette')
+
+const config = {
   content: [
-    './components/**/*.{ts,jsx,tsx}',
-    './app/**/*.{js,ts,jsx,tsx}',
+    './components/**/*.{ts,tsx}',
+    './app/**/*.{ts,tsx}',
     './node_modules/@tremor/**/*.{js,ts,jsx,tsx}',
   ],
-  darkMode: ['class'],
+  darkMode: 'class',
   theme: {
     container: {
       center: true,
@@ -21,6 +26,7 @@ const config: Config = {
     fontFamily: {
       canvas: ['Inter', 'sans-serif'],
       mono: ['var(--font-jetbrains-mono)'],
+      logo: ['var(--font-league-spartan)'],
     },
     extend: {
       colors: {
@@ -162,9 +168,41 @@ const config: Config = {
   ],
   plugins: [
     require('@headlessui/tailwindcss'),
-    // require('@tailwindcss/forms'),
     require('@tailwindcss/typography'),
     require('tailwindcss-animate'),
+    addVariablesForColors,
+    function ({ matchUtilities, theme }: any) {
+      matchUtilities(
+        {
+          'bg-grid-small': (value) => ({
+            backgroundImage: `url("${svgToDataUri(
+              `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="8" height="8" fill="none" stroke="${value}"><path d="M0 .5H31.5V32"/></svg>`,
+            )}")`,
+          }),
+          'bg-dot': (value) => ({
+            backgroundImage: `url("${svgToDataUri(
+              `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="none"><circle fill="${value}" id="pattern-circle" cx="10" cy="10" r="1.6257413380501518"></circle></svg>`,
+            )}")`,
+          }),
+        },
+        {
+          values: flattenColorPalette(theme('backgroundColor')),
+          type: 'color',
+        },
+      )
+    },
   ],
-}
+} satisfies Config
+
 export default config
+
+function addVariablesForColors({ addBase, theme }: any) {
+  let allColors = flattenColorPalette(theme('colors'))
+  let newVars = Object.fromEntries(
+    Object.entries(allColors).map(([key, val]) => [`--${key}`, val]),
+  )
+
+  addBase({
+    ':root': newVars,
+  })
+}
