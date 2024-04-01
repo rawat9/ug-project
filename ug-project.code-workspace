@@ -2,15 +2,14 @@
   "folders": [
     {
       "name": "project-root",
-      "path": "./"
+      "path": "./",
     },
     {
       "name": "supabase-functions",
-      "path": "supabase/functions"
-    }
+      "path": "supabase/functions",
+    },
   ],
   "settings": {
-    "jest.disabledWorkspaceFolders": ["supabase-functions"],
-    "deno.importMap": "./supabase/functions/import_map.json"
-  }
+    "deno.importMap": "./supabase/functions/import_map.json",
+  },
 }
