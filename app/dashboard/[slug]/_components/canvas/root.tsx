@@ -57,10 +57,10 @@ export function Canvas() {
     await saveCanvas(id, elements)
   }
 
-  // useAutosave({
-  //   data: elements,
-  //   onSave: handleSave,
-  // })
+  useAutosave({
+    data: elements,
+    onSave: handleSave,
+  })
 
   function onDrop(_layout: Layout[], item: Layout, e: DragEvent) {
     const w = e.dataTransfer?.getData('width')

@@ -11,6 +11,7 @@ import { TextElementProperties } from './_components/text-element-properties'
 import { TableElementProperties } from './_components/table-element-properties/root'
 import { LineChartElementProperties } from './_components/line-chart-element-properties'
 import { BarChartElementProperties } from './_components/bar-chart-element-properties'
+import { BarListElementProperties } from './_components/bar-list-element-properties'
 
 export function Properties() {
   const { selectedElement, setSelectedElement, removeElement } = useCanvasAtom()
@@ -94,6 +95,8 @@ function BaseProperties({ element }: { element: Element | null }) {
       return <LineChartElementProperties element={element} />
     case 'bar-chart':
       return <BarChartElementProperties element={element} />
+    case 'bar-list':
+      return <BarListElementProperties element={element} />
     default:
       throw new Error('Invalid type')
   }

@@ -6,6 +6,7 @@ import { AreaChartElement } from './area-chart-element'
 import { TableElement } from './table-element'
 import { LineChartElement } from './line-chart-element'
 import { BarChartElement } from './bar-chart-element'
+import { BarListElement } from './bar-list-element'
 
 export function BaseElement({ element }: { element: Element }) {
   switch (element.type) {
@@ -21,6 +22,8 @@ export function BaseElement({ element }: { element: Element }) {
       return <LineChartElement element={element} />
     case 'bar-chart':
       return <BarChartElement element={element} />
+    case 'bar-list':
+      return <BarListElement element={element} />
     default:
       throw new Error(`Unknown element type: ${element}`)
   }

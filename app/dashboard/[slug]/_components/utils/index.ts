@@ -39,6 +39,14 @@ export function getElementProps(type: Element['type']): Element['props'] {
         xAxis: '',
         categories: [],
       }
+    case 'bar-list':
+      return {
+        data: [
+          { name: 'Bose', value: 346 },
+          { name: 'Sony', value: 231 },
+          { name: 'JBL', value: 24 },
+        ],
+      }
     default:
       throw new Error(`Invalid type: ${type}`)
   }

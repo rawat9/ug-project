@@ -10,6 +10,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { LineChartWidget } from './_components/line-chart-widget'
 import { BarChartWidget } from './_components/bar-chart-widget'
+import { BarListWidget } from './_components/bar-list-widget'
 
 export function Widgets({ isOpen }: { isOpen: boolean }) {
   const searchParams = useSearchParams()
@@ -35,7 +36,7 @@ export function Widgets({ isOpen }: { isOpen: boolean }) {
           className="absolute left-4 top-4 z-50 block h-[550px] w-[300px] rounded-md bg-white shadow-md"
         >
           <div className="h-full">
-            <div className="flex items-center justify-between p-4">
+            <div className="flex items-center justify-between p-4 pb-1">
               <h2 className="text-md font-semibold">Widgets</h2>
               <button
                 className="text-gray-400 hover:text-gray-600"
@@ -44,17 +45,15 @@ export function Widgets({ isOpen }: { isOpen: boolean }) {
                 <Cross className="h-5 w-5" />
               </button>
             </div>
-            <div className="h-[90%] p-4">
-              <div className="relative mb-3">
-                <Search />
-              </div>
-              <div className="mt-6 grid grid-cols-2 gap-3">
+            <div className="h-[90%] overflow-y-auto p-4">
+              <div className="grid grid-cols-2 gap-3">
                 <TextWidget />
                 <CardWidget />
                 <TableWidget />
                 <AreaChartWidget />
                 <LineChartWidget />
                 <BarChartWidget />
+                <BarListWidget />
               </div>
             </div>
           </div>

@@ -4,7 +4,12 @@ import type {
   TableOptions,
   TableState,
 } from '@tanstack/react-table'
-import type { BarChartProps, EventProps, TextProps } from '@tremor/react'
+import type {
+  BarChartProps,
+  BarListProps,
+  EventProps,
+  TextProps,
+} from '@tremor/react'
 
 type ElementTypes =
   | 'text'
@@ -39,6 +44,10 @@ interface TableElementProps {
 interface CardElementProps {}
 
 interface AreaChartElementProps {}
+
+interface BarListElementProps extends BarListProps {
+  dataKey: string
+}
 
 interface LineChartElementProps {
   header: string
@@ -100,6 +109,11 @@ export interface BarChartElement extends BaseElement {
   props: BarChartElementProps
 }
 
+export interface BarListElement extends BaseElement {
+  type: 'bar-list'
+  props: BarListElementProps
+}
+
 export type Element =
   | TextElement
   | TableElement
@@ -107,6 +121,7 @@ export type Element =
   | AreaChartElement
   | LineChartElement
   | BarChartElement
+  | BarListElement
 
 export interface Canvas {
   selectedElement: Element | null
