@@ -5,7 +5,6 @@ export function Hero() {
   return (
     <div className="text-center">
       <div className="my-6 translate-y-[-1rem] animate-fade-in bg-gradient-to-b from-slate-300 to-slate-700 bg-clip-text py-4 text-center text-6xl font-medium tracking-tight text-transparent opacity-0 [--animation-delay:200ms] md:text-7xl">
-        {/* Linear is a better way */}
         Dashgen is a better way
         <br className="hidden md:block" /> to build dashboards
       </div>
