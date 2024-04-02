@@ -2,8 +2,6 @@
 
 > CMS Tool for building personalised data-driven dashboards
 
-[![codecov](https://codecov.io/gh/rawat9/ug-project/graph/badge.svg?token=XCSPK4GKUA)](https://codecov.io/gh/rawat9/ug-project)
-
 ## Running locally
 
 1. Clone the project:
