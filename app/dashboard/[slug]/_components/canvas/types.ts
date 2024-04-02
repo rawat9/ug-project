@@ -47,6 +47,8 @@ interface AreaChartElementProps {}
 
 interface BarListElementProps extends BarListProps {
   dataKey: string
+  name: string
+  value: string
 }
 
 interface LineChartElementProps {

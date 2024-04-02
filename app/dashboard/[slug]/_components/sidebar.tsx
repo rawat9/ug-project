@@ -7,6 +7,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { CodeEditor, Settings, Widget, State } from '@/icons'
+import { cn } from '@/lib/utils'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 export function Sidebar() {
@@ -36,7 +37,10 @@ export function Sidebar() {
                       scroll: false,
                     })
                   }}
-                  className="self-center rounded-lg p-1.5 text-gray-700 transition-colors duration-200 hover:bg-gray-100 focus:outline-none dark:text-gray-200 dark:hover:bg-gray-800"
+                  className={cn(
+                    'self-center rounded-lg p-1.5 text-gray-700 transition-colors duration-200 hover:bg-gray-100 focus:outline-none dark:text-gray-200 dark:hover:bg-gray-800',
+                    searchParams.get('widgets') === 'true' && 'bg-gray-100',
+                  )}
                 >
                   <Widget className="h-5 w-5" />
                 </button>
@@ -61,7 +65,10 @@ export function Sidebar() {
                       scroll: false,
                     })
                   }}
-                  className="self-center rounded-lg p-1.5 text-gray-700 transition-colors duration-200 hover:bg-gray-100 focus:outline-none dark:text-gray-200 dark:hover:bg-gray-800"
+                  className={cn(
+                    'self-center rounded-lg p-1.5 text-gray-700 transition-colors duration-200 hover:bg-gray-100 focus:outline-none dark:text-gray-200 dark:hover:bg-gray-800',
+                    searchParams.get('editor') === 'true' && 'bg-gray-100',
+                  )}
                 >
                   <CodeEditor className="h-5 w-5" />
                 </button>
@@ -89,7 +96,10 @@ export function Sidebar() {
                       scroll: false,
                     })
                   }}
-                  className="self-center rounded-lg p-1.5 text-gray-700 transition-colors duration-200 hover:bg-gray-100 focus:outline-none dark:text-gray-200 dark:hover:bg-gray-800"
+                  className={cn(
+                    'self-center rounded-lg p-1.5 text-gray-700 transition-colors duration-200 hover:bg-gray-100 focus:outline-none dark:text-gray-200 dark:hover:bg-gray-800',
+                    searchParams.get('state') === 'true' && 'bg-gray-100',
+                  )}
                 >
                   <State className="h-5 w-5" />
                 </button>

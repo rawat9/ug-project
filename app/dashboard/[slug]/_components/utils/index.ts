@@ -46,6 +46,7 @@ export function getElementProps(type: Element['type']): Element['props'] {
           { name: 'Sony', value: 231 },
           { name: 'JBL', value: 24 },
         ],
+        color: 'blue',
       }
     default:
       throw new Error(`Invalid type: ${type}`)

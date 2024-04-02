@@ -228,3 +228,35 @@ export const fetchCanvas = async (id: string) => {
   // FIX ME - This is a hack to get around the type system
   return data.content as unknown as Canvas
 }
+
+export const publishDashboard = async (id: string) => {
+  const supabase = await createSupabaseServerClient()
+
+  const { error } = await supabase
+    .from('dashboard')
+    .update({
+      is_published: true,
+    })
+    .eq('id', id)
+
+  if (error) {
+    console.error(error.message)
+    throw new Error('Error publishing dashboard')
+  }
+}
+
+export const unPublishDashboard = async (id: string) => {
+  const supabase = await createSupabaseServerClient()
+
+  const { error } = await supabase
+    .from('dashboard')
+    .update({
+      is_published: false,
+    })
+    .eq('id', id)
+
+  if (error) {
+    console.error(error.message)
+    throw new Error('Error un-publishing dashboard')
+  }
+}

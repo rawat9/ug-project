@@ -1,10 +1,10 @@
-import { Share } from './share'
-import { Button } from '@/components/ui/button'
+import { Publish } from './publish'
 import { Dashboard } from '@/icons'
 import Link from 'next/link'
 import { ToolbarTitle } from './toolbar-title'
 import { getDashboardById } from '@/lib/data'
 import { notFound } from 'next/navigation'
+import { Preview } from './preview'
 
 export async function Toolbar({ id }: { id: string }) {
   const dashboard = await getDashboardById(id)
@@ -28,8 +28,8 @@ export async function Toolbar({ id }: { id: string }) {
           </div>
         </div>
         <div className="flex items-center justify-end gap-2">
-          <Button variant="secondary">Preview</Button>
-          <Share />
+          <Preview />
+          <Publish id={dashboard.id} isPublished={dashboard.is_published} />
         </div>
       </div>
     </header>

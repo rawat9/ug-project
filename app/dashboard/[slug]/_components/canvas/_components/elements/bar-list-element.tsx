@@ -2,6 +2,8 @@ import { BarList, Card } from '@tremor/react'
 import { memo } from 'react'
 import type { BarListElement } from '../../types'
 import { EmptyDataState } from './empty-state'
+import Markdown from 'react-markdown'
+import upperFirst from 'lodash/upperFirst'
 
 // const dataFormatter = (number: number) =>
 //   Intl.NumberFormat('us').format(number).toString()
@@ -9,29 +11,24 @@ import { EmptyDataState } from './empty-state'
 const BarListElement = memo(({ element }: { element: BarListElement }) => {
   return (
     <Card className="h-full w-full overflow-hidden">
-      <h3 className="line-clamp-1 text-lg font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
+      <Markdown className="prose line-clamp-1 text-tremor-content-strong dark:text-dark-tremor-content-strong">
         {element.props.title}
-      </h3>
+      </Markdown>
       {element.props.data.length === 0 ? (
         <EmptyDataState />
       ) : (
-        // <h3 className="text-tremor-title text-tremor-content-strong dark:text-dark-tremor-content-strong font-medium">Website Analytics</h3>
         <>
           <p className="mt-4 flex items-center justify-between text-tremor-default text-tremor-content dark:text-dark-tremor-content">
-            <span>Source</span>
-            <span>Views</span>
+            <span>{upperFirst(element.props.name)}</span>
+            <span>{upperFirst(element.props.value)}</span>
           </p>
-          <BarList data={element.props.data} className="mt-2 h-full w-full" />
+          <BarList
+            data={element.props.data}
+            className="mt-2 h-full w-full"
+            color={element.props.color}
+            showAnimation={true}
+          />
         </>
-        // <BarList
-        //   className="h-full w-full py-6"
-        //   data={element.props.data}
-        //   color={element.props.color}
-        //   // onValueChange={(event) => {
-        //   //   element.props.selected = event
-        //   // }}
-        //   showAnimation={true}
-        // />
       )}
     </Card>
   )

@@ -280,7 +280,7 @@ export function BarChartElementProperties({
                     <Label htmlFor="color" className="text-xs text-slate-500">
                       Color
                     </Label>
-                    <Input id="color" type="color" defaultValue={'#3459US'} />
+                    <Input id="color" defaultValue={'#3459US'} />
                   </div>
                 </div>
               </PopoverContent>

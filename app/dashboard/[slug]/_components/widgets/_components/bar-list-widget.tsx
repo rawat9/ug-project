@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { BarChart } from '@/icons'
+import { BarList } from '@/icons'
 import { draggedWidget } from '../state'
 import { useSetAtom } from 'jotai'
 
@@ -24,7 +24,7 @@ export function BarListWidget() {
         e.dataTransfer.setData('height', '10')
       }}
     >
-      <BarChart className="h-10 w-10 duration-500 ease-in-out group-hover:scale-125" />
+      <BarList className="h-10 w-10 duration-500 ease-in-out group-hover:scale-125" />
       <p>Bar List</p>
     </Button>
   )

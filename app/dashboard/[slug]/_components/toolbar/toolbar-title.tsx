@@ -9,6 +9,8 @@ import {
 } from '@/components/ui/tooltip'
 import { updateDashboardTitle } from '@/lib/data'
 import { Tables } from '@/types/database'
+import { usePathname } from 'next/navigation'
+import lodashLast from 'lodash/last'
 
 export function ToolbarTitle({
   id,
@@ -16,6 +18,8 @@ export function ToolbarTitle({
 }: Pick<Tables<'dashboard'>, 'id' | 'title'>) {
   const [isRenaming, setRenaming] = useState(false)
   const [currentTitle, setCurrentTitle] = useState(title)
+  const pathname = usePathname()
+  const isPreviewMode = lodashLast(pathname.split('/')) === 'preview'
 
   const handleNameChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -59,21 +63,25 @@ export function ToolbarTitle({
         />
       ) : (
         <>
-          <TooltipProvider delayDuration={0}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <h3
-                  className="truncate font-medium hover:rounded-sm hover:ring-1"
-                  onClick={() => setRenaming(true)}
-                >
-                  {title}
-                </h3>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Rename</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          {isPreviewMode ? (
+            <h3 className="truncate font-medium select-all">{title}</h3>
+          ) : (
+            <TooltipProvider delayDuration={0}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <h3
+                    className="truncate font-medium hover:rounded-sm hover:ring-1"
+                    onClick={() => setRenaming(true)}
+                  >
+                    {title}
+                  </h3>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Rename</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
         </>
       )}
     </>

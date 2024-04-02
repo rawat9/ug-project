@@ -19,7 +19,7 @@ export async function DashboardsList({ query }: { query: string }) {
         <div className="grid gap-4 py-10 md:grid-cols-2 lg:grid-cols-3">
           {filteredDashboards.map((dashboard, index) => (
             <Link
-              href={`/dashboard/${dashboard.id}`}
+              href={`/dashboard/${dashboard.id}/edit`}
               key={index}
               aria-label="Open dashboard"
               scroll={false}

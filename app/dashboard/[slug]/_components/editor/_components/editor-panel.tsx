@@ -175,9 +175,9 @@ export function EditorPanel() {
       <ResizableHandle />
       <ResizablePanel
         id="schema-viewer"
-        minSize={20}
+        minSize={30}
         maxSize={40}
-        defaultSize={20}
+        defaultSize={30}
         order={3}
       >
         <TabGroup className="h-full">

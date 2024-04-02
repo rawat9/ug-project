@@ -20,7 +20,7 @@ import { useAtomValue, useSetAtom } from 'jotai'
 import { fetchCanvas, saveCanvas } from '@/lib/data'
 import { draggedWidget } from '../widgets/state'
 
-export function Canvas() {
+export function Canvas({ isPreview = false }: { isPreview?: boolean }) {
   const { replace } = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -190,12 +190,16 @@ export function Canvas() {
           onResizeStop={onResizeStop}
           innerRef={canvasRef}
           onDropDragOver={onDropDragOver}
+          isResizable={!isPreview}
+          isDraggable={!isPreview}
         >
           {elements.map((element) => (
             <div
               key={element.id}
               className={cn(
-                'flex h-full w-full cursor-pointer select-none items-center p-1 hover:rounded-tremor-default hover:ring-1 hover:ring-inset hover:ring-blue-500',
+                'flex h-full w-full cursor-pointer select-none items-center p-1',
+                !isPreview &&
+                  'hover:rounded-tremor-default hover:ring-1 hover:ring-inset hover:ring-blue-500',
                 selectedElement?.id === element?.id &&
                   resizableId &&
                   'ring-1 ring-inset ring-blue-500 hover:rounded-none',

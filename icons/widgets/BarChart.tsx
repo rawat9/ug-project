@@ -10,13 +10,52 @@ export function BarChart(props: SVGProps<SVGSVGElement>) {
       {...props}
     >
       <path
-        fill="currentColor"
-        d="M480 496H48a32 32 0 0 1-32-32V32a16 16 0 0 1 32 0v432h432a16 16 0 0 1 0 32"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={32}
+        d="M32 32v432a16 16 0 0 0 16 16h432"
       ></path>
-      <path
-        fill="currentColor"
-        d="M156 432h-40a36 36 0 0 1-36-36V244a36 36 0 0 1 36-36h40a36 36 0 0 1 36 36v152a36 36 0 0 1-36 36m144 0h-40a36 36 0 0 1-36-36V196a36 36 0 0 1 36-36h40a36 36 0 0 1 36 36v200a36 36 0 0 1-36 36m143.64 0h-40a36 36 0 0 1-36-36V132a36 36 0 0 1 36-36h40a36 36 0 0 1 36 36v264a36 36 0 0 1-36 36"
-      ></path>
+      <rect
+        width={80}
+        height={192}
+        x={96}
+        y={224}
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={32}
+        rx={20}
+        ry={20}
+      ></rect>
+      <rect
+        width={80}
+        height={240}
+        x={240}
+        y={176}
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={32}
+        rx={20}
+        ry={20}
+      ></rect>
+      <rect
+        width={80}
+        height={304}
+        x={383.64}
+        y={112}
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={32}
+        rx={20}
+        ry={20}
+      ></rect>
     </svg>
   )
 }
