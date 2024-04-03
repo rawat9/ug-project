@@ -16,6 +16,7 @@ export type Database = {
           id: string
           title: string
           user_id: string | null
+          is_published: boolean
         }
         Insert: {
           content?: Json | null
@@ -23,6 +24,7 @@ export type Database = {
           id?: string
           title?: string
           user_id?: string | null
+          is_published?: boolean
         }
         Update: {
           content?: Json | null
@@ -30,6 +32,7 @@ export type Database = {
           id?: string
           title?: string
           user_id?: string | null
+          is_published?: boolean
         }
         Relationships: []
       }
