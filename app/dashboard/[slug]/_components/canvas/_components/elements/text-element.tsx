@@ -4,7 +4,7 @@ import Markdown from 'react-markdown'
 import { type TextElement } from '../../types'
 
 const TextElement = memo(({ element }: { element: TextElement }) => {
-  const { value, alignment } = element.props
+  const { value, alignment, dynamicValue } = element.props
   const alignmentStyle = {
     alignItems: alignment.items,
     justifyContent: alignment.justify,
@@ -13,7 +13,7 @@ const TextElement = memo(({ element }: { element: TextElement }) => {
   return (
     <div className="flex h-full w-full" style={alignmentStyle}>
       <Markdown className="prose text-tremor-default text-tremor-content dark:text-dark-tremor-content">
-        {value}
+        {dynamicValue ?? value}
       </Markdown>
     </div>
   )

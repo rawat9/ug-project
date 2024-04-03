@@ -38,7 +38,7 @@ export function QuerySidebar({
             }}
           >
             <Data className="mr-2 h-4 w-4" />
-            <p className="text-sm antialiased">{query.name}</p>
+            <p className="truncate text-sm antialiased">{query.name}</p>
           </Button>
         ))}
       </div>

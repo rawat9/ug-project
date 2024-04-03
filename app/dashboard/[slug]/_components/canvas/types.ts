@@ -21,6 +21,7 @@ type ElementTypes =
 
 interface TextElementProps extends Partial<TextProps> {
   value: string
+  dynamicValue?: string
   heading?: string
   alignment: {
     justify: 'start' | 'end' | 'center'
@@ -64,6 +65,8 @@ interface BarChartElementProps extends BarChartProps {
   originalData: unknown[]
   dataKey: string
   xAxis: string
+  xAxisTitle: string
+  yAxisTitle: string
   columns: Column[]
   groupBy: string
   groupByColumns: string[]

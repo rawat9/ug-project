@@ -176,7 +176,7 @@ export function Editor({ isOpen }: { isOpen: boolean }) {
           <ResizablePanelGroup direction="horizontal">
             <ResizablePanel
               id="sidebar"
-              defaultSize={20}
+              defaultSize={15}
               maxSize={20}
               minSize={15}
               ref={sidebarRef}

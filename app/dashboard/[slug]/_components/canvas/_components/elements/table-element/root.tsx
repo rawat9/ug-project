@@ -221,8 +221,8 @@ const TableElement = memo(({ element }: { element: TableElement }) => {
               ))}
             </TableBody>
           </Table>
-          <div className="flex h-[4%] items-center justify-end space-x-2 px-2">
-            <div className="flex-1 text-sm text-slate-500">
+          <div className="flex h-[4%] items-center justify-end space-x-2">
+            <div className="flex-1 text-xs text-slate-600">
               {'Showing ' +
                 table?.getPaginationRowModel().rows.length +
                 ' of ' +
@@ -239,7 +239,7 @@ const TableElement = memo(({ element }: { element: TableElement }) => {
               >
                 Previous
               </Button>
-              <p className="text-xs">
+              <p className="text-xs text-slate-600">
                 Page {table.getState().pagination.pageIndex + 1} of{' '}
                 {table.getPageCount()}
               </p>

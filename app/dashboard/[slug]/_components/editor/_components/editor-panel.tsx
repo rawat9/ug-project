@@ -38,6 +38,7 @@ export function EditorPanel() {
   const [queries, setQueries] = useAtom(queriesAtom)
   const [activeQuery, setActiveQuery] = useAtom(activeQueryAtom)
   const setQuery = useSetAtom(queryAtom(activeQuery?.name ?? ''))
+  const [currentIndex, setCurrentIndex] = React.useState(0)
 
   const deleteMutation = useMutation({
     mutationFn: deleteQuery,
@@ -120,11 +121,12 @@ export function EditorPanel() {
       query.trim(),
     )
     set({ query, data, error, columns, executionTime })
+    setCurrentIndex(1)
   }
 
   return (
     <>
-      <ResizablePanel id="editor" order={2} defaultSize={60}>
+      <ResizablePanel id="editor" order={2} defaultSize={55}>
         <div className="flex p-5">
           <div className="flex flex-1 items-center">
             {activeQuery && (
@@ -175,12 +177,16 @@ export function EditorPanel() {
       <ResizableHandle />
       <ResizablePanel
         id="schema-viewer"
-        minSize={30}
+        minSize={20}
         maxSize={40}
         defaultSize={30}
         order={3}
       >
-        <TabGroup className="h-full">
+        <TabGroup
+          className="h-full"
+          index={currentIndex}
+          onIndexChange={setCurrentIndex}
+        >
           <TabList variant="line">
             <Tab className="ui-selected:border-slate-600 ui-selected:text-slate-800">
               Schema

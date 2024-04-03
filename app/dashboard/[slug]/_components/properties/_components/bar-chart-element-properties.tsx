@@ -30,6 +30,8 @@ import {
 } from '@/components/ui/popover'
 import { Input } from '@/components/ui/input'
 import { Eye } from '@/icons'
+import { Switch } from '@/components/ui/switch'
+import { cn, colors } from '@/lib/utils'
 
 export function BarChartElementProperties({
   element,
@@ -39,6 +41,7 @@ export function BarChartElementProperties({
   const { updateElement } = useCanvasAtom()
 
   const queries = useAtomValue(queriesAtom)
+  console.log(queries)
   const [columns, setColumns] = useState(element.props.columns)
 
   function handleHeaderChange(value: string) {
@@ -47,6 +50,26 @@ export function BarChartElementProperties({
       props: {
         ...element.props,
         header: value,
+      },
+    })
+  }
+
+  function handleXAxisTitleChange(value: string) {
+    updateElement(element.id, {
+      ...element,
+      props: {
+        ...element.props,
+        xAxisTitle: value,
+      },
+    })
+  }
+
+  function handleYAxisTitleChange(value: string) {
+    updateElement(element.id, {
+      ...element,
+      props: {
+        ...element.props,
+        yAxisTitle: value,
       },
     })
   }
@@ -185,70 +208,85 @@ export function BarChartElementProperties({
     })
   }
 
+  function handleStackedGroupChange(value: boolean) {
+    updateElement(element.id, {
+      ...element,
+      props: {
+        ...element.props,
+        stack: value,
+      },
+    })
+  }
+
   return (
-    <div className="flex flex-col gap-1">
-      <div className="flex flex-col gap-4 px-4">
-        <div>
-          <Label htmlFor="title" className="text-xs text-slate-500">
-            Title
-          </Label>
-          <TextInput
-            type="text"
-            autoComplete="off"
-            id="title"
-            value={element.props.header}
-            onValueChange={handleHeaderChange}
-          />
-        </div>
-        <div>
-          <Label htmlFor="data" className="text-xs text-slate-500">
-            Data
-          </Label>
-          <TextInput
-            type="text"
-            autoComplete="off"
-            id="data"
-            placeholder="{{ getChartData }}"
-            className="font-mono text-xs"
-            defaultValue={element.props.dataKey}
-            onValueChange={handleDataChange}
-          />
-        </div>
-        <div>
-          <Label htmlFor="x-axis" className="text-xs text-slate-500">
-            X Axis
-          </Label>
-          <Select value={element.props.xAxis} onValueChange={handleXAxisChange}>
-            <SelectTrigger id="x-axis" className="text-slate-500">
-              <SelectValue placeholder="Select a column" />
-            </SelectTrigger>
-            <SelectContent className="-translate-x-full">
-              {columns.map((column) => (
-                <SelectItem key={column.name} value={column.name}>
-                  {column.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="space-y-1">
-          <p className="text-xs font-medium leading-none text-slate-500 peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-            Categories
-          </p>
-          <div className="grid gap-1">
-            <Popover>
+    <div className="flex flex-col gap-4 px-4 pb-4">
+      <div>
+        <Label htmlFor="title" className="text-xs text-slate-500">
+          Title
+        </Label>
+        <TextInput
+          type="text"
+          autoComplete="off"
+          id="title"
+          value={element.props.header}
+          onValueChange={handleHeaderChange}
+        />
+      </div>
+      <div>
+        <Label htmlFor="data" className="text-xs text-slate-500">
+          Data
+        </Label>
+        <TextInput
+          type="text"
+          autoComplete="off"
+          id="data"
+          placeholder="{{ getChartData }}"
+          className="font-mono text-xs"
+          defaultValue={element.props.dataKey}
+          onValueChange={handleDataChange}
+        />
+      </div>
+      <div>
+        <Label htmlFor="x-axis" className="text-xs text-slate-500">
+          X Axis
+        </Label>
+        <Select value={element.props.xAxis} onValueChange={handleXAxisChange}>
+          <SelectTrigger id="x-axis" className="text-slate-500">
+            <SelectValue placeholder="Select a column" />
+          </SelectTrigger>
+          <SelectContent className="-translate-x-full">
+            {columns.map((column) => (
+              <SelectItem key={column.name} value={column.name}>
+                {column.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="space-y-1">
+        <p className="text-xs font-medium leading-none text-slate-500 peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+          Categories
+        </p>
+        <div className="grid gap-1">
+          {element.props.categories.map((category, index) => (
+            <Popover key={index}>
               <PopoverTrigger asChild>
-                <div className="flex h-8 w-full cursor-pointer items-center gap-2 rounded-md border border-slate-100 bg-gray-50 p-2">
+                <div
+                  key={index}
+                  className="flex h-8 w-full cursor-pointer items-center gap-2 rounded-md border border-slate-100 bg-gray-50 p-2"
+                >
                   <div className="h-4 w-4 rounded-md bg-fuchsia-800" />
-                  <p className="text-sm text-slate-500">name</p>
+                  <p className="text-sm text-slate-500">{category}</p>
                   <button className="ml-auto">
                     <Eye className="h-4 w-4 text-slate-400" />
                   </button>
                 </div>
               </PopoverTrigger>
               <PopoverContent
-                className="-translate-x-full"
-                onInteractOutside={(e) => e.preventDefault()}
+                alignOffset={-300}
+                align="start"
+                className="z-10 -translate-x-6"
+                // onInteractOutside={(e) => e.preventDefault()}
               >
                 <div className="grid gap-4">
                   <div className="grid items-center gap-2">
@@ -258,7 +296,7 @@ export function BarChartElementProperties({
                     >
                       Category
                     </Label>
-                    <Input id="category" defaultValue={'name'} />
+                    <Input id="category" defaultValue={category} />
                   </div>
                   <div className="grid items-center gap-2">
                     <Label htmlFor="agg-fn" className="text-xs text-slate-500">
@@ -277,47 +315,90 @@ export function BarChartElementProperties({
                     </Select>
                   </div>
                   <div className="grid items-center gap-2">
-                    <Label htmlFor="color" className="text-xs text-slate-500">
-                      Color
-                    </Label>
-                    <Input id="color" defaultValue={'#3459US'} />
+                    <p className="text-xs font-medium text-slate-500">Color</p>
+                    <div className="grid grid-cols-6 gap-2">
+                      {colors.map((color, index) => (
+                        <button
+                          key={index}
+                          className={cn(
+                            'h-8 w-full rounded-md py-1 shadow-md',
+                            `bg-${color}-500`,
+                          )}
+                          // onClick={() => onColorChange(color)}
+                        />
+                      ))}
+                    </div>
                   </div>
                 </div>
               </PopoverContent>
             </Popover>
-            {element.props.categories.map((category, index) => (
-              <div
-                key={index}
-                className="flex h-8 w-full cursor-pointer items-center gap-2 rounded-md border border-slate-100 bg-gray-50 p-2"
-              >
-                <div className="h-4 w-4 rounded-md bg-fuchsia-800" />
-                <p className="text-sm text-slate-500">{category}</p>
-              </div>
-            ))}
-          </div>
+          ))}
         </div>
-        <div>
-          <Label htmlFor="group-by" className="text-xs text-slate-500">
-            Group by
-          </Label>
-          <Select
-            value={element.props.groupBy}
-            onValueChange={handleGroupByChange}
+      </div>
+      <div>
+        <Label htmlFor="group-by" className="text-xs text-slate-500">
+          Group by
+        </Label>
+        <Select
+          value={element.props.groupBy}
+          onValueChange={handleGroupByChange}
+        >
+          <SelectTrigger id="group-by" className="text-slate-500">
+            <SelectValue placeholder="Select a column" />
+          </SelectTrigger>
+          <SelectContent
+            alignOffset={-300}
+            align="start"
+            className="z-10 -translate-x-6"
           >
-            <SelectTrigger id="group-by" className="text-slate-500">
-              <SelectValue placeholder="Select a column" />
-            </SelectTrigger>
-            <SelectContent className="-translate-x-full">
-              {columns
-                .filter((c) => c.dtype === 'text' || c.dtype === 'varchar')
-                .map((column) => (
-                  <SelectItem key={column.name} value={column.name}>
-                    {column.name}
-                  </SelectItem>
-                ))}
-            </SelectContent>
-          </Select>
+            {columns
+              .filter((c) => c.dtype === 'text' || c.dtype === 'varchar')
+              .map((column) => (
+                <SelectItem key={column.name} value={column.name}>
+                  {column.name}
+                </SelectItem>
+              ))}
+          </SelectContent>
+        </Select>
+      </div>
+      {element.props.groupBy && (
+        <div className="flex items-center">
+          <Switch
+            id="stacked-group"
+            checked={element.props.stack}
+            onCheckedChange={handleStackedGroupChange}
+          />
+          <Label
+            htmlFor="stacked-group"
+            className="ml-2 text-xs text-slate-500"
+          >
+            Stack grouped data
+          </Label>
         </div>
+      )}
+      <div>
+        <Label htmlFor="x-title" className="text-xs text-slate-500">
+          X-Axis title
+        </Label>
+        <TextInput
+          type="text"
+          autoComplete="off"
+          id="x-title"
+          value={element.props.xAxisTitle}
+          onValueChange={handleXAxisTitleChange}
+        />
+      </div>
+      <div>
+        <Label htmlFor="y-title" className="text-xs text-slate-500">
+          Y-Axis title
+        </Label>
+        <TextInput
+          type="text"
+          autoComplete="off"
+          id="y-title"
+          value={element.props.yAxisTitle}
+          onValueChange={handleYAxisTitleChange}
+        />
       </div>
     </div>
   )

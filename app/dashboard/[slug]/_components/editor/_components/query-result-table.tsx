@@ -96,6 +96,7 @@ export function QueryResultTable({
               Next
             </Button>
             <select
+              id="page-size"
               value={table.getState().pagination.pageSize}
               onChange={(e) => {
                 table.setPageSize(Number(e.target.value))

@@ -3,7 +3,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import { Input } from '@/components/ui/input'
 import { cn, colors, getColor } from '@/lib/utils'
 import type { Color } from '@tremor/react'
 import { Cross } from '@/icons'
@@ -20,7 +19,7 @@ export function ColorPicker({
 
   return (
     <div>
-      <label className="text-xs font-medium text-slate-500">Color</label>
+      <p className="text-xs font-medium text-slate-500">Color</p>
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
           <div className="flex h-12 w-full cursor-pointer items-center gap-2 rounded-md border border-slate-100 bg-gray-50 p-2">

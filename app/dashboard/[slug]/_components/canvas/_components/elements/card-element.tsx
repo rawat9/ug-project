@@ -4,7 +4,11 @@ import { type CardElement } from '../../types'
 
 const CardElement = memo(({ element }: { element: CardElement }) => {
   return (
-    <Card className="h-full" decoration="top" decorationColor="indigo">
+    <Card
+      className="h-full overflow-hidden"
+      decoration="top"
+      decorationColor="indigo"
+    >
       <Text>Sales</Text>
       <Metric>£ 34,743</Metric>
     </Card>
