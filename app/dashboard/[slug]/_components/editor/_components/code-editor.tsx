@@ -1,76 +1,74 @@
 'use client'
 
-import Editor, { OnMount } from '@monaco-editor/react'
 import * as React from 'react'
-import { Sources } from './sources'
-import { Run } from './run'
-import { useSetAtom } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { useDebouncedCallback } from 'use-debounce'
-import { editorAtom, queryAtom } from '../state'
-import { executeQuery } from '@/lib/data'
-import { Button } from '@/components/ui/button'
-import { format } from 'sql-formatter'
-import { Format } from '@/icons'
+import { activeQueryAtom, queryAtom } from '../state'
 
-function CodeEditor() {
-  const editorRef = React.useRef<Parameters<OnMount>[0]>()
-  const set = useSetAtom(editorAtom)
-  const setQuery = useSetAtom(queryAtom)
+import ReactCodeMirror, {
+  ReactCodeMirrorRef,
+  ReactCodeMirrorProps,
+} from '@uiw/react-codemirror'
+import { PostgreSQL, sql } from '@codemirror/lang-sql'
+import { getExtension } from './sql'
+import { disableGrammarly } from '@/lib/utils'
 
-  const execute = React.useCallback(async () => {
-    const query = editorRef.current?.getValue()
-    if (!query || query.trim() === '') return
-    const { data, error, columns, executionTime } = await executeQuery(
-      query.trim(),
-    )
-    set({ query, data, error, columns, executionTime })
-  }, [set])
+const CodeEditor = React.forwardRef<ReactCodeMirrorRef, ReactCodeMirrorProps>(
+  (_, ref) => {
+    const activeQuery = useAtomValue(activeQueryAtom)
+    const setQuery = useSetAtom(queryAtom(activeQuery?.name ?? ''))
 
-  const handleEditorDidMount: OnMount = (editor) => {
-    editorRef.current = editor
-  }
+    const dialect = PostgreSQL
+    const extensions = [
+      dialect.language.data.of({ autocomplete: getExtension }),
+    ]
 
-  const handleOnChange = useDebouncedCallback((value?: string) => {
-    setQuery(value || '')
-  }, 600)
+    const handleOnChange = useDebouncedCallback((value: string) => {
+      setQuery(value)
+    }, 600)
 
-  const formatQuery = React.useCallback(() => {
-    const query = editorRef.current?.getValue()
-    if (!query || query.trim() === '') return
-    const formattedQuery = format(query, {
-      language: 'postgresql',
-      tabWidth: 2,
-      keywordCase: 'upper',
-    })
-    editorRef.current?.setValue(formattedQuery)
-  }, [])
-
-  return (
-    <>
-      <div className="flex h-14 w-full items-center gap-2 border-b px-6">
-        <h1 className="flex-1">query-name</h1>
-        <Button onClick={formatQuery} variant="outline" className="h-8 px-2">
-          <Format className="h-5 w-5" />
-        </Button>
-        <Sources />
-        <Run executionHandler={execute} />
+    return (
+      <div className="flex h-[60%] min-h-[200px] px-4">
+        <ReactCodeMirror
+          basicSetup={{
+            autocompletion: true,
+            bracketMatching: true,
+            foldGutter: false,
+          }}
+          width="100%"
+          height="100%"
+          placeholder="Write your query here"
+          className="w-full rounded-md border shadow-sm"
+          value={activeQuery?.sql_query ?? ''}
+          ref={ref}
+          extensions={[
+            sql({
+              dialect: PostgreSQL,
+              schema: {
+                users: ['id', 'name', 'age'],
+                posts: ['id', 'title', 'content'],
+              },
+              tables: [
+                {
+                  label: 'users',
+                  type: 'class',
+                  info: 'User table',
+                  apply: 'users',
+                },
+                { label: 'posts', type: 'class', info: 'Post table' },
+              ],
+            }),
+            extensions,
+          ]}
+          onChange={handleOnChange}
+          onCreateEditor={() => {
+            disableGrammarly()
+          }}
+        />
       </div>
-      <Editor
-        height="90%"
-        language="sql"
-        theme="vs-light"
-        className="pr-4"
-        options={{
-          fontSize: 15,
-          minimap: {
-            enabled: false,
-          },
-        }}
-        onMount={handleEditorDidMount}
-        onChange={handleOnChange}
-      />
-    </>
-  )
-}
+    )
+  },
+)
 
+CodeEditor.displayName = 'CodeEditor'
 export default React.memo(CodeEditor)

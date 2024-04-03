@@ -19,6 +19,7 @@ export async function createSupabaseServerClient() {
     {
       global: {
         headers: {
+          'Cache-Control': 'no-store',
           Authorization: `Bearer ${token}`,
         },
       },

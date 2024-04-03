@@ -3,6 +3,20 @@ import { Logger } from 'logger'
 
 const logger = new Logger()
 
+const map = new Map([
+  [16, 'bool'],
+  [20, 'int8'],
+  [21, 'int2'],
+  [23, 'int4'],
+  [700, 'float4'],
+  [701, 'float8'],
+  [25, 'text'],
+  [1043, 'varchar'],
+  [1082, 'date'],
+  [1114, 'timestamp'],
+  [1700, 'numeric'],
+])
+
 Deno.serve(async (req) => {
   const { conn_string, query } = await req.json()
 
@@ -26,7 +40,13 @@ Deno.serve(async (req) => {
     const result = await sql.unsafe(query)
     end = performance.now()
 
-    const columns = result.columns.map((column) => column.name)
+    const columns = result.columns.map((column) => {
+      return {
+        id: column.number,
+        name: column.name,
+        dtype: map.get(column.type) ?? 'text',
+      }
+    })
 
     const executionTime = end - start
     logger.info(`Query took ${executionTime}ms`)

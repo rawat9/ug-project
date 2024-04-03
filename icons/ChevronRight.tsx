@@ -1,6 +1,6 @@
-import { ComponentProps } from 'react'
+import type { SVGProps } from 'react'
 
-export function ChevronRight(props: ComponentProps<'svg'>) {
+export function ChevronRight(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

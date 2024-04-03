@@ -1,42 +1,93 @@
-import { Cross, Selection } from '@/icons'
+'use client'
+
+import { Delete, ExpandRight, Selection } from '@/icons'
 import { useCanvasAtom } from '../canvas/state'
-import { Element } from '../canvas/types'
 import { TextElementProperties } from './_components/text-element-properties'
+import { TableElementProperties } from './_components/table-element-properties/root'
+import * as React from 'react'
+
+import { type Element } from '../canvas/types'
+import { ExpandLeft } from '@/icons'
 
 export function Properties() {
-  const { selectedElement } = useCanvasAtom()
+  const { selectedElement, setSelectedElement, removeElement } = useCanvasAtom()
+  const [expanded, setExpanded] = React.useState(false)
+
+  React.useEffect(() => {
+    if (selectedElement) {
+      setExpanded(true)
+    } else {
+      setExpanded(false)
+    }
+  }, [selectedElement])
+
+  function handleRemove() {
+    if (selectedElement) {
+      removeElement(selectedElement.id)
+      setSelectedElement(null)
+    }
+  }
 
   return (
-    <div className="h-full">
-      <div className="flex h-[5%] items-center justify-between p-2">
-        <h2 className="text-lg font-semibold">Properties</h2>
-        <button className="text-gray-400 hover:text-gray-600">
-          <Cross className="h-5 w-5" />
-        </button>
-      </div>
-      <div className="h-px w-full bg-gray-200" />
-      {selectedElement ? (
-        <>
-          <div className="border-b p-2">{selectedElement.name}</div>
-          <div className="py-4">
-            <BaseProperties element={selectedElement} />
+    <>
+      {expanded ? (
+        <div className="absolute right-4 top-4 z-50 block h-[550px] w-[300px] rounded-lg bg-white shadow-md">
+          <div className="flex h-9 items-center p-2">
+            {selectedElement ? (
+              <>
+                <div className="flex-1">{selectedElement.name}</div>
+                <button onClick={handleRemove}>
+                  <Delete className="mr-1 h-5 w-5 text-gray-400 hover:text-gray-600" />
+                </button>
+              </>
+            ) : (
+              <div className="flex-1 text-sm text-slate-500">
+                No element selected
+              </div>
+            )}
+            <button onClick={() => setExpanded(false)}>
+              <ExpandRight className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+            </button>
           </div>
-        </>
+          <div className="h-px w-full bg-gray-200" />
+          <div className="h-[95%] py-4">
+            <div className="h-full overflow-y-auto">
+              <BaseProperties element={selectedElement} />
+            </div>
+          </div>
+        </div>
       ) : (
-        <div className="flex h-[90%] flex-col items-center justify-center p-2 text-gray-400">
-          <Selection className="my-4 h-12 w-12" />
-          Select an element to edit its properties
+        <div className="absolute right-4 top-4 z-50 flex h-9 w-28 items-center rounded-md bg-white px-2 shadow-md">
+          <p className="flex-1 text-sm text-slate-500">Properties</p>
+          <button onClick={() => setExpanded(true)}>
+            <ExpandLeft className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+          </button>
         </div>
       )}
-    </div>
+    </>
   )
 }
 
-function BaseProperties({ element }: { element: Element }) {
+function BaseProperties({ element }: { element: Element | null }) {
+  if (!element) {
+    return (
+      <div className="flex h-[90%] w-full flex-col items-center justify-center p-2 pb-4 text-gray-400">
+        <Selection className="my-4 h-12 w-12" />
+        <p className="text-center">Select an element to edit its properties</p>
+      </div>
+    )
+  }
+
   switch (element.type) {
     case 'text':
-      return <TextElementProperties selectedElement={element} />
+      return <TextElementProperties element={element} />
+    case 'table':
+      return <TableElementProperties element={element} />
+    case 'card':
+      return <div>Card properties</div>
+    case 'area-chart':
+      return <div>Area chart properties</div>
     default:
-      return null
+      throw new Error('Invalid type')
   }
 }
