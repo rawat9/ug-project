@@ -1,3 +1,12 @@
+export interface ConnectionObject {
+  host: string
+  port: number
+  database: string
+  username: string
+  password: string
+  ssl: boolean
+}
+
 export interface PostgresError {
   name: string
   message: string
@@ -17,6 +26,9 @@ export interface Result {
     columns: Column[]
     error: PostgresError | null
     executionTime: number
+  }
+  'test-connection': {
+
   }
   turso: {
     /** Names of columns.

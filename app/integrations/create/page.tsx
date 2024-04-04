@@ -1,4 +1,4 @@
-import { Postgres, Connection } from '@/icons'
+import { Postgres, Connection, Help } from '@/icons'
 import { BackButton } from './_components/back-button'
 import {
   Sheet,
@@ -8,6 +8,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet'
 import { ConnectionForm } from './_components/connection-form'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
 export default function Page() {
   return (
@@ -21,22 +22,39 @@ export default function Page() {
           </div>
         </div>
         <div className="grid w-full grid-cols-2 gap-4 py-8 sm:grid-cols-3 lg:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <Sheet key={index}>
-              <SheetTrigger asChild>
-                <div className="flex h-40 cursor-pointer flex-col items-center justify-center gap-3 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md">
-                  <Postgres className="h-12 w-12" />
-                  <p className="font-medium">PostgreSQL</p>
-                </div>
-              </SheetTrigger>
-              <SheetContent className="min-w-[800px]">
-                <SheetHeader className="h-[5%] border-b px-4 py-2">
-                  <SheetTitle>PostgreSQL</SheetTitle>
-                </SheetHeader>
-                <ConnectionForm />
-              </SheetContent>
-            </Sheet>
-          ))}
+          <Sheet>
+            <SheetTrigger asChild>
+              <div className="flex h-40 cursor-pointer flex-col items-center justify-center gap-3 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md">
+                <Postgres className="h-12 w-12" />
+                <p className="font-medium">PostgreSQL</p>
+              </div>
+            </SheetTrigger>
+            <SheetContent className="min-w-[800px]">
+              <SheetHeader className="h-[5%] border-b px-4 py-2">
+                <SheetTitle>PostgreSQL</SheetTitle>
+              </SheetHeader>
+              <ConnectionForm />
+              <div className="p-4">
+                <Alert>
+                  <Help className="h-5 w-5" />
+                  <AlertTitle className="py-1">Heads up!</AlertTitle>
+                  <AlertDescription>
+                    The database credentials you provide are encrypted and
+                    stored securely using{' '}
+                    <a
+                      className="font-medium underline underline-offset-4"
+                      href="https://aws.amazon.com/kms/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      AWS KMS
+                    </a>
+                    .
+                  </AlertDescription>
+                </Alert>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </div>
