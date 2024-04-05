@@ -26,7 +26,7 @@ export async function IntegrationsList({ query }: { query: string }) {
   return (
     <>
       {filteredIntegrations.length ? (
-        <div className="grid gap-4 overflow-y-auto">
+        <div className="grid gap-4 overflow-y-auto pb-4">
           {filteredIntegrations.map((integration, index) => (
             <Link
               href="/integrations/app-db"

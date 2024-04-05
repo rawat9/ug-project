@@ -4,7 +4,6 @@ export interface ConnectionObject {
   database: string
   username: string
   password: string
-  ssl: boolean
 }
 
 export interface PostgresError {
@@ -28,7 +27,7 @@ export interface Result {
     executionTime: number
   }
   'test-connection': {
-
+    success: boolean
   }
   turso: {
     /** Names of columns.

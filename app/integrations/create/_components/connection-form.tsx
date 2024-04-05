@@ -2,7 +2,6 @@
 
 import { Label } from '@/components/ui/label'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Checkbox } from '@/components/ui/checkbox'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
@@ -14,6 +13,7 @@ import toast from 'react-hot-toast'
 import { createIntegration, testConnection } from '@/lib/data/integrations'
 import { DevTool } from '@hookform/devtools'
 import { TextInput, NumberInput } from '@tremor/react'
+import { redirect } from 'next/navigation'
 
 export function ConnectionForm() {
   const [connString, toggleConnString] = React.useState(false)
@@ -44,8 +44,8 @@ export function ConnectionForm() {
     return toggleConnString(!connString)
   }
 
-  async function onSubmit(data: z.infer<typeof formSchema>) {
-    const result = formSchema.safeParse(data)
+  async function onSubmit(formData: z.infer<typeof formSchema>) {
+    const result = formSchema.safeParse(formData)
 
     if (!result.success) {
       const errors = result.error.issues
@@ -57,11 +57,30 @@ export function ConnectionForm() {
       return toast.error('Something went wrong')
     }
 
+    const { data } = result
+
     if (data.connectionString) {
-      await createIntegration(
-        data.name,
-        data.description ?? '',
-        data.connectionString,
+      toast.promise(
+        createIntegration(
+          data.name,
+          data.description ?? '',
+          data.connectionString,
+        ),
+        {
+          loading: 'Creating integration...',
+          success: 'Integration created successfully',
+          error: 'Failed to create integration',
+        },
+      )
+    } else if (data.details) {
+      const connectionString = `postgresql://${data.details.username}:${data.details.password}@${data.details.host}:${data.details.port}/${data.details.database}`
+      toast.promise(
+        createIntegration(data.name, data.description ?? '', connectionString),
+        {
+          loading: 'Creating integration...',
+          success: 'Integration created successfully',
+          error: 'Failed to create integration',
+        },
       )
     }
 
@@ -82,9 +101,11 @@ export function ConnectionForm() {
       return toast.error('Something went wrong')
     }
 
-    if (result.data.connectionString) {
-      setIsTesting(true)
-      toast.promise(testConnection(result.data.connectionString), {
+    const { data } = result
+
+    setIsTesting(true)
+    if (data.connectionString) {
+      toast.promise(testConnection(data.connectionString), {
         loading: 'Testing connection...',
         success: () => {
           setConnectionSuccessful(true)
@@ -92,8 +113,18 @@ export function ConnectionForm() {
         },
         error: 'Connection failed',
       })
-      setIsTesting(false)
+    } else if (data.details) {
+      const connectionString = `postgresql://${data.details.username}:${data.details.password}@${data.details.host}:${data.details.port}/${data.details.database}`
+      toast.promise(testConnection(connectionString), {
+        loading: 'Testing connection...',
+        success: () => {
+          setConnectionSuccessful(true)
+          return 'Connection successful'
+        },
+        error: 'Connection failed',
+      })
     }
+    setIsTesting(false)
   }
 
   return (

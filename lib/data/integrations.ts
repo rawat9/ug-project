@@ -6,8 +6,9 @@ import {
   CommitmentPolicy,
 } from '@aws-crypto/client-node'
 import { createSupabaseServerClient } from '../supabase/server'
-import { revalidatePath } from 'next/cache'
-import { ConnectionObject, Result } from '@/types'
+import { revalidatePath, unstable_cache as cache } from 'next/cache'
+import { Result } from '@/types'
+import { redirect } from 'next/navigation'
 
 async function encryptData(connectionString: string) {
   const generatorKeyId = process.env.AWS_KMS_KEY_ID
@@ -37,19 +38,18 @@ async function encryptData(connectionString: string) {
 export async function createIntegration(
   title: string,
   description: string,
-  connection: string,
+  connectionString: string,
 ) {
   const supabase = await createSupabaseServerClient()
-  // const encryptedString = await encryptData(connectionString)
+  const encryptedString = await encryptData(connectionString)
 
-  // if (!encryptedString) {
-  //   throw new Error('Error encrypting connection string')
-  // }
-
+  if (!encryptedString) {
+    throw new Error('Error encrypting connection string')
+  }
   const { error } = await supabase.from('integration').insert({
     title,
     description,
-    conn_string: connection,
+    conn_string: encryptedString,
   })
 
   if (error) {
@@ -57,30 +57,36 @@ export async function createIntegration(
     throw new Error('Error creating dashboard')
   }
 
-  revalidatePath('/integrations')
+  redirect('/integrations')
 }
 
-// cache this function call
-export async function testConnection(connectionString: string) {
-  const supabase = await createSupabaseServerClient()
-  const { data, error } = await supabase.functions.invoke<
-    Result['test-connection']
-  >('test-connection', {
-    method: 'POST',
-    body: {
-      type: 'postgres',
-      conn_string: connectionString,
-    },
-  })
+export const testConnection = cache(
+  async (connectionString: string) => {
+    const supabase = await createSupabaseServerClient()
+    const { data, error } = await supabase.functions.invoke<
+      Result['test-connection']
+    >('test-connection', {
+      method: 'POST',
+      body: {
+        type: 'postgres',
+        conn_string: connectionString,
+      },
+    })
 
-  if (error) {
-    console.log(error)
-    throw new Error(error.message)
-  }
+    if (error) {
+      console.log(error)
+      throw new Error(error.message)
+    }
 
-  if (!data) {
-    throw new Error('No data returned')
-  }
+    if (!data) {
+      throw new Error('No data returned')
+    }
 
-  return data
-}
+    if (!data.success) {
+      throw new Error('Connection failed')
+    }
+
+    return data
+  },
+  ['connectionString'],
+)
