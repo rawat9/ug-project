@@ -1,10 +1,10 @@
 import Search from '@/components/shared/search'
-import { CreateFormDialog } from '../dashboard/_components/create-form-dialog'
 import { IntegrationsList } from './_components/integrations-list'
 import { Header } from '@/components/shared/header'
 import { Suspense } from 'react'
 import Link from 'next/link'
-import { Sqlite } from '@/icons'
+import { Add, Sqlite } from '@/icons'
+import { Button } from '@/components/ui/button'
 import { IntegrationsListSkeleton } from './_components/integrations-list-skeleton'
 
 export default async function Page({
@@ -21,7 +21,12 @@ export default async function Page({
         <div className="mx-auto flex max-w-screen-lg flex-col px-4 py-24">
           <div className="flex items-center space-x-2 pb-10">
             <Search />
-            <CreateFormDialog />
+            <Link href={'/integrations/create'}>
+              <Button>
+                <Add />
+                <p className="ml-2 hidden sm:flex">Add New</p>
+              </Button>
+            </Link>
           </div>
           <Link
             href="/integrations/app-db"

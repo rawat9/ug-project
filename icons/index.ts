@@ -55,6 +55,7 @@ export * from './Format'
 // Icons for fetchIntegrations
 export * from './integrations/Sqlite'
 export * from './integrations/Postgres'
+export * from './integrations/Connection'
 
 // Icons for element properties
 export * from './AlignLeft'

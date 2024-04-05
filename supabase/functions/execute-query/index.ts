@@ -1,10 +1,6 @@
 import postgres from 'postgres'
 import { Logger } from 'logger'
 
-const sql = postgres('secret', {
-  max: 1,
-})
-
 const logger = new Logger()
 
 const map = new Map([
@@ -22,7 +18,7 @@ const map = new Map([
 ])
 
 Deno.serve(async (req) => {
-  const { query } = await req.json()
+  const { conn_string, query } = await req.json()
 
   if (!query) {
     return new Response(JSON.stringify({ error: 'Query is required' }), {
@@ -35,6 +31,8 @@ Deno.serve(async (req) => {
       status: 400,
     })
   }
+
+  const sql = postgres(conn_string)
 
   let end = 0
   const start = performance.now()
