@@ -47,6 +47,8 @@ Deno.serve(async (req) => {
     })
   }
 
+  // const sql = postgres(conn_string)
+
   let end = 0
   const start = performance.now()
   try {

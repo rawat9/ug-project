@@ -1,4 +1,12 @@
-import { AggregationFn } from '@tanstack/react-table'
+import type { AggregationFn } from '@tanstack/react-table'
+
+export interface ConnectionObject {
+  host: string
+  port: number
+  database: string
+  username: string
+  password: string
+}
 
 export interface PostgresError {
   name: string
@@ -26,6 +34,9 @@ export interface Result {
     columns: Column[]
     error: PostgresError | null
     executionTime: number
+  }
+  'test-connection': {
+    success: boolean
   }
   turso: {
     /** Names of columns.

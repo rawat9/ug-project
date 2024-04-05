@@ -26,7 +26,7 @@ export async function IntegrationsList({ query }: { query: string }) {
   return (
     <>
       {filteredIntegrations.length ? (
-        <div className="grid gap-4 overflow-y-auto">
+        <div className="grid gap-4 overflow-y-auto pb-4">
           {filteredIntegrations.map((integration, index) => (
             <Link
               href="/integrations/app-db"
@@ -41,7 +41,9 @@ export async function IntegrationsList({ query }: { query: string }) {
                 <div className="flex items-center">
                   <div className="flex-1">
                     <h4 className="py-2 font-semibold">{integration.title}</h4>
-                    <p className="text-sm text-gray-600">Description</p>
+                    <p className="text-sm text-gray-600">
+                      {integration.description}
+                    </p>
                   </div>
                   <div className="flex items-center gap-1">
                     <Postgres className="h-7 w-7" />
@@ -56,7 +58,7 @@ export async function IntegrationsList({ query }: { query: string }) {
         <div className="flex min-h-[300px] flex-col items-center justify-center rounded-lg border bg-white py-8">
           <h1>No results found for &apos;{query}&apos;</h1>
           <p className="text-xs text-gray-500">
-            Try a different search term or create a new dashboard
+            Try a different search term or create a new integration
           </p>
         </div>
       )}
