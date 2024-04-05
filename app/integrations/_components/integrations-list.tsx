@@ -41,7 +41,9 @@ export async function IntegrationsList({ query }: { query: string }) {
                 <div className="flex items-center">
                   <div className="flex-1">
                     <h4 className="py-2 font-semibold">{integration.title}</h4>
-                    <p className="text-sm text-gray-600">Description</p>
+                    <p className="text-sm text-gray-600">
+                      {integration.description}
+                    </p>
                   </div>
                   <div className="flex items-center gap-1">
                     <Postgres className="h-7 w-7" />

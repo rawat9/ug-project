@@ -254,12 +254,6 @@ export function ConnectionForm() {
                   </p>
                 )}
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="ssl" className="text-right">
-                  Use SSL
-                </Label>
-                <Checkbox id="ssl" {...register('details.ssl')} />
-              </div>
             </>
           )}
           <SheetFooter className="items-center py-8">
