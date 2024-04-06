@@ -1,5 +1,5 @@
 import { Publish } from './publish'
-import { Dashboard } from '@/icons'
+import { Logo } from '@/icons'
 import Link from 'next/link'
 import { ToolbarTitle } from './toolbar-title'
 import { getDashboardById } from '@/lib/data'
@@ -18,13 +18,13 @@ export async function Toolbar({ id }: { id: string }) {
       <div className="flex h-full w-full items-center justify-between">
         <div className="flex h-8 items-center gap-3">
           <Link href="/dashboard" className="flex">
-            <Dashboard className="h-5 w-5" />
+            <Logo className="h-5 w-5" />
           </Link>
           <div className="flex flex-col">
             <div className="flex items-center">
               <ToolbarTitle id={dashboard.id} title={dashboard.title} />
             </div>
-            <p className="text-xs text-gray-400">Edited 5 hours ago</p>
+            <p className="text-xs text-gray-400">Edited 2 hours ago</p>
           </div>
         </div>
         <div className="flex items-center justify-end gap-2">

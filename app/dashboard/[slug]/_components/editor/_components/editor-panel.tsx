@@ -13,7 +13,7 @@ import { Sources } from './sources'
 import { Run } from './run'
 import { ReactCodeMirrorRef } from '@uiw/react-codemirror'
 import { format } from 'sql-formatter'
-import { executeQuery } from '@/lib/data'
+import { executeQuery, fetchSchema } from '@/lib/data'
 
 import * as React from 'react'
 import {
@@ -25,7 +25,8 @@ import {
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query'
 import { QueryName } from './query-name'
 import { deleteQuery, updateQuery } from '@/lib/data/client/queries'
-import { Tables } from '@/types/database'
+import type { Tables } from '@/types/database'
+import type { TableSchema } from '@/types'
 import toast from 'react-hot-toast'
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@tremor/react'
 import { fetchIntegrations } from '@/lib/data/client/integrations'
@@ -33,20 +34,20 @@ import { fetchIntegrations } from '@/lib/data/client/integrations'
 export function EditorPanel() {
   const queryClient = useQueryClient()
   const [queryResult, set] = useAtom(editorAtom)
-  const { data, error, columns, executionTime } = queryResult
-  const resultPanelRef = React.useRef<ImperativePanelHandle>(null)
+  const { data, error, columns } = queryResult
+  // const resultPanelRef = React.useRef<ImperativePanelHandle>(null)
   const codeEditorRef = React.useRef<ReactCodeMirrorRef>(null)
   const [queries, setQueries] = useAtom(queriesAtom)
   const [activeQuery, setActiveQuery] = useAtom(activeQueryAtom)
   const setQuery = useSetAtom(queryAtom(activeQuery?.name ?? ''))
   const [currentIndex, setCurrentIndex] = React.useState(0)
-
-  console.log(queries)
+  const [schema, setSchema] = React.useState<TableSchema[]>([])
 
   const { data: integrations } = useQuery({
     queryKey: ['integrations'],
     queryFn: fetchIntegrations,
     select: (it) => it.data,
+    retry: 3,
   })
 
   const deleteMutation = useMutation({
@@ -121,13 +122,27 @@ export function EditorPanel() {
     updateMutation.mutate({ id: activeQuery.id, key: 'name', value: name })
   }
 
-  const handleSetIntegration = (integrationId: string) => {
+  const handleSetIntegration = async (integrationId: string) => {
     if (!activeQuery) return
     updateMutation.mutate({
       id: activeQuery.id,
       key: 'integration_id',
       value: integrationId,
     })
+
+    const encryptedConnectionString = integrations?.find(
+      (integration) => integration.id === integrationId,
+    )?.conn_string
+
+    if (!encryptedConnectionString) {
+      toast.error('Unable to update the schema. No connection string found', {
+        position: 'top-center',
+      })
+      return
+    }
+
+    const { data } = await fetchSchema(encryptedConnectionString)
+    setSchema(data)
   }
 
   const handleDelete = () => {
@@ -173,6 +188,28 @@ export function EditorPanel() {
     // switch to the result panel
     setCurrentIndex(1)
   }
+
+  React.useEffect(() => {
+    async function loadSchema() {
+      const integrationId = activeQuery?.integration_id
+
+      if (!integrationId) {
+        return
+      }
+
+      const encryptedConnectionString = integrations?.find(
+        (integration) => integration.id === activeQuery.integration_id,
+      )?.conn_string
+
+      if (!encryptedConnectionString) {
+        return
+      }
+
+      const { data } = await fetchSchema(encryptedConnectionString)
+      setSchema(data)
+    }
+    loadSchema()
+  }, [integrations, activeQuery?.integration_id])
 
   return (
     <>
@@ -250,8 +287,8 @@ export function EditorPanel() {
             </Tab>
           </TabList>
           <TabPanels className="h-full">
-            <TabPanel className="p-2">
-              <SchemaViewer />
+            <TabPanel className="h-full p-2">
+              <SchemaViewer schema={schema} />
             </TabPanel>
             <TabPanel className="mt-0 h-full w-full">
               {error ? (

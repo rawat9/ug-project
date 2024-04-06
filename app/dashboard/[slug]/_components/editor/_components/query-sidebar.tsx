@@ -20,6 +20,7 @@ export function QuerySidebar({
     queryKey: ['queries'],
     queryFn: fetchQueries,
     select: (it) => it.data,
+    retry: 3,
   })
 
   return (

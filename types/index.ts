@@ -8,6 +8,13 @@ export interface ConnectionObject {
   password: string
 }
 
+export interface TableSchema {
+  table_schema: string
+  table_name: string
+  column_name: string
+  udt_name: string
+}
+
 export interface PostgresError {
   name: string
   message: string
@@ -23,6 +30,11 @@ export type Column = {
 }
 
 export interface Result {
+  'fetch-schema': {
+    data: TableSchema[]
+    error: PostgresError | null
+    executionTime: number
+  }
   'execute-pg': {
     data: unknown[]
     columns: Column[]

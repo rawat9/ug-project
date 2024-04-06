@@ -1,6 +1,5 @@
 'use server'
 
-// TO FIX
 import { Element } from '@/app/dashboard/[slug]/_components/canvas/types'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 import { revalidatePath, unstable_cache as cache } from 'next/cache'
@@ -9,6 +8,11 @@ import { z } from 'zod'
 
 import type { Result } from '@/types'
 import type { Json, Tables } from '@/types/database'
+import {
+  CommitmentPolicy,
+  KmsKeyringNode,
+  buildClient,
+} from '@aws-crypto/client-node'
 
 type Dashboard = Tables<'dashboard'>
 type Integration = Tables<'integration'>
@@ -131,15 +135,54 @@ export const updateDashboardTitle = async ({
   revalidatePath('/dashboard')
 }
 
-export const executeQuery = async (query: string, conn_string: Json) => {
+async function decryptData(encryptedData: Buffer) {
+  const generatorKeyId = process.env.AWS_KMS_KEY_ID
+
+  const { decrypt } = buildClient(
+    CommitmentPolicy.REQUIRE_ENCRYPT_REQUIRE_DECRYPT,
+  )
+
+  const keyring = new KmsKeyringNode({ generatorKeyId })
+
+  const context = {
+    stage: 'dashgen',
+    purpose: 'Data dashboard tool',
+    origin: process.env.AWS_REGION!,
+  }
+
+  try {
+    const { plaintext, messageHeader } = await decrypt(keyring, encryptedData)
+    const { encryptionContext } = messageHeader
+
+    Object.entries(context).forEach(([key, value]) => {
+      if (encryptionContext[key] !== value)
+        throw new Error('Encryption Context does not match expected values')
+    })
+
+    return plaintext.toString()
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+export const executeQuery = async (
+  query: string,
+  conn_string: { type: 'Buffer'; data: number[] },
+) => {
   const supabase = await createSupabaseServerClient()
+  const decrypted = await decryptData(Buffer.from(conn_string.data))
+
+  if (!decrypted) {
+    throw new Error('Error decrypting connection string')
+  }
+
   const { data, error } = await supabase.functions.invoke<
     Result['execute-query']
   >('execute-query', {
     method: 'POST',
     body: {
       query,
-      conn_string,
+      conn_string: decrypted,
     },
   })
 
@@ -263,3 +306,34 @@ export const unPublishDashboard = async (id: string) => {
     throw new Error('Error un-publishing dashboard')
   }
 }
+
+export const fetchSchema = cache(
+  async (conn_string: { type: 'Buffer'; data: number[] }) => {
+    const supabase = await createSupabaseServerClient()
+    // const decrypted = await decryptData(Buffer.from(conn_string.data))
+
+    // if (!decrypted) {
+    //   throw new Error('Error decrypting connection string')
+    // }
+
+    const { data, error } = await supabase.functions.invoke<
+      Result['fetch-schema']
+    >('fetch-schema', {
+      method: 'POST',
+      // body: {
+      //   // conn_string: decrypted,
+      // },
+    })
+
+    if (error) {
+      throw error
+    }
+
+    if (!data) {
+      throw new Error('No data returned')
+    }
+
+    return data
+  },
+  ['schema'],
+)

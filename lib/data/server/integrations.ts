@@ -49,7 +49,7 @@ export async function createIntegration(
   const { error } = await supabase.from('integration').insert({
     title,
     description,
-    conn_string: encryptedString,
+    conn_string: encryptedString.toJSON(),
   })
 
   if (error) {

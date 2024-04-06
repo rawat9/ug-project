@@ -73,3 +73,6 @@ export * from './Selection'
 
 // Table element properties
 export * from './Sigma'
+
+// App Logo
+export * from './Logo'

@@ -16,7 +16,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import { Add, CaretSort, Check } from '@/icons'
+import { Add, CaretSort, Check, Postgres } from '@/icons'
 import { Tables } from '@/types/database'
 
 export function Sources({
@@ -40,6 +40,9 @@ export function Sources({
           className="h-8 w-[200px] justify-between"
         >
           <span className="truncate">
+            {selectedIntegrationId && (
+              <Postgres className="inline-flex mr-2 h-4 w-4" />
+            )}
             {selectedIntegrationId
               ? integrations.find(
                   (integration) => integration.id === selectedIntegrationId,

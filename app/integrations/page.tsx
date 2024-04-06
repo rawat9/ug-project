@@ -39,9 +39,9 @@ export default async function Page({
             >
               <div className="flex items-center">
                 <div className="flex-1">
-                  <h4 className="py-2 font-semibold">App Database</h4>
+                  <h4 className="py-2 font-semibold">Demo DB</h4>
                   <p className="text-sm text-gray-600">
-                    Managed by DashCMS. You can create new tables and import
+                    Managed by Dashgen. You can create new tables and import
                     data using CSV or Excel
                   </p>
                 </div>
