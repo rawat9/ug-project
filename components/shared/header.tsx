@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Dashboard } from '@/icons'
 import { ActiveLink } from './active-link'
 import { UserButton } from '@clerk/nextjs'
+import Image from 'next/image'
 
 export function Header() {
   return (

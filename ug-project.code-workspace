@@ -10,7 +10,6 @@
     },
   ],
   "settings": {
-    "jest.disabledWorkspaceFolders": ["supabase-functions"],
     "deno.importMap": "./supabase/functions/import_map.json",
   },
 }
