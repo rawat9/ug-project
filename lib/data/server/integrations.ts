@@ -5,9 +5,9 @@ import {
   buildClient,
   CommitmentPolicy,
 } from '@aws-crypto/client-node'
-import { createSupabaseServerClient } from '../supabase/server'
-import { revalidatePath, unstable_cache as cache } from 'next/cache'
-import { Result } from '@/types'
+import { createSupabaseServerClient } from '../../supabase/server'
+import { unstable_cache as cache } from 'next/cache'
+import type { Result } from '@/types'
 import { redirect } from 'next/navigation'
 
 async function encryptData(connectionString: string) {

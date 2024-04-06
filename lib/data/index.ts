@@ -131,13 +131,16 @@ export const updateDashboardTitle = async ({
   revalidatePath('/dashboard')
 }
 
-export const executeQuery = async (query: string) => {
+export const executeQuery = async (query: string, conn_string: Json) => {
   const supabase = await createSupabaseServerClient()
   const { data, error } = await supabase.functions.invoke<
     Result['execute-query']
   >('execute-query', {
     method: 'POST',
-    body: { query },
+    body: {
+      query,
+      conn_string,
+    },
   })
 
   if (error) {

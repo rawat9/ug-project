@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { createSupabaseBrowserClient } from '../supabase/client'
+import { createSupabaseBrowserClient } from '../../supabase/client'
 import { Tables } from '@/types/database'
 
 export const fetchQueries = async () => {

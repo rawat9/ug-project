@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { AddCircle } from '@/icons'
-import { createQuery } from '@/lib/data/queries'
+import { createQuery } from '@/lib/data/client/queries'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useSetAtom } from 'jotai'
 import { activeQueryAtom, queriesAtom } from '../state'

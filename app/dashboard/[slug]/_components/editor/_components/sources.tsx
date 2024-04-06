@@ -1,5 +1,3 @@
-'use client'
-
 import * as React from 'react'
 
 import { cn } from '@/lib/utils'
@@ -19,21 +17,18 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { Add, CaretSort, Check } from '@/icons'
+import { Tables } from '@/types/database'
 
-const frameworks = [
-  {
-    value: 'postgresql',
-    label: 'onboarding-db (PostgreSQL)',
-  },
-  {
-    value: 'mysql',
-    label: 'sales-db (MySQL)',
-  },
-]
-
-export function Sources() {
+export function Sources({
+  selectedIntegrationId,
+  integrations,
+  handleSelectChange,
+}: {
+  selectedIntegrationId?: string | null
+  integrations: Tables<'integration'>[]
+  handleSelectChange: (integration_id: string) => void
+}) {
   const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState('')
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -42,11 +37,15 @@ export function Sources() {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="h-8 w-[190px] justify-between"
+          className="h-8 w-[200px] justify-between"
         >
-          {value
-            ? frameworks.find((framework) => framework.value === value)?.label
-            : 'Select integration...'}
+          <span className="truncate">
+            {selectedIntegrationId
+              ? integrations.find(
+                  (integration) => integration.id === selectedIntegrationId,
+                )?.title
+              : 'Select integration...'}
+          </span>
           <CaretSort className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -55,20 +54,23 @@ export function Sources() {
           <CommandInput placeholder="Search integration..." className="h-9" />
           <CommandEmpty>No integration found.</CommandEmpty>
           <CommandGroup>
-            {frameworks.map((framework) => (
+            {integrations.map((integration) => (
               <CommandItem
-                key={framework.value}
-                value={framework.value}
-                onSelect={(currentValue) => {
-                  setValue(currentValue === value ? '' : currentValue)
+                key={integration.id}
+                value={integration.id}
+                onSelect={(value) => {
+                  if (value === selectedIntegrationId) return
+                  handleSelectChange(integration.id)
                   setOpen(false)
                 }}
               >
-                {framework.label}
+                {integration.title}
                 <Check
                   className={cn(
                     'ml-auto h-4 w-4',
-                    value === framework.value ? 'opacity-100' : 'opacity-0',
+                    selectedIntegrationId === integration.id
+                      ? 'opacity-100'
+                      : 'opacity-0',
                   )}
                 />
               </CommandItem>

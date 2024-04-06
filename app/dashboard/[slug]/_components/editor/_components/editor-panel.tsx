@@ -22,12 +22,13 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query'
 import { QueryName } from './query-name'
-import { deleteQuery, updateQuery } from '@/lib/data/queries'
+import { deleteQuery, updateQuery } from '@/lib/data/client/queries'
 import { Tables } from '@/types/database'
 import toast from 'react-hot-toast'
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@tremor/react'
+import { fetchIntegrations } from '@/lib/data/client/integrations'
 
 export function EditorPanel() {
   const queryClient = useQueryClient()
@@ -40,9 +41,18 @@ export function EditorPanel() {
   const setQuery = useSetAtom(queryAtom(activeQuery?.name ?? ''))
   const [currentIndex, setCurrentIndex] = React.useState(0)
 
+  console.log(queries)
+
+  const { data: integrations } = useQuery({
+    queryKey: ['integrations'],
+    queryFn: fetchIntegrations,
+    select: (it) => it.data,
+  })
+
   const deleteMutation = useMutation({
     mutationFn: deleteQuery,
     onSuccess: (_, id) => {
+      // update state
       setQueries((prev) => prev.filter((query) => query.id !== id))
       const activeIndex = queries.findIndex((query) => query.id === id)
 
@@ -64,15 +74,17 @@ export function EditorPanel() {
   const updateMutation = useMutation({
     mutationFn: updateQuery,
     onSuccess: (_, variables) => {
+      // update state
       setQueries((prev) =>
         prev.map((query) =>
           query.id === variables.id
-            ? { ...query, name: variables.value }
+            ? { ...query, [variables.key]: variables.value }
             : query,
         ),
       )
       setActiveQuery(
-        (prev) => ({ ...prev, name: variables.value }) as Tables<'query'>,
+        (prev) =>
+          ({ ...prev, [variables.key]: variables.value }) as Tables<'query'>,
       )
       queryClient.invalidateQueries({ queryKey: ['queries'] })
     },
@@ -109,6 +121,15 @@ export function EditorPanel() {
     updateMutation.mutate({ id: activeQuery.id, key: 'name', value: name })
   }
 
+  const handleSetIntegration = (integrationId: string) => {
+    if (!activeQuery) return
+    updateMutation.mutate({
+      id: activeQuery.id,
+      key: 'integration_id',
+      value: integrationId,
+    })
+  }
+
   const handleDelete = () => {
     if (!activeQuery) return
     deleteMutation.mutate(activeQuery.id)
@@ -117,10 +138,39 @@ export function EditorPanel() {
   const execute = async () => {
     const query = codeEditorRef.current?.view?.state.doc.toString()
     if (!query || query.trim() === '') return
+    if (!activeQuery) return
+    if (!integrations?.length) {
+      toast.error('No integrations found', {
+        position: 'top-center',
+      })
+      return
+    }
+
+    const encryptedConnectionString = integrations.find(
+      (integration) => integration.id === activeQuery.integration_id,
+    )?.conn_string
+
+    if (!encryptedConnectionString) {
+      toast.error('No connection string found', {
+        position: 'top-center',
+      })
+      return
+    }
+
+    // save the query before running
+    updateMutation.mutate({
+      id: activeQuery?.id,
+      key: 'sql_query',
+      value: query,
+    })
+
     const { data, error, columns, executionTime } = await executeQuery(
       query.trim(),
+      encryptedConnectionString,
     )
     set({ query, data, error, columns, executionTime })
+
+    // switch to the result panel
     setCurrentIndex(1)
   }
 
@@ -166,7 +216,11 @@ export function EditorPanel() {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-            <Sources />
+            <Sources
+              selectedIntegrationId={activeQuery?.integration_id}
+              integrations={integrations ?? []}
+              handleSelectChange={handleSetIntegration}
+            />
             <Run executionHandler={execute} />
           </div>
         </div>

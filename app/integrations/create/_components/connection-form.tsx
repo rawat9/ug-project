@@ -13,7 +13,6 @@ import toast from 'react-hot-toast'
 import { createIntegration, testConnection } from '@/lib/data/integrations'
 import { DevTool } from '@hookform/devtools'
 import { TextInput, NumberInput } from '@tremor/react'
-import { redirect } from 'next/navigation'
 
 export function ConnectionForm() {
   const [connString, toggleConnString] = React.useState(false)

@@ -11,7 +11,7 @@ export default authMiddleware({
     }
 
     // If the user is logged in, navigate them to the dashboard
-    if (auth.userId && auth.isPublicRoute) {
+    if (auth.userId && req.url === '/') {
       return NextResponse.redirect(new URL('/dashboard', req.url))
     }
 

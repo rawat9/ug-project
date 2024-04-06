@@ -1,7 +1,7 @@
 import { Toolbar } from './_components/toolbar'
 import { Provider as JotaiProvider } from 'jotai'
 import { Suspense } from 'react'
-import { Loading } from './_components/skeleton-loader'
+import Loading from './loading'
 
 export default async function Layout({
   children,

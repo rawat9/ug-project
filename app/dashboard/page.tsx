@@ -5,7 +5,7 @@ import { DashboardsList } from './_components/dashboards-list'
 import { DashboardsListSkeleton } from './_components/dashboards-list-skeleton'
 import { Suspense } from 'react'
 
-export default async function Page({
+export default function Page({
   searchParams,
 }: {
   searchParams?: { query?: string }

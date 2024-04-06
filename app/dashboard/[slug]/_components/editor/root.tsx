@@ -24,9 +24,6 @@ import {
   ResizablePanelGroup,
 } from '@/components/ui/resizable'
 import { QuerySidebar } from './_components/query-sidebar'
-import toast from 'react-hot-toast'
-import { useQuery } from '@tanstack/react-query'
-import { fetchQueries } from '@/lib/data/queries'
 import { useAtomValue } from 'jotai'
 import { activeQueryAtom } from './state'
 import { ImperativePanelHandle } from 'react-resizable-panels'
@@ -37,16 +34,6 @@ export function Editor({ isOpen }: { isOpen: boolean }) {
   const [isExpanded, setIsExpanded] = React.useState(true) // for panel
   const [isCollapsed, setIsCollapsed] = React.useState(false) // for sidebar
   const heightRef = React.useRef(0)
-
-  const { data: queries, isError } = useQuery({
-    queryKey: ['queries'],
-    queryFn: fetchQueries,
-    select: (it) => it.data,
-  })
-
-  if (isError) {
-    toast.error('Error fetching queries', { position: 'top-center' })
-  }
 
   const ref = React.useRef<HTMLDivElement>(null)
   const refTop = React.useRef<HTMLDivElement>(null)
@@ -184,17 +171,7 @@ export function Editor({ isOpen }: { isOpen: boolean }) {
               collapsedSize={0}
               collapsible
             >
-              {queries && queries.length > 0 ? (
-                <QuerySidebar queries={queries} activeQuery={activeQuery} />
-              ) : (
-                <div className="flex h-full w-full justify-center p-4">
-                  <div className="flex h-[80%] w-[90%] items-center justify-center rounded-md border-2 border-dashed">
-                    <p className="text-sm text-gray-500">
-                      You don&apos;t have any queries
-                    </p>
-                  </div>
-                </div>
-              )}
+              <QuerySidebar activeQuery={activeQuery} />
             </ResizablePanel>
             <ResizableHandle />
             {activeQuery ? (

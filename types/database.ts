@@ -44,7 +44,7 @@ export type Database = {
           title: string
           description: string
           user_id: string | null
-          encrypted_conn_string: Json | null
+          conn_string: Json | null
         }
         Insert: {
           created_at?: string
@@ -52,7 +52,7 @@ export type Database = {
           title?: string
           user_id?: string | null
           description?: string
-          encrypted_conn_string?: Json | null
+          conn_string?: Json | null
         }
         Update: {
           created_at?: string
@@ -60,7 +60,7 @@ export type Database = {
           title?: string
           user_id?: string | null
           description?: string
-          encrypted_conn_string?: Json | null
+          conn_string?: Json | null
         }
         Relationships: []
       }
