@@ -1,7 +1,6 @@
 import { ContainerScroll } from './_components/ContainerScroll'
 import { Hero } from './_components/Hero'
-import { BentoGrid, BentoGridItem } from './_components/BentoGrid'
-import { features } from './_components/features'
+import { Features } from './_components/features'
 import Image from 'next/image'
 
 interface FeatureProps {
@@ -22,22 +21,13 @@ function Feature({ title, description, icon }: FeatureProps) {
 
 export default function Page() {
   return (
-    <div className="overflow-hidden pb-[16.4rem] md:pb-[25.6rem]">
+    <div className="overflow-hidden pb-[16.4rem]">
       <div className="mx-auto max-w-[120rem] px-8 pt-[6.4rem] md:pt-2">
         <ContainerScroll titleComponent={<Hero />}>
           <Image src="" alt="hero image" width={800} height={600} />
         </ContainerScroll>
       </div>
-      <BentoGrid className="mx-auto max-w-6xl">
-        {features.map((item, i) => (
-          <BentoGridItem
-            key={i}
-            title={item.title}
-            description={item.description}
-            icon={item.icon}
-          />
-        ))}
-      </BentoGrid>
+      <Features />
     </div>
   )
 }

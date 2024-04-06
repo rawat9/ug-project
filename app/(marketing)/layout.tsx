@@ -1,3 +1,4 @@
+import { Footer } from './_components/Footer'
 import { GridBackground } from './_components/GridBackground'
 import { Header } from './_components/Header'
 
@@ -10,6 +11,7 @@ export default function Layout({ children }: MarketingLayoutProps) {
     <div className="min-h-screen">
       <Header />
       <GridBackground>{children}</GridBackground>
+      <Footer />
     </div>
   )
 }

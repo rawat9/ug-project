@@ -4,6 +4,10 @@ import Link from 'next/link'
 export function Hero() {
   return (
     <div className="text-center">
+      <button className='relative rounded-full p-1 text-sm inline-flex items-center leading-6 bg-white text-gray-600 hover:shadow-xl duration-200 ring-1 ring-gray-900/10 hover:ring-gray-900/20'>
+        <span className='pl-1'>Take the survey</span>{" "}
+        <span className="rounded-full ml-2 p-1 bg-gray-100 border"><ChevronRight /></span>
+      </button>
       <div className="my-6 translate-y-[-1rem] animate-fade-in bg-gradient-to-b from-slate-300 to-slate-700 bg-clip-text py-4 text-center text-6xl font-medium tracking-tight text-transparent opacity-0 [--animation-delay:200ms] md:text-7xl">
         Dashgen is a better way
         <br className="hidden md:block" /> to build dashboards
