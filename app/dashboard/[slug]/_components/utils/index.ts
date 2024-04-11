@@ -40,6 +40,7 @@ export function getElementProps(type: Element['type']): Element['props'] {
         columns: [],
         categories: [],
         groupedCategories: [],
+        curveType: 'linear',
       }
     case 'bar-chart':
       return {

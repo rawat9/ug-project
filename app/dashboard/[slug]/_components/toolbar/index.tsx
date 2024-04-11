@@ -2,7 +2,7 @@ import { Publish } from './publish'
 import { Logo } from '@/icons'
 import Link from 'next/link'
 import { ToolbarTitle } from './toolbar-title'
-import { getDashboardById } from '@/lib/data'
+import { getDashboardById } from '@/lib/data/server/dashboard'
 import { notFound } from 'next/navigation'
 import { Preview } from './preview'
 

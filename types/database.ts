@@ -48,6 +48,7 @@ export type Database = {
           description: string
           user_id: string | null
           conn_string: { type: 'Buffer'; data: number[] } | null
+          is_default: boolean
         }
         Insert: {
           created_at?: string
@@ -56,6 +57,7 @@ export type Database = {
           user_id?: string | null
           description?: string
           conn_string?: { type: 'Buffer'; data: number[] } | null
+          is_default?: boolean
         }
         Update: {
           created_at?: string
@@ -64,6 +66,7 @@ export type Database = {
           user_id?: string | null
           description?: string
           conn_string?: { type: 'Buffer'; data: number[] } | null
+          is_default?: boolean
         }
         Relationships: []
       }

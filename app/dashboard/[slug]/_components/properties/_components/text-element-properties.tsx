@@ -206,10 +206,18 @@ export function TextElementProperties({ element }: { element: TextElement }) {
           </TabGroup>
         </div>
       </div>
-      <div className="space-y-1">
-        <Label htmlFor='font-size'className="text-xs text-slate-500">Font size</Label>
-        <NumberInput id="font-size" value={element.props.fontSize} onValueChange={handleFontSizeChange} />
-      </div>
+      {element.props.type === 'plaintext' && (
+        <div className="space-y-1">
+          <Label htmlFor="font-size" className="text-xs text-slate-500">
+            Font size
+          </Label>
+          <NumberInput
+            id="font-size"
+            value={element.props.fontSize}
+            onValueChange={handleFontSizeChange}
+          />
+        </div>
+      )}
       <div className="space-y-1">
         <p className="text-xs font-medium text-slate-500">Color</p>
         <Popover open={isOpen} onOpenChange={setIsOpen}>

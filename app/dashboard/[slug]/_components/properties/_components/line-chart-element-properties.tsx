@@ -3,7 +3,6 @@
 import { Label } from '@/components/ui/label'
 import { useCanvasAtom } from '../../canvas/state'
 import { LineChartElement } from '../../canvas/types'
-import { TextInput } from '@tremor/react'
 import lodashResult from 'lodash/result'
 import lodashKeyBy from 'lodash/keyBy'
 import lodashMap from 'lodash/map'
@@ -16,6 +15,9 @@ import lodashUniq from 'lodash/uniq'
 import lodashKeys from 'lodash/keys'
 import lodashFlatMap from 'lodash/flatMap'
 import lodashMerge from 'lodash/merge'
+import lodashMeanBy from 'lodash/meanBy'
+
+import { CurveType, Tab, TabGroup, TabList, TextInput } from '@tremor/react'
 
 import { Column } from '@/types'
 import {
@@ -28,7 +30,7 @@ import {
 
 import { useAtomValue } from 'jotai'
 import { queriesAtom } from '../../editor/state'
-import { colors, isDateType, isTextType } from '@/lib/utils'
+import { colors, isDateType } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import {
   Popover,
@@ -36,9 +38,8 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { Listbox, Transition } from '@headlessui/react'
-import { Add, Check } from '@/icons'
+import { Add, Check, Delete } from '@/icons'
 import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
 import React from 'react'
 
 export function LineChartElementProperties({
@@ -47,6 +48,10 @@ export function LineChartElementProperties({
   element: LineChartElement
 }) {
   const { updateElement } = useCanvasAtom()
+  const curveTypes = React.useMemo<CurveType[]>(
+    () => ['linear', 'natural', 'monotone', 'step'],
+    [],
+  )
   const queries = useAtomValue(queriesAtom)
 
   function handleTitleChange(value: string) {
@@ -83,7 +88,7 @@ export function LineChartElementProperties({
 
       const group = lodashGroupBy(
         lodashSortBy(result.data, value),
-        (column) => {
+        (column: any) => {
           return new Date(column[guessXAxis]).toLocaleString('default', {
             month: 'short',
             year: 'numeric',
@@ -117,6 +122,7 @@ export function LineChartElementProperties({
           categories: integerColumns.map((c) => ({
             name: c.name,
             aggFn: 'sum' as const,
+            hidden: false,
           })),
         },
       })
@@ -131,6 +137,7 @@ export function LineChartElementProperties({
         categories: categories.map((c) => ({
           name: c,
           aggFn: 'sum' as const,
+          hidden: false,
         })),
       },
     })
@@ -150,21 +157,24 @@ export function LineChartElementProperties({
       return toast.error('Invalid column type. Please select a date column.')
     }
 
-    const group = lodashGroupBy(lodashSortBy(originalData, value), (column) => {
-      switch (indexTimeGranularity) {
-        case 'Yearly':
-          return new Date(column[index]).getFullYear()
-        case 'Monthly':
-          return new Date(column[index]).toLocaleString('default', {
-            month: 'short',
-            year: 'numeric',
-          })
-        case 'Daily':
-          return new Date(column[index]).toLocaleDateString()
-        default:
-          return column[index]
-      }
-    })
+    const group = lodashGroupBy(
+      lodashSortBy(originalData, value),
+      (column: any) => {
+        switch (indexTimeGranularity) {
+          case 'Yearly':
+            return new Date(column[index]).getFullYear()
+          case 'Monthly':
+            return new Date(column[index]).toLocaleString('default', {
+              month: 'short',
+              year: 'numeric',
+            })
+          case 'Daily':
+            return new Date(column[index]).toLocaleDateString()
+          default:
+            return column[index]
+        }
+      },
+    )
 
     const results = lodashMap(group, (g, key) => {
       const cols = categories.reduce((acc, category) => {
@@ -198,30 +208,48 @@ export function LineChartElementProperties({
       index,
     } = element.props
 
-    const group = lodashGroupBy(lodashSortBy(originalData, index), (column) => {
-      switch (value) {
-        case 'Yearly':
-          return new Date(column[index]).getFullYear()
-        case 'Monthly':
-          return new Date(column[index]).toLocaleString('default', {
-            month: 'short',
-            year: 'numeric',
-          })
-        case 'Daily':
-          return new Date(column[index]).toLocaleDateString()
-        default:
-          return column[index]
-      }
-    })
+    const group = lodashGroupBy(
+      lodashSortBy(originalData, index),
+      (column: any) => {
+        switch (value) {
+          case 'Yearly':
+            return new Date(column[index]).getFullYear()
+          case 'Monthly':
+            return new Date(column[index]).toLocaleString('default', {
+              month: 'short',
+              year: 'numeric',
+            })
+          case 'Daily':
+            return new Date(column[index]).toLocaleDateString()
+          default:
+            return column[index]
+        }
+      },
+    )
 
     const results = lodashMap(group, (g, key) => {
       const cols = categories.reduce((acc, category) => {
         return { ...acc, [category.name]: lodashSumBy(g, category.name) }
       }, {})
 
-      return {
-        [index]: key,
-        ...cols,
+      if (groupBy) {
+        const grouped = lodashGroupBy(g, groupBy)
+
+        const cols: Record<string, number> = {}
+        lodashMap(grouped, (g, key) => {
+          categories.forEach((category) => {
+            cols[key] = lodashSumBy(g, category.name)
+          })
+        })
+        return {
+          [index]: key,
+          ...cols,
+        }
+      } else {
+        return {
+          [index]: key,
+          ...cols,
+        }
       }
     })
 
@@ -280,22 +308,25 @@ export function LineChartElementProperties({
       return
     }
 
-    const group = lodashGroupBy(lodashSortBy(originalData, index), (column) => {
-      switch (indexTimeGranularity) {
-        case 'Yearly':
-          return new Date(column[index]).getFullYear()
-        case 'Monthly':
-          return new Date(column[index]).toLocaleString('default', {
-            month: 'short',
-            year: 'numeric',
-          })
-        case 'Daily':
-          return new Date(column[index]).toLocaleDateString()
-        default:
-          return column[index]
-      }
-    })
-    // const group = lodashGroupBy(lodashSortBy(originalData, value))
+    const group = lodashGroupBy(
+      lodashSortBy(originalData, index),
+      (column: any) => {
+        switch (indexTimeGranularity) {
+          case 'Yearly':
+            return new Date(column[index]).getFullYear()
+          case 'Monthly':
+            return new Date(column[index]).toLocaleString('default', {
+              month: 'short',
+              year: 'numeric',
+            })
+          case 'Daily':
+            return new Date(column[index]).toLocaleDateString()
+          default:
+            return column[index]
+        }
+      },
+    )
+
     const results = lodashMap(group, (g, key) => {
       return {
         [index]: key,
@@ -318,6 +349,91 @@ export function LineChartElementProperties({
         groupBy: value,
         data: lodashMerge(currentData, results),
         groupedCategories,
+      },
+    })
+  }
+
+  function handleCurveTypeChange(index: number) {
+    const curveType = curveTypes[index]
+    if (!curveType) return
+
+    updateElement(element.id, {
+      ...element,
+      props: {
+        ...element.props,
+        curveType,
+      },
+    })
+  }
+
+  function handleRemoveCategory(category: string) {
+    updateElement(element.id, {
+      ...element,
+      props: {
+        ...element.props,
+        categories: element.props.categories.filter((c) => c.name !== category),
+      },
+    })
+  }
+
+  function handleAggregationFnChange(
+    aggregrationFn: 'sum' | 'mean' | 'count',
+    category: string,
+  ) {
+    const {
+      index,
+      data: currentData,
+      originalData,
+      indexTimeGranularity,
+    } = element.props
+
+    const existingGroup = lodashGroupBy(
+      lodashSortBy(originalData, index),
+      (column: any) => {
+        switch (indexTimeGranularity) {
+          case 'Yearly':
+            return new Date(column[index]).getFullYear()
+          case 'Monthly':
+            return new Date(column[index]).toLocaleString('default', {
+              month: 'short',
+              year: 'numeric',
+            })
+          case 'Daily':
+            return new Date(column[index]).toLocaleDateString()
+          default:
+            return column[index]
+        }
+      },
+    )
+
+    const results = lodashMap(existingGroup, (g, key) => {
+      switch (aggregrationFn) {
+        case 'count':
+          return {
+            [index]: key,
+            [category]: g.length,
+          }
+        case 'sum':
+          return {
+            [index]: key,
+            [category]: lodashSumBy(g, category),
+          }
+        case 'mean':
+          return {
+            [index]: key,
+            [category]: lodashMeanBy(g, category),
+          }
+      }
+    })
+
+    updateElement(element.id, {
+      ...element,
+      props: {
+        ...element.props,
+        data: lodashMerge(currentData, results),
+        categories: element.props.categories.map((c) =>
+          c.name === category ? { ...c, aggFn: aggregrationFn } : c,
+        ),
       },
     })
   }
@@ -448,12 +564,25 @@ export function LineChartElementProperties({
           {element.props.categories.length ? (
             element.props.categories.map((category, index) => (
               <Popover key={index}>
-                <PopoverTrigger asChild>
+                <PopoverTrigger asChild disabled={true}>
                   <div
                     key={index}
-                    className="flex h-8 w-full cursor-pointer items-center gap-2 rounded-md border border-slate-100 bg-gray-50 p-2"
+                    aria-disabled="true"
+                    className="flex h-8 w-full cursor-pointer items-center gap-2 rounded-md border border-slate-100 bg-gray-50 p-2 disabled:bg-gray-100"
                   >
-                    <p className="text-sm text-slate-700">{category.name}</p>
+                    <p className="flex-1 text-sm text-slate-700">
+                      {category.name}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <p className="rounded-md border bg-neutral-50 px-1 text-xs text-slate-700">
+                        {category.aggFn}
+                      </p>
+                      <button
+                        onClick={() => handleRemoveCategory(category.name)}
+                      >
+                        <Delete className="h-4 w-4 text-slate-500" />
+                      </button>
+                    </div>
                   </div>
                 </PopoverTrigger>
                 <PopoverContent
@@ -480,9 +609,9 @@ export function LineChartElementProperties({
                       </Label>
                       <Select
                         value={category.aggFn}
-                        // onValueChange={(value: 'sum' | 'mean' | 'count') =>
-                        //   handleAggregationFnChange(value, category.name)
-                        // }
+                        onValueChange={(value: 'sum' | 'mean' | 'count') =>
+                          handleAggregationFnChange(value, category.name)
+                        }
                       >
                         <SelectTrigger id="category-agg-fn">
                           <SelectValue placeholder="Select an aggregation function" />
@@ -494,13 +623,6 @@ export function LineChartElementProperties({
                         </SelectContent>
                       </Select>
                     </div>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      // onClick={() => handleRemoveCategory(category.name)}
-                    >
-                      Remove
-                    </Button>
                   </div>
                 </PopoverContent>
               </Popover>
@@ -589,6 +711,24 @@ export function LineChartElementProperties({
           value={element.props.yAxisTitle}
           onValueChange={handleYAxisTitleChange}
         />
+      </div>
+      <div className="space-y-1">
+        <p className="text-xs font-medium text-slate-500">Curve type</p>
+        <TabGroup
+          onIndexChange={handleCurveTypeChange}
+          defaultIndex={curveTypes.indexOf(element.props.curveType)}
+        >
+          <TabList variant="solid" className="w-full">
+            {curveTypes.map((curveType, index) => (
+              <Tab
+                key={index}
+                className="w-full justify-center text-xs ui-selected:text-slate-700"
+              >
+                {curveType}
+              </Tab>
+            ))}
+          </TabList>
+        </TabGroup>
       </div>
     </div>
   )

@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/popover'
 import { Button } from '@/components/ui/button'
 import { Check, Copy, Publish as PublishIcon, Selection } from '@/icons'
-import { publishDashboard, unPublishDashboard } from '@/lib/data'
+import { publishDashboard, unPublishDashboard } from '@/lib/data/server/dashboard'
 import toast from 'react-hot-toast'
 import { useOrigin } from '@/hooks/useOrigin'
 import { useState } from 'react'

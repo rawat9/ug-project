@@ -1,39 +1,13 @@
 'use server'
 
-import {
-  KmsKeyringNode,
-  buildClient,
-  CommitmentPolicy,
-} from '@aws-crypto/client-node'
 import { createSupabaseServerClient } from '../../supabase/server'
 import { unstable_cache as cache } from 'next/cache'
 import type { Result } from '@/types'
 import { redirect } from 'next/navigation'
+import type { Tables } from '@/types/database'
+import { decryptData, encryptData } from '../aws-kms'
 
-async function encryptData(connectionString: string) {
-  const generatorKeyId = process.env.AWS_KMS_KEY_ID
-
-  const { encrypt } = buildClient(
-    CommitmentPolicy.REQUIRE_ENCRYPT_REQUIRE_DECRYPT,
-  )
-
-  const keyring = new KmsKeyringNode({ generatorKeyId })
-
-  const context = {
-    stage: 'dashgen',
-    purpose: 'Data dashboard tool',
-    origin: process.env.AWS_REGION!,
-  }
-
-  try {
-    const { result } = await encrypt(keyring, connectionString, {
-      encryptionContext: context,
-    })
-    return result
-  } catch (e) {
-    console.error(e)
-  }
-}
+type Integration = Tables<'integration'>
 
 export async function createIntegration(
   title: string,
@@ -90,3 +64,78 @@ export const testConnection = cache(
   },
   ['connectionString'],
 )
+
+export const fetchSchema = cache(
+  async (
+    conn_string: { type: 'Buffer'; data: number[] } | null,
+    is_default: boolean,
+  ) => {
+    const supabase = await createSupabaseServerClient()
+
+    if (is_default || !conn_string) {
+      const { data, error } = await supabase.functions.invoke<
+        Result['fetch-schema']
+      >('fetch-schema', {
+        method: 'POST',
+        body: {
+          conn_string: null,
+        },
+      })
+
+      if (error) {
+        throw error
+      }
+
+      if (!data) {
+        throw new Error('No data returned')
+      }
+
+      return data
+    }
+
+    const decrypted = await decryptData(Buffer.from(conn_string.data))
+
+    if (!decrypted) {
+      throw new Error('Error decrypting connection string')
+    }
+
+    const { data, error } = await supabase.functions.invoke<
+      Result['fetch-schema']
+    >('fetch-schema', {
+      method: 'POST',
+      body: {
+        conn_string: decrypted,
+      },
+    })
+
+    if (error) {
+      throw error
+    }
+
+    if (!data) {
+      throw new Error('No data returned')
+    }
+
+    return data
+  },
+  ['schema'],
+)
+
+export const fetchIntegrations = async (): Promise<Integration[]> => {
+  try {
+    const supabase = await createSupabaseServerClient()
+    const { data, error } = await supabase
+      .from('integration')
+      .select()
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      throw new Error('Error fetching data')
+    }
+
+    return data ?? []
+  } catch (error) {
+    console.error(error)
+    throw new Error('Error creating the supabase client')
+  }
+}

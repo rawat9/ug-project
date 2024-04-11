@@ -1,4 +1,4 @@
-import { fetchDashboards } from '@/lib/data'
+import { fetchDashboards } from '@/lib/data/server/dashboard'
 import Link from 'next/link'
 import { EmptyState } from './empty-state'
 

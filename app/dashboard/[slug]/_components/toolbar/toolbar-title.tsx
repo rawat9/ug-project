@@ -7,7 +7,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { updateDashboardTitle } from '@/lib/data'
+import { updateDashboardTitle } from '@/lib/data/server/dashboard'
 import { Tables } from '@/types/database'
 import { usePathname } from 'next/navigation'
 import lodashLast from 'lodash/last'
@@ -64,7 +64,7 @@ export function ToolbarTitle({
       ) : (
         <>
           {isPreviewMode ? (
-            <h3 className="truncate font-medium select-all">{title}</h3>
+            <h3 className="select-all truncate font-medium">{title}</h3>
           ) : (
             <TooltipProvider delayDuration={0}>
               <Tooltip>

@@ -1,5 +1,5 @@
 import { Postgres } from '@/icons'
-import { fetchIntegrations } from '@/lib/data'
+import { fetchIntegrations } from '@/lib/data/server/integrations'
 import Link from 'next/link'
 
 export async function IntegrationsList({ query }: { query: string }) {

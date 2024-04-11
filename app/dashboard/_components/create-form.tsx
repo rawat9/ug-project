@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { createDashboard } from '@/lib/data'
+import { createDashboard } from '@/lib/data/server/dashboard'
 
 export function CreateForm() {
   return (

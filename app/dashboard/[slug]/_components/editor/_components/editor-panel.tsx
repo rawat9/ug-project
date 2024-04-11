@@ -5,7 +5,6 @@ import { useAtom, useSetAtom } from 'jotai'
 import CodeEditor from './code-editor'
 import { activeQueryAtom, editorAtom, queriesAtom, queryAtom } from '../state'
 import { QueryResultTable } from './query-result-table'
-import { ImperativePanelHandle } from 'react-resizable-panels'
 import { SchemaViewer } from './schema-viewer'
 import { Delete, Format } from '@/icons'
 import { Button } from '@/components/ui/button'
@@ -13,7 +12,8 @@ import { Sources } from './sources'
 import { Run } from './run'
 import { ReactCodeMirrorRef } from '@uiw/react-codemirror'
 import { format } from 'sql-formatter'
-import { executeQuery, fetchSchema } from '@/lib/data'
+import { executeQuery } from '@/lib/data/server/queries'
+import { fetchSchema } from '@/lib/data/server/integrations'
 
 import * as React from 'react'
 import {
@@ -35,7 +35,6 @@ export function EditorPanel() {
   const queryClient = useQueryClient()
   const [queryResult, set] = useAtom(editorAtom)
   const { data, error, columns } = queryResult
-  // const resultPanelRef = React.useRef<ImperativePanelHandle>(null)
   const codeEditorRef = React.useRef<ReactCodeMirrorRef>(null)
   const [queries, setQueries] = useAtom(queriesAtom)
   const [activeQuery, setActiveQuery] = useAtom(activeQueryAtom)
@@ -139,18 +138,21 @@ export function EditorPanel() {
       value: integrationId,
     })
 
-    const encryptedConnectionString = integrations?.find(
+    const integration = integrations?.find(
       (integration) => integration.id === integrationId,
-    )?.conn_string
+    )
 
-    if (!encryptedConnectionString) {
-      toast.error('Unable to update the schema. No connection string found', {
+    if (!integration) {
+      toast.error('Failed to update the schema. No connection string found', {
         position: 'top-center',
       })
       return
     }
 
-    const { data } = await fetchSchema(encryptedConnectionString)
+    const { data } = await fetchSchema(
+      integration.conn_string,
+      integration.is_default,
+    )
     setSchema(data)
   }
 
@@ -170,12 +172,12 @@ export function EditorPanel() {
       return
     }
 
-    const encryptedConnectionString = integrations.find(
+    const integration = integrations.find(
       (integration) => integration.id === activeQuery.integration_id,
-    )?.conn_string
+    )
 
-    if (!encryptedConnectionString) {
-      toast.error('No connection string found', {
+    if (!integration) {
+      toast.error('Please select an integration', {
         position: 'top-center',
       })
       return
@@ -190,7 +192,8 @@ export function EditorPanel() {
 
     const { data, error, columns, executionTime } = await executeQuery(
       query.trim(),
-      encryptedConnectionString,
+      integration.conn_string,
+      integration.is_default,
     )
     set({ query, data, error, columns, executionTime })
 
@@ -206,15 +209,18 @@ export function EditorPanel() {
         return
       }
 
-      const encryptedConnectionString = integrations?.find(
+      const integration = integrations?.find(
         (integration) => integration.id === activeQuery.integration_id,
-      )?.conn_string
+      )
 
-      if (!encryptedConnectionString) {
+      if (!integration) {
         return
       }
 
-      const { data } = await fetchSchema(encryptedConnectionString)
+      const { data } = await fetchSchema(
+        integration.conn_string,
+        integration.is_default,
+      )
       setSchema(data)
     }
     loadSchema() // better way to do this

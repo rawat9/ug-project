@@ -7,9 +7,9 @@ import type {
 import type {
   BarChartProps,
   BarListProps,
+  CurveType,
   EventProps,
   LineChartProps,
-  TextProps,
 } from '@tremor/react'
 
 type ElementTypes =
@@ -61,9 +61,14 @@ interface LineChartElementProps extends Omit<LineChartProps, 'categories'> {
   xAxisTitle: string
   yAxisTitle: string
   columns: Column[]
-  categories: { name: string; aggFn: 'sum' | 'count' | 'mean' }[]
+  categories: {
+    name: string
+    aggFn: 'sum' | 'count' | 'mean'
+    hidden: boolean
+  }[]
   dataKey: string
   groupBy: string
+  curveType: CurveType
   groupedCategories: string[]
   indexTimeGranularity: 'Daily' | 'Monthly' | 'Yearly'
 }
