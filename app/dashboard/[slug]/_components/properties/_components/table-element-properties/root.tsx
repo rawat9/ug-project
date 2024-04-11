@@ -64,7 +64,6 @@ export function TableElementProperties({ element }: { element: TableElement }) {
   }, [columns]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleDataChange(value: string) {
-    // setDataSourceValue(value)
     updateElement(element.id, {
       ...element,
       props: {
