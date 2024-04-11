@@ -21,6 +21,7 @@ export function QuerySidebar({
     queryFn: fetchQueries,
     select: (it) => it.data,
     retry: 3,
+    retryDelay: 2000,
   })
 
   return (
@@ -34,7 +35,7 @@ export function QuerySidebar({
           </div>
         </div>
       ) : (
-        <div className="flex h-full flex-col gap-3 overflow-y-auto px-2 py-4">
+        <div className="flex h-full flex-col gap-3 overflow-y-auto px-2 py-4 pb-20">
           <p className="text-sm font-medium text-slate-600">
             Queries ({queries.length})
           </p>

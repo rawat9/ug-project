@@ -18,7 +18,7 @@ export function ColorPicker({
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <div>
+    <div className="space-y-1">
       <p className="text-xs font-medium text-slate-500">Color</p>
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
@@ -35,16 +35,18 @@ export function ColorPicker({
           </div>
         </PopoverTrigger>
         <PopoverContent
-          className="-translate-x-full"
           onInteractOutside={(e) => e.preventDefault()}
+          alignOffset={-300}
+          align="start"
+          className="z-10 max-h-60 -translate-x-6 -translate-y-9"
         >
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between pb-4">
             <p className="flex-1 text-sm text-slate-500">Colors</p>
             <button onClick={() => setIsOpen(false)}>
               <Cross />
             </button>
           </div>
-          <div className="grid grid-cols-6 gap-2 py-4">
+          <div className="grid grid-cols-6 gap-2">
             {colors.map((color, index) => (
               <button
                 key={index}

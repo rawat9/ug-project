@@ -107,14 +107,23 @@ export function EditorPanel() {
     const query = codeEditorRef.current?.view?.state.doc.toString()
     if (!query || query.trim() === '') return
 
-    const formattedQuery = format(query, {
-      language: 'postgresql',
-      tabWidth: 2,
-      keywordCase: 'upper',
-      paramTypes: { custom: [{ regex: String.raw`\{\{\s*[\w\.,]+\s*\}\}` }] }, // TODO: complete this
-    })
+    try {
+      const formattedQuery = format(query, {
+        language: 'postgresql',
+        tabWidth: 2,
+        keywordCase: 'upper',
+        paramTypes: { custom: [{ regex: String.raw`\{\{\s*[\w\.,]+\s*\}\}` }] }, // TODO: complete this
+      })
 
-    setQuery(formattedQuery)
+      setQuery(formattedQuery)
+    } catch {}
+
+    // // save the query before running
+    // updateMutation.mutate({
+    //   id: activeQuery?.id,
+    //   key: 'sql_query',
+    //   value: query,
+    // })
   }
 
   const handleRename = (name: string) => {
@@ -208,7 +217,7 @@ export function EditorPanel() {
       const { data } = await fetchSchema(encryptedConnectionString)
       setSchema(data)
     }
-    loadSchema()
+    loadSchema() // better way to do this
   }, [integrations, activeQuery?.integration_id])
 
   return (

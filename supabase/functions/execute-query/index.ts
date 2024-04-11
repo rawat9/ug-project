@@ -1,21 +1,6 @@
 import postgres from 'postgres'
 import { Logger } from 'logger'
 
-const sql = postgres(
-  'postgresql://postgres:postgres@172.17.0.1:54322/postgres',
-  {
-    max: 1,
-    types: {
-      int8: {
-        to: 20,
-        from: [20],
-        serialize: (value: string) => Number(value),
-        parse: (value: number) => Number(value),
-      },
-    },
-  },
-)
-
 const logger = new Logger()
 
 const map = new Map([
@@ -33,12 +18,21 @@ const map = new Map([
 ])
 
 Deno.serve(async (req) => {
-  const { query } = await req.json()
+  const { query, conn_string } = await req.json()
 
   if (!query) {
     return new Response(JSON.stringify({ error: 'Query is required' }), {
       status: 400,
     })
+  }
+
+  if (!conn_string) {
+    return Response.json(
+      { error: 'Connection string is required' },
+      {
+        status: 400,
+      },
+    )
   }
 
   if (typeof query !== 'string') {
@@ -47,7 +41,21 @@ Deno.serve(async (req) => {
     })
   }
 
-  // const sql = postgres(conn_string)
+  const sql = postgres(conn_string, {
+    types: {
+      int8: {
+        to: 20,
+        from: [20],
+        serialize: (value: string) => Number(value),
+        parse: (value: number) => Number(value),
+      },
+    },
+    idle_timeout: 30,
+    max_lifetime: 60 * 10,
+    connection: {
+      application_name: 'dashgen',
+    },
+  })
 
   let end = 0
   const start = performance.now()

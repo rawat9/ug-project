@@ -60,7 +60,7 @@ export function State({ isOpen }: { isOpen: boolean }) {
                     {elements.map((element) => (
                       <JsonView
                         key={element.id}
-                        value={element}
+                        value={element.props}
                         collapsed={true}
                         keyName={element.name}
                         displayDataTypes={false}

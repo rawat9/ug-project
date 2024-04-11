@@ -123,17 +123,20 @@ export function BarListElementProperties({
   return (
     <div className="flex flex-col gap-4 px-4">
       <div>
-        <Label htmlFor="title" className="text-xs text-slate-500">
+        <Label
+          htmlFor="title"
+          className="inline-flex items-center text-xs text-slate-500"
+        >
           Title
           <TooltipProvider delayDuration={0}>
             <Tooltip>
               <TooltipTrigger asChild>
                 <button>
-                  <Help className="ml-1 inline-flex cursor-pointer items-center text-slate-500" />
+                  <Help className="ml-1 h-3 w-3 cursor-pointer text-slate-500" />
                 </button>
               </TooltipTrigger>
               <TooltipContent side="left">
-                The title of the bar-list element. Supports Markdown.
+                Supports Markdown.
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

@@ -1,6 +1,6 @@
 'use client'
 
-import { Delete, ExpandRight, Selection } from '@/icons'
+import { Delete, ExpandRight, Pencil, Selection } from '@/icons'
 import { useCanvasAtom } from '../canvas/state'
 import * as React from 'react'
 
@@ -29,6 +29,12 @@ export function Properties() {
     if (selectedElement) {
       removeElement(selectedElement.id)
       setSelectedElement(null)
+    }
+  }
+
+  function handleRename() {
+    if (selectedElement) {
+      console.log('rename')
     }
   }
 

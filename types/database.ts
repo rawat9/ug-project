@@ -18,6 +18,7 @@ export type Database = {
           title: string
           user_id: string | null
           is_published: boolean
+          description: string | null
         }
         Insert: {
           content?: Json | null
@@ -26,6 +27,7 @@ export type Database = {
           title?: string
           user_id?: string | null
           is_published?: boolean
+          description?: string | null
         }
         Update: {
           content?: Json | null
@@ -34,6 +36,7 @@ export type Database = {
           title?: string
           user_id?: string | null
           is_published?: boolean
+          description?: string | null
         }
         Relationships: []
       }

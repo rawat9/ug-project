@@ -54,3 +54,32 @@ export const colors = [
 export function getColor(color: Color) {
   return tailwindColors[color]['500']
 }
+
+export function isDateType(type: string) {
+  return (
+    type === 'date' ||
+    type === 'datetime' ||
+    type === 'time' ||
+    type === 'timestamp' ||
+    type === 'timestampz'
+  )
+}
+
+export function isTextType(type: string) {
+  return type === 'text' || type === 'varchar'
+}
+
+export const monthNames = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+]

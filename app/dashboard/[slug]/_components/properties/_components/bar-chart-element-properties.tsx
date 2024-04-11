@@ -10,7 +10,6 @@ import {
 } from '@/components/ui/select'
 import { useCanvasAtom } from '../../canvas/state'
 import { BarChartElement } from '../../canvas/types'
-import { useState } from 'react'
 import { TextInput } from '@tremor/react'
 
 import lodashKeyBy from 'lodash/keyBy'
@@ -18,8 +17,15 @@ import lodashResult from 'lodash/result'
 import lodashMap from 'lodash/map'
 import lodashCountBy from 'lodash/countBy'
 import lodashSumBy from 'lodash/sumBy'
+import lodashMeanBy from 'lodash/meanBy'
 import lodashGroupBy from 'lodash/groupBy'
+import lodashUniq from 'lodash/uniq'
+import lodashKeys from 'lodash/keys'
+import lodashFlatMap from 'lodash/flatMap'
+import lodashMerge from 'lodash/merge'
+import lodashOmit from 'lodash/omit'
 
+import { Help } from '@/icons'
 import { useAtomValue } from 'jotai'
 import { queriesAtom } from '../../editor/state'
 import { Column } from '@/types'
@@ -28,10 +34,20 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import {
+  Tooltip,
+  TooltipProvider,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { Input } from '@/components/ui/input'
-import { Eye } from '@/icons'
+import { Add, Check } from '@/icons'
 import { Switch } from '@/components/ui/switch'
-import { cn, colors } from '@/lib/utils'
+import { Listbox, Transition } from '@headlessui/react'
+import * as React from 'react'
+import { Button } from '@/components/ui/button'
+import toast from 'react-hot-toast'
+import { colors } from '@/lib/utils'
 
 export function BarChartElementProperties({
   element,
@@ -41,15 +57,13 @@ export function BarChartElementProperties({
   const { updateElement } = useCanvasAtom()
 
   const queries = useAtomValue(queriesAtom)
-  console.log(queries)
-  const [columns, setColumns] = useState(element.props.columns)
 
-  function handleHeaderChange(value: string) {
+  function handleTitleChange(value: string) {
     updateElement(element.id, {
       ...element,
       props: {
         ...element.props,
-        header: value,
+        title: value,
       },
     })
   }
@@ -75,79 +89,62 @@ export function BarChartElementProperties({
   }
 
   function handleDataChange(value: string) {
-    updateElement(element.id, {
-      ...element,
-      props: {
-        ...element.props,
-        dataKey: value,
-      },
-    })
-    try {
-      const interpolate = /{{\s*([^{}]+?)\s*}}/g
-      const match = value.match(interpolate)
-
-      if (match) {
-        const result = lodashResult(
-          lodashKeyBy(queries, 'name'),
-          match[0].replace(/{{\s*|\s*}}/g, ''),
-        ) as
-          | {
-              data: unknown[]
-              columns: Column[]
-            }
-          | undefined
-
-        if (result) {
-          const guessXAxis = result.columns.find(
-            (c) => c.dtype === 'text',
-          )?.name
-
-          if (!guessXAxis) {
-            return
-          }
-
-          const start = performance.now()
-          const group = lodashGroupBy(result.data, guessXAxis)
-          const integerColumns = result.columns.filter((col) =>
-            col.dtype.startsWith('int'),
-          )
-          const results = lodashMap(group, (g, key) => {
-            const cols = integerColumns.reduce((acc, col) => {
-              return { ...acc, [col.name]: lodashSumBy(g, col.name) }
-            }, {})
-
-            return {
-              [guessXAxis]: key,
-              ...cols,
-            }
-          })
-          const end = performance.now()
-          console.log('It took: ', end - start)
-          console.log(results.length)
-          updateElement(element.id, {
-            ...element,
-            props: {
-              ...element.props,
-              data: results,
-              originalData: result.data,
-              dataKey: value,
-              columns: result.columns,
-              xAxis: guessXAxis,
-              categories: integerColumns.map((c) => c.name),
-            },
-          })
-          setColumns(result.columns)
+    if (!queries.length) {
+      return
+    }
+    const result = lodashResult(lodashKeyBy(queries, 'name'), value) as
+      | {
+          data: unknown[]
+          columns: Column[]
         }
+      | undefined
+
+    if (result) {
+      const guessXAxis = result.columns.find((c) => c.dtype === 'text')?.name
+
+      if (!guessXAxis) {
+        return
       }
-    } catch {}
+
+      const group = lodashGroupBy(result.data, guessXAxis)
+      const integerColumns = result.columns.filter(
+        (col) => col.dtype.startsWith('int') || col.dtype.startsWith('float'),
+      )
+      const results = lodashMap(group, (g, key) => {
+        const cols = integerColumns.reduce((acc, col) => {
+          return { ...acc, [col.name]: lodashSumBy(g, col.name) }
+        }, {})
+
+        return {
+          [guessXAxis]: key,
+          ...cols,
+        }
+      })
+      updateElement(element.id, {
+        ...element,
+        props: {
+          ...element.props,
+          data: results,
+          originalData: result.data,
+          columns: result.columns,
+          dataKey: value,
+          index: guessXAxis,
+          categories: integerColumns.map((c) => ({
+            name: c.name,
+            aggFn: 'sum' as const,
+          })),
+        },
+      })
+    }
   }
 
-  function handleXAxisChange(value: string) {
-    const newGroup = lodashGroupBy(element.props.originalData, value)
-    const integerColumns = columns.filter((col) => col.dtype.startsWith('int'))
-    const results = lodashMap(newGroup, (g, key) => {
-      const cols = integerColumns.reduce((acc, col) => {
-        return { ...acc, [col.name]: lodashSumBy(g, col.name) }
+  function handleIndexChange(value: string) {
+    const { originalData, categories } = element.props
+
+    const group = lodashGroupBy(originalData, value)
+    const results = lodashMap(group, (g, key) => {
+      const cols = categories.reduce((acc, category) => {
+        return { ...acc, [category.name]: lodashSumBy(g, category.name) }
       }, {})
 
       return {
@@ -160,50 +157,9 @@ export function BarChartElementProperties({
       ...element,
       props: {
         ...element.props,
-        xAxis: value,
+        index: value,
         data: results,
-      },
-    })
-  }
-
-  function handleGroupByChange(value: string) {
-    const index = element.props.xAxis
-    const existingGroup = lodashGroupBy(element.props.originalData, index)
-    // const categories = new Set()
-    const results = lodashMap(existingGroup, (g, key) => {
-      // let aggFn = null
-
-      // if (value === 'Count') {
-      //   aggFn = lodashCountBy
-      // } else if (value === 'Sum') {
-      //   aggFn = lodashSumBy
-      // } else if (value === 'Average') {
-      //   aggFn = (g, value) => {
-      //     return {
-      //       [value]: lodashSumBy(g, value) / g.length,
-      //     }
-      //   }
-      // }
-
-      // const cols = lodashCountBy(g, 'gender')
-      // const keys = Object.keys(cols)
-      // keys.map((k) => categories.add(k))
-
-      return {
-        [index]: key,
-        ...lodashCountBy(g, value),
-      }
-    })
-
-    console.log(results)
-
-    updateElement(element.id, {
-      ...element,
-      props: {
-        ...element.props,
-        groupBy: value,
-        data: results,
-        categories: ['Male', 'Female'],
+        groupedCategories: [],
       },
     })
   }
@@ -218,44 +174,195 @@ export function BarChartElementProperties({
     })
   }
 
+  function handleRemoveCategory(category: string) {
+    updateElement(element.id, {
+      ...element,
+      props: {
+        ...element.props,
+        categories: element.props.categories.filter((c) => c.name !== category),
+      },
+    })
+  }
+
+  function handleAggregationFnChange(
+    aggregrationFn: 'sum' | 'mean' | 'count',
+    category: string,
+  ) {
+    const { index, data: currentData } = element.props
+    const existingGroup = lodashGroupBy(element.props.originalData, index)
+
+    const results = lodashMap(existingGroup, (g, key) => {
+      switch (aggregrationFn) {
+        case 'count':
+          return {
+            [index]: key,
+            [category]: g.length,
+          }
+        case 'sum':
+          return {
+            [index]: key,
+            [category]: lodashSumBy(g, category),
+          }
+        case 'mean':
+          return {
+            [index]: key,
+            [category]: lodashMeanBy(g, category),
+          }
+      }
+    })
+
+    updateElement(element.id, {
+      ...element,
+      props: {
+        ...element.props,
+        data: lodashMerge(currentData, results),
+        categories: element.props.categories.map((c) =>
+          c.name === category ? { ...c, aggFn: aggregrationFn } : c,
+        ),
+      },
+    })
+  }
+
+  function handleCategoryChange(category: string[]) {
+    updateElement(element.id, {
+      ...element,
+      props: {
+        ...element.props,
+        categories: category.map((c) => ({
+          name: c,
+          aggFn: 'sum' as const,
+        })),
+      },
+    })
+  }
+
+  function handleCategoryNameChange(
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number,
+  ) {
+    return
+  }
+
+  function handleGroupByChange(value: string) {
+    const {
+      originalData,
+      index,
+      data: currentData,
+      groupedCategories: currentGroupedCategories,
+    } = element.props
+
+    // removing group by
+    if (value === 'None') {
+      updateElement(element.id, {
+        ...element,
+        props: {
+          ...element.props,
+          groupBy: '',
+          data: currentData.map((obj) =>
+            lodashOmit(obj, currentGroupedCategories),
+          ),
+          groupedCategories: [], // remove the grouped column
+        },
+      })
+      return
+    }
+
+    const group = lodashGroupBy(originalData, index)
+    const results = lodashMap(group, (g, key) => {
+      return {
+        [index]: key,
+        ...lodashCountBy(g, value),
+      }
+    })
+
+    const groupedCategories = lodashUniq(
+      lodashFlatMap(results, (obj) => lodashKeys(obj)),
+    ).filter((c) => c !== index)
+
+    if (groupedCategories.length >= colors.length) {
+      return toast.error('Too many categories to group')
+    }
+
+    updateElement(element.id, {
+      ...element,
+      props: {
+        ...element.props,
+        groupBy: value,
+        data: lodashMerge(currentData, results),
+        groupedCategories,
+      },
+    })
+  }
+
   return (
     <div className="flex flex-col gap-4 px-4 pb-4">
       <div>
-        <Label htmlFor="title" className="text-xs text-slate-500">
+        <Label
+          htmlFor="title"
+          className="inline-flex items-center text-xs text-slate-500"
+        >
           Title
+          <TooltipProvider delayDuration={0}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button>
+                  <Help className="ml-1 h-3 w-3 cursor-pointer text-slate-500" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="left">Supports Markdown.</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </Label>
         <TextInput
           type="text"
           autoComplete="off"
           id="title"
-          value={element.props.header}
-          onValueChange={handleHeaderChange}
+          value={element.props.title}
+          onValueChange={handleTitleChange}
         />
       </div>
       <div>
         <Label htmlFor="data" className="text-xs text-slate-500">
           Data
         </Label>
-        <TextInput
-          type="text"
-          autoComplete="off"
-          id="data"
-          placeholder="{{ getChartData }}"
-          className="font-mono text-xs"
+        <Select
           defaultValue={element.props.dataKey}
           onValueChange={handleDataChange}
-        />
+        >
+          <SelectTrigger id="data">
+            <SelectValue placeholder="getData" className="font-mono text-xs">
+              {element.props.dataKey}
+            </SelectValue>
+          </SelectTrigger>
+          {queries.length > 0 && (
+            <SelectContent
+              alignOffset={-300}
+              align="start"
+              className="z-10 max-h-60 -translate-x-6"
+            >
+              {queries.map((query) => (
+                <SelectItem key={query.name} value={query.name}>
+                  {query.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          )}
+        </Select>
       </div>
       <div>
-        <Label htmlFor="x-axis" className="text-xs text-slate-500">
-          X Axis
+        <Label htmlFor="index" className="text-xs text-slate-500">
+          Index
         </Label>
-        <Select value={element.props.xAxis} onValueChange={handleXAxisChange}>
-          <SelectTrigger id="x-axis" className="text-slate-500">
+        <Select value={element.props.index} onValueChange={handleIndexChange}>
+          <SelectTrigger id="index">
             <SelectValue placeholder="Select a column" />
           </SelectTrigger>
-          <SelectContent className="-translate-x-full">
-            {columns.map((column) => (
+          <SelectContent
+            alignOffset={-300}
+            align="start"
+            className="z-10 max-h-60 -translate-x-6"
+          >
+            {element.props.columns.map((column) => (
               <SelectItem key={column.name} value={column.name}>
                 {column.name}
               </SelectItem>
@@ -263,76 +370,136 @@ export function BarChartElementProperties({
           </SelectContent>
         </Select>
       </div>
-      <div className="space-y-1">
-        <p className="text-xs font-medium leading-none text-slate-500 peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-          Categories
-        </p>
-        <div className="grid gap-1">
-          {element.props.categories.map((category, index) => (
-            <Popover key={index}>
-              <PopoverTrigger asChild>
-                <div
-                  key={index}
-                  className="flex h-8 w-full cursor-pointer items-center gap-2 rounded-md border border-slate-100 bg-gray-50 p-2"
-                >
-                  <div className="h-4 w-4 rounded-md bg-fuchsia-800" />
-                  <p className="text-sm text-slate-500">{category}</p>
-                  <button className="ml-auto">
-                    <Eye className="h-4 w-4 text-slate-400" />
-                  </button>
-                </div>
-              </PopoverTrigger>
-              <PopoverContent
-                alignOffset={-300}
-                align="start"
-                className="z-10 -translate-x-6"
-                // onInteractOutside={(e) => e.preventDefault()}
+      <div>
+        <div className="flex items-center justify-between">
+          <p className="text-xs font-medium leading-none text-slate-500">
+            Categories
+          </p>
+          <Listbox
+            value={element.props.categories.map((c) => c.name)}
+            onChange={handleCategoryChange}
+            multiple
+          >
+            <div>
+              <Listbox.Button className="rounded-md p-1 hover:bg-gray-50">
+                <Add className="h-4 w-4 text-slate-500" />
+              </Listbox.Button>
+              <Transition
+                as={React.Fragment}
+                enter="transition ease-out duration-100"
+                enterFrom="opacity-0"
+                enterTo="opacity-100"
+                leave="transition ease-in duration-200"
+                leaveFrom="opacity-100"
+                leaveTo="opacity-0"
               >
-                <div className="grid gap-4">
-                  <div className="grid items-center gap-2">
-                    <Label
-                      htmlFor="category"
-                      className="text-xs text-slate-500"
-                    >
-                      Category
-                    </Label>
-                    <Input id="category" defaultValue={category} />
+                <Listbox.Options className="absolute -left-2 top-64 z-10 mt-1 max-h-60 w-auto -translate-x-full overflow-auto rounded-lg bg-white py-1 shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+                  {element.props.columns
+                    .filter(
+                      (c) =>
+                        c.dtype.startsWith('int') ||
+                        c.dtype.startsWith('float') ||
+                        c.dtype.startsWith('numeric'),
+                    )
+                    .map((category, i) => (
+                      <Listbox.Option
+                        key={i}
+                        className={({ active }) =>
+                          `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                            active ? 'bg-slate-100' : 'text-gray-900'
+                          }`
+                        }
+                        value={category.name}
+                      >
+                        {({ selected }) => (
+                          <>
+                            <span
+                              className={`block truncate ${
+                                selected ? 'font-medium' : 'font-normal'
+                              }`}
+                            >
+                              {category.name}
+                            </span>
+                            {selected ? (
+                              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-600">
+                                <Check className="h-5 w-5" aria-hidden="true" />
+                              </span>
+                            ) : null}
+                          </>
+                        )}
+                      </Listbox.Option>
+                    ))}
+                </Listbox.Options>
+              </Transition>
+            </div>
+          </Listbox>
+        </div>
+        <div className="grid gap-1">
+          {element.props.categories.length ? (
+            element.props.categories.map((category, index) => (
+              <Popover key={index}>
+                <PopoverTrigger asChild>
+                  <div
+                    key={index}
+                    className="flex h-8 w-full cursor-pointer items-center gap-2 rounded-md border border-slate-100 bg-gray-50 p-2"
+                  >
+                    <p className="text-sm text-slate-700">{category.name}</p>
                   </div>
-                  <div className="grid items-center gap-2">
-                    <Label htmlFor="agg-fn" className="text-xs text-slate-500">
-                      Aggregation Function
-                    </Label>
-                    <Select defaultValue="Sum">
-                      <SelectTrigger id="agg-fn">
-                        <SelectValue placeholder="Select an aggregation function" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="None">None</SelectItem>
-                        <SelectItem value="Sum">Sum</SelectItem>
-                        <SelectItem value="Count">Count</SelectItem>
-                        <SelectItem value="Average">Average</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="grid items-center gap-2">
-                    <p className="text-xs font-medium text-slate-500">Color</p>
-                    <div className="grid grid-cols-6 gap-2">
-                      {colors.map((color, index) => (
-                        <button
-                          key={index}
-                          className={cn(
-                            'h-8 w-full rounded-md py-1 shadow-md',
-                            `bg-${color}-500`,
-                          )}
-                          // onClick={() => onColorChange(color)}
-                        />
-                      ))}
+                </PopoverTrigger>
+                <PopoverContent
+                  alignOffset={-300}
+                  align="start"
+                  className="z-10 -translate-x-6"
+                >
+                  <div className="grid gap-4">
+                    <div className="grid items-center gap-2">
+                      <Label
+                        htmlFor="category-name"
+                        className="text-xs text-slate-500"
+                      >
+                        Category
+                      </Label>
+                      <Input id="category-name" defaultValue={category.name} />
                     </div>
+                    <div className="grid items-center gap-2">
+                      <Label
+                        htmlFor="category-agg-fn"
+                        className="text-xs text-slate-500"
+                      >
+                        Aggregation Function
+                      </Label>
+                      <Select
+                        value={category.aggFn}
+                        onValueChange={(value: 'sum' | 'mean' | 'count') =>
+                          handleAggregationFnChange(value, category.name)
+                        }
+                      >
+                        <SelectTrigger id="category-agg-fn">
+                          <SelectValue placeholder="Select an aggregation function" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="sum">Sum</SelectItem>
+                          <SelectItem value="count">Count</SelectItem>
+                          <SelectItem value="mean">Average</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleRemoveCategory(category.name)}
+                    >
+                      Remove
+                    </Button>
                   </div>
-                </div>
-              </PopoverContent>
-            </Popover>
-          ))}
+                </PopoverContent>
+              </Popover>
+            ))
+          ) : (
+            <div className="flex h-16 items-center justify-center rounded-md border border-dashed bg-neutral-50">
+              <p className="text-xs text-slate-500">No categories</p>
+            </div>
+          )}
         </div>
       </div>
       <div>
@@ -343,15 +510,16 @@ export function BarChartElementProperties({
           value={element.props.groupBy}
           onValueChange={handleGroupByChange}
         >
-          <SelectTrigger id="group-by" className="text-slate-500">
+          <SelectTrigger id="group-by">
             <SelectValue placeholder="Select a column" />
           </SelectTrigger>
           <SelectContent
             alignOffset={-300}
             align="start"
-            className="z-10 -translate-x-6"
+            className="z-10 max-h-60 -translate-x-6"
           >
-            {columns
+            <SelectItem value="None">None</SelectItem>
+            {element.props.columns
               .filter((c) => c.dtype === 'text' || c.dtype === 'varchar')
               .map((column) => (
                 <SelectItem key={column.name} value={column.name}>

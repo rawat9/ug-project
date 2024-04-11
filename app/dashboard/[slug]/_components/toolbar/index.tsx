@@ -24,12 +24,15 @@ export async function Toolbar({ id }: { id: string }) {
             <div className="flex items-center">
               <ToolbarTitle id={dashboard.id} title={dashboard.title} />
             </div>
-            <p className="text-xs text-gray-400">Edited 2 hours ago</p>
+            <p className="text-xs text-gray-400">{dashboard.description}</p>
           </div>
         </div>
         <div className="flex items-center justify-end gap-2">
           <Preview />
-          <Publish id={dashboard.id} isPublished={dashboard.is_published} />
+          <Publish
+            id={dashboard.id}
+            isDashboardPublished={dashboard.is_published}
+          />
         </div>
       </div>
     </header>

@@ -7,7 +7,7 @@ import lodashKeyBy from 'lodash/keyBy'
 import lodashResult from 'lodash/result'
 
 import { type TableElement } from '../../../canvas/types'
-import { ColumnDef, VisibilityState } from '@tanstack/react-table'
+import { VisibilityState } from '@tanstack/react-table'
 import { Grouping } from './grouping'
 import { Columns } from './columns'
 import { Pagination } from './pagination'
@@ -15,21 +15,16 @@ import { Pagination } from './pagination'
 import { useAtomValue } from 'jotai'
 import { queriesAtom } from '../../../editor/state'
 import { Column } from '@/types'
-import { aggregationFns } from './aggregationFns'
-import { Button } from '@/components/ui/button'
-import { CaretDown, CaretSort, CaretUp } from '@/icons'
 
 export function TableElementProperties({ element }: { element: TableElement }) {
   const { tableHeader, pageSize } = element.props
 
-  // const [dataSourceValue, setDataSourceValue] = React.useState(dataSource)
   const [tableHeaderValue, setTableHeaderValue] = React.useState(tableHeader)
   const [pageSizeValue, setPageSizeValue] = React.useState(pageSize)
 
   const { updateElement } = useCanvasAtom()
 
   const queries = useAtomValue(queriesAtom)
-  // const [columns, setColumns] = React.useState<Column[]>([])
   const [columns, setColumns] = React.useState(
     element.props.columns.map((c) => c.name),
   )
@@ -220,7 +215,7 @@ export function TableElementProperties({ element }: { element: TableElement }) {
       <div className="flex flex-col gap-2 px-4">
         <div className="mb-3">
           <Label htmlFor="header" className="text-xs text-slate-500">
-            Table header
+            Title
           </Label>
           <TextInput
             type="text"
@@ -232,7 +227,7 @@ export function TableElementProperties({ element }: { element: TableElement }) {
         </div>
         <div>
           <Label htmlFor="data-source" className="text-xs text-slate-500">
-            Table data
+            Data
           </Label>
           <TextInput
             type="text"

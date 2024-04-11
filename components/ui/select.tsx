@@ -1,13 +1,12 @@
 'use client'
 
 import * as React from 'react'
-// import {
-//   CaretSortIcon,
-//   CheckIcon,
-//   ChevronDownIcon,
-//   ChevronUpIcon,
-// } from '@radix-ui/react-icons'
-import { CaretSort as CaretSortIcon, Check as CheckIcon } from '@/icons'
+import {
+  CaretSort as CaretSortIcon,
+  Check as CheckIcon,
+  CaretDown as ChevronDownIcon,
+  CaretUp as ChevronUpIcon,
+} from '@/icons'
 import * as SelectPrimitive from '@radix-ui/react-select'
 
 import { cn } from '@/lib/utils'
@@ -25,7 +24,7 @@ const SelectTrigger = React.forwardRef<
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      'flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-slate-200 bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-white placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-800 dark:ring-offset-slate-950 dark:placeholder:text-slate-400 dark:focus:ring-slate-300 [&>span]:truncate',
+      'flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-slate-200 bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-white focus:outline-none focus:ring-1 focus:ring-slate-500 disabled:cursor-not-allowed disabled:opacity-50 data-[placeholder]:text-slate-500 dark:border-slate-800 dark:ring-offset-slate-950 dark:placeholder:text-slate-400 dark:focus:ring-slate-300 [&>span]:truncate',
       className,
     )}
     {...props}
@@ -50,7 +49,7 @@ const SelectScrollUpButton = React.forwardRef<
     )}
     {...props}
   >
-    {/* <ChevronUpIcon /> */}
+    <ChevronUpIcon />
   </SelectPrimitive.ScrollUpButton>
 ))
 SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName
@@ -67,7 +66,7 @@ const SelectScrollDownButton = React.forwardRef<
     )}
     {...props}
   >
-    {/* <ChevronDownIcon /> */}
+    <ChevronDownIcon />
   </SelectPrimitive.ScrollDownButton>
 ))
 SelectScrollDownButton.displayName =

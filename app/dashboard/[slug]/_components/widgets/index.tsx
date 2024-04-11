@@ -1,6 +1,5 @@
 'use client'
 
-import Search from '@/components/shared/search'
 import { TextWidget } from './_components/text-widget'
 import { CardWidget } from './_components/card-widget'
 import { AreaChartWidget } from './_components/area-chart-widget'

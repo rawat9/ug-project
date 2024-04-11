@@ -41,15 +41,19 @@ export const createDashboard = async (body: FormData) => {
   const result = z
     .object({
       title: z.string().trim().min(1),
+      description: z.string().optional(),
     })
-    .safeParse({ title: body.get('title') })
+    .safeParse({
+      title: body.get('title'),
+      description: body.get('description'),
+    })
 
   if (!result.success) {
     console.error(result.error)
     throw new Error('Invalid form data')
   }
 
-  const { title } = result.data
+  const { title, description } = result.data
 
   const supabase = await createSupabaseServerClient()
 
@@ -57,6 +61,7 @@ export const createDashboard = async (body: FormData) => {
     .from('dashboard')
     .insert({
       title,
+      description,
     })
     .select('id')
     .single()
@@ -67,7 +72,7 @@ export const createDashboard = async (body: FormData) => {
   }
 
   revalidatePath('/dashboard')
-  redirect(`/dashboard/${data?.id}`)
+  redirect(`/dashboard/${data?.id}/edit`)
 }
 
 export const getDashboardById = async (
@@ -165,37 +170,37 @@ async function decryptData(encryptedData: Buffer) {
   }
 }
 
-export const executeQuery = async (
-  query: string,
-  conn_string: { type: 'Buffer'; data: number[] },
-) => {
-  const supabase = await createSupabaseServerClient()
-  const decrypted = await decryptData(Buffer.from(conn_string.data))
+export const executeQuery = cache(
+  async (query: string, conn_string: { type: 'Buffer'; data: number[] }) => {
+    const supabase = await createSupabaseServerClient()
+    // const decrypted = await decryptData(Buffer.from(conn_string.data))
 
-  if (!decrypted) {
-    throw new Error('Error decrypting connection string')
-  }
+    // if (!decrypted) {
+    //   throw new Error('Error decrypting connection string')
+    // }
 
-  const { data, error } = await supabase.functions.invoke<
-    Result['execute-query']
-  >('execute-query', {
-    method: 'POST',
-    body: {
-      query,
-      conn_string: decrypted,
-    },
-  })
+    const { data, error } = await supabase.functions.invoke<
+      Result['execute-query']
+    >('execute-query', {
+      method: 'POST',
+      body: {
+        query,
+        conn_string: 'postgresql://postgres:postgres@172.17.0.1:54322/postgres',
+      },
+    })
 
-  if (error) {
-    throw error
-  }
+    if (error) {
+      throw error
+    }
 
-  if (!data) {
-    throw new Error('No data returned')
-  }
+    if (!data) {
+      throw new Error('No data returned')
+    }
 
-  return data
-}
+    return data
+  },
+  ['query'],
+)
 
 export const fetchIntegrations = async (): Promise<Integration[]> => {
   try {
@@ -324,6 +329,8 @@ export const fetchSchema = cache(
       //   // conn_string: decrypted,
       // },
     })
+
+    console.log(data)
 
     if (error) {
       throw error

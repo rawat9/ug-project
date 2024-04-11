@@ -14,13 +14,14 @@ import { useState } from 'react'
 
 export function Publish({
   id,
-  isPublished,
+  isDashboardPublished,
 }: {
   id: string
-  isPublished: boolean
+  isDashboardPublished: boolean
 }) {
   const [copied, setCopied] = useState(false)
   const [isPublishing, setIsPublishing] = useState(false)
+  const [isPublished, setIsPublished] = useState(isDashboardPublished)
   const origin = useOrigin()
   const url = `${origin}/dashboard/${id}/preview`
 
@@ -41,7 +42,10 @@ export function Publish({
         promise,
         {
           loading: 'Publishing...',
-          success: 'Published!',
+          success: () => {
+            setIsPublished(true)
+            return 'Published!'
+          },
           error: 'Failed to publish dashboard',
         },
         {
@@ -61,7 +65,10 @@ export function Publish({
         promise,
         {
           loading: 'Unpublishing...',
-          success: 'Unpublished!',
+          success: () => {
+            setIsPublished(false)
+            return 'Unpublished!'
+          },
           error: 'Failed to unpublish dashboard',
         },
         {

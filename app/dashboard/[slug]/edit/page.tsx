@@ -20,9 +20,9 @@ export default function Page({
       <div className="fixed left-12 top-14 z-10 h-[calc(100vh_-_3.5rem)] w-[calc(100vw_-_3rem)]">
         <State isOpen={searchParams?.state === 'true'} />
         <Widgets isOpen={searchParams?.widgets === 'true'} />
+        <Properties />
         <Canvas />
         <Editor isOpen={searchParams?.editor === 'true'} />
-        <Properties />
       </div>
     </>
   )

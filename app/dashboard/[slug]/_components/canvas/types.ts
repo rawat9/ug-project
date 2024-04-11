@@ -8,6 +8,7 @@ import type {
   BarChartProps,
   BarListProps,
   EventProps,
+  LineChartProps,
   TextProps,
 } from '@tremor/react'
 
@@ -19,14 +20,16 @@ type ElementTypes =
   | 'line-chart'
   | 'bar-chart'
 
-interface TextElementProps extends Partial<TextProps> {
-  value: string
-  dynamicValue?: string
-  heading?: string
+interface TextElementProps {
+  type: 'plaintext' | 'markdown'
+  rawValue: string
+  displayValue: string
+  color: string
   alignment: {
     justify: 'start' | 'end' | 'center'
     items: 'start' | 'end' | 'center'
   }
+  fontSize: number
 }
 
 interface TableElementProps {
@@ -52,24 +55,29 @@ interface BarListElementProps extends BarListProps {
   value: string
 }
 
-interface LineChartElementProps {
-  header: string
-  xAxis: string
-  yAxis: string[]
-  data: unknown[]
+interface LineChartElementProps extends Omit<LineChartProps, 'categories'> {
+  title: string
+  originalData: unknown[]
+  xAxisTitle: string
+  yAxisTitle: string
+  columns: Column[]
+  categories: { name: string; aggFn: 'sum' | 'count' | 'mean' }[]
   dataKey: string
+  groupBy: string
+  groupedCategories: string[]
+  indexTimeGranularity: 'Daily' | 'Monthly' | 'Yearly'
 }
 
-interface BarChartElementProps extends BarChartProps {
-  header: string
+interface BarChartElementProps extends Omit<BarChartProps, 'categories'> {
+  title: string
   originalData: unknown[]
   dataKey: string
-  xAxis: string
   xAxisTitle: string
   yAxisTitle: string
   columns: Column[]
   groupBy: string
-  groupByColumns: string[]
+  groupedCategories: string[]
+  categories: { name: string; aggFn: 'sum' | 'count' | 'mean' }[]
   yAggregation: string
   selected: EventProps
 }

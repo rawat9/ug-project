@@ -29,7 +29,9 @@ export async function DashboardsList({ query }: { query: string }) {
                 data-testid="dashboard"
               >
                 <h4 className="py-2 font-semibold">{dashboard.title}</h4>
-                <p className="text-sm">Description</p>
+                <p className="text-sm text-slate-500">
+                  {dashboard.description}
+                </p>
               </div>
             </Link>
           ))}

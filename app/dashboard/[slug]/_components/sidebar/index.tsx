@@ -1,14 +1,21 @@
 'use client'
 
 import {
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { CodeEditor, Settings, Widget, State } from '@/icons'
+import { CodeEditor, Settings, Widget, State, Delete } from '@/icons'
 import { cn } from '@/lib/utils'
+import { DropdownMenu } from '@radix-ui/react-dropdown-menu'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { DeleteAlertDialog } from './delete-alert-dialog'
 
 export function Sidebar() {
   const { replace } = useRouter()
@@ -115,9 +122,21 @@ export function Sidebar() {
           <TooltipProvider delayDuration={0}>
             <Tooltip>
               <TooltipTrigger asChild>
-                <button className="rounded-lg p-1.5 text-gray-700 transition-colors duration-200 hover:bg-gray-100 focus:outline-none dark:bg-gray-800 dark:text-gray-200">
-                  <Settings className="h-6 w-6" />
-                </button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="rounded-lg p-1.5 text-gray-700 transition-colors duration-200 hover:bg-gray-100 focus:outline-none dark:bg-gray-800 dark:text-gray-200">
+                      <Settings className="h-6 w-6" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent side="right" sideOffset={10}>
+                    <DropdownMenuItem
+                      className="cursor-pointer font-medium text-red-500"
+                      asChild
+                    >
+                      <DeleteAlertDialog />
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </TooltipTrigger>
               <TooltipContent side="right">
                 <p>Settings</p>

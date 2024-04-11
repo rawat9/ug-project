@@ -24,7 +24,13 @@ export default function Page() {
     <div className="overflow-hidden pb-[16.4rem]">
       <div className="mx-auto max-w-[120rem] px-8 pt-[6.4rem] md:pt-2">
         <ContainerScroll titleComponent={<Hero />}>
-          <Image src="" alt="hero image" width={800} height={600} />
+          <Image
+            src="/demo-img.png"
+            alt="Product demo image"
+            width={1280}
+            height={600}
+            className="rounded-lg object-fill"
+          />
         </ContainerScroll>
       </div>
       <Features />

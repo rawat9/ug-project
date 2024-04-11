@@ -60,6 +60,7 @@ export function Canvas({ isPreview = false }: { isPreview?: boolean }) {
   useAutosave({
     data: elements,
     onSave: handleSave,
+    interval: 10000,
   })
 
   function onDrop(_layout: Layout[], item: Layout, e: DragEvent) {

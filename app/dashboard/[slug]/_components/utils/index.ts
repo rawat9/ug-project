@@ -9,11 +9,15 @@ export function getElementProps(type: Element['type']): Element['props'] {
   switch (type) {
     case 'text':
       return {
-        value: 'Dummy text',
+        type: 'plaintext',
+        rawValue: 'Text',
+        displayValue: 'Text',
         alignment: {
           justify: 'start',
           items: 'center',
         },
+        color: 'gray',
+        fontSize: 16,
       }
     case 'card':
       return {}
@@ -31,21 +35,22 @@ export function getElementProps(type: Element['type']): Element['props'] {
         aggregatedValues: [],
       }
     case 'line-chart':
-      return {}
+      return {
+        data: [],
+        columns: [],
+        categories: [],
+        groupedCategories: [],
+      }
     case 'bar-chart':
       return {
         data: [],
         columns: [],
-        xAxis: '',
         categories: [],
+        groupedCategories: [],
       }
     case 'bar-list':
       return {
-        data: [
-          { name: 'Bose', value: 346 },
-          { name: 'Sony', value: 231 },
-          { name: 'JBL', value: 24 },
-        ],
+        data: [],
         color: 'blue',
       }
     default:

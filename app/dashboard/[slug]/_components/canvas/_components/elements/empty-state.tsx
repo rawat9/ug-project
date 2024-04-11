@@ -9,7 +9,7 @@ export function EmptyDataState() {
           No data to show
         </p>
         <p className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
-          May take 24 hours for data to load
+          Make sure that the data source is provided
         </p>
       </div>
     </div>

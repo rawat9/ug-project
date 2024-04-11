@@ -8,24 +8,20 @@ import { activeQueryAtom, queryAtom } from '../state'
 import ReactCodeMirror, {
   ReactCodeMirrorRef,
   ReactCodeMirrorProps,
+  keymap,
 } from '@uiw/react-codemirror'
-import { PostgreSQL, sql } from '@codemirror/lang-sql'
 import { getExtension } from './sql'
 import { disableGrammarly } from '@/lib/utils'
+import { acceptCompletion, completionStatus } from '@codemirror/autocomplete'
 
 const CodeEditor = React.forwardRef<ReactCodeMirrorRef, ReactCodeMirrorProps>(
   (_, ref) => {
     const activeQuery = useAtomValue(activeQueryAtom)
     const setQuery = useSetAtom(queryAtom(activeQuery?.name ?? ''))
 
-    const dialect = PostgreSQL
-    const extensions = [
-      dialect.language.data.of({ autocomplete: getExtension }),
-    ]
-
     const handleOnChange = useDebouncedCallback((value: string) => {
       setQuery(value)
-    }, 600)
+    }, 800)
 
     return (
       <div className="flex h-[60%] min-h-[200px] px-4">
@@ -42,23 +38,18 @@ const CodeEditor = React.forwardRef<ReactCodeMirrorRef, ReactCodeMirrorProps>(
           value={activeQuery?.sql_query ?? ''}
           ref={ref}
           extensions={[
-            sql({
-              dialect: PostgreSQL,
-              schema: {
-                users: ['id', 'name', 'age'],
-                posts: ['id', 'title', 'content'],
-              },
-              tables: [
-                {
-                  label: 'users',
-                  type: 'class',
-                  info: 'User table',
-                  apply: 'users',
-                },
-                { label: 'posts', type: 'class', info: 'Post table' },
-              ],
-            }),
-            extensions,
+            // keymap.of([
+            //   {
+            //     key: 'Tab',
+            //     preventDefault: true,
+            //     shift: indentLess,
+            //     run: (editor) => {
+            //       if (!completionStatus(editor.state)) return indentMore(e);
+            //       return acceptCompletion(editor)
+            //     },
+            //   },
+            // ]),
+            getExtension(),
           ]}
           onChange={handleOnChange}
           onCreateEditor={() => {
