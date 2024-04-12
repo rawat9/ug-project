@@ -26,14 +26,14 @@ export function Columns({
   const [draggable, setDraggable] = React.useState(false)
 
   return (
-    <div className="flex flex-col gap-2 px-4">
+    <div className="flex flex-col gap-2">
       <div className="mb-1 flex items-center justify-between">
         <h4 className="text-sm font-medium text-slate-500">
           Columns ({columns.length})
         </h4>
-        <button type="button" className="text-sm">
+        {/* <button type="button" className="text-sm">
           <Add className="h-4 w-4" />
-        </button>
+        </button> */}
       </div>
       <div className="flex flex-col rounded-lg border py-2">
         {columns.length === 0 ? (
@@ -85,7 +85,7 @@ export function Columns({
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                    <Pencil className="h-4 w-4 text-gray-400" />
+                    {/* <Pencil className="h-4 w-4 text-gray-400" /> */}
                   </div>
                 </div>
               </Reorder.Item>

@@ -47,9 +47,9 @@ export function Widgets({ isOpen }: { isOpen: boolean }) {
             <div className="h-[90%] overflow-y-auto p-4">
               <div className="grid grid-cols-2 gap-2">
                 <TextWidget />
-                <CardWidget />
+                {/* <CardWidget /> */}
                 <TableWidget />
-                <AreaChartWidget />
+                {/* <AreaChartWidget /> */}
                 <LineChartWidget />
                 <BarChartWidget />
                 <BarListWidget />

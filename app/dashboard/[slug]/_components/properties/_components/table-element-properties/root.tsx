@@ -15,13 +15,16 @@ import { Pagination } from './pagination'
 import { useAtomValue } from 'jotai'
 import { queriesAtom } from '../../../editor/state'
 import { Column } from '@/types'
+import toast from 'react-hot-toast'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 export function TableElementProperties({ element }: { element: TableElement }) {
-  const { tableHeader, pageSize } = element.props
-
-  const [tableHeaderValue, setTableHeaderValue] = React.useState(tableHeader)
-  const [pageSizeValue, setPageSizeValue] = React.useState(pageSize)
-
   const { updateElement } = useCanvasAtom()
 
   const queries = useAtomValue(queriesAtom)
@@ -64,57 +67,41 @@ export function TableElementProperties({ element }: { element: TableElement }) {
   }, [columns]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleDataChange(value: string) {
-    updateElement(element.id, {
-      ...element,
-      props: {
-        ...element.props,
-        dataSource: value,
-      },
-    })
-    try {
-      const interpolate = /{{\s*([^{}]+?)\s*}}/g
-      const match = value.match(interpolate)
-
-      if (match) {
-        const result = lodashResult(
-          lodashKeyBy(queries, 'name'),
-          match[0].replace(/{{\s*|\s*}}/g, ''),
-        ) as
-          | {
-              data: unknown[]
-              columns: Column[]
-            }
-          | undefined
-
-        if (result) {
-          updateElement(element.id, {
-            ...element,
-            props: {
-              ...element.props,
-              data: result.data,
-              columns: result.columns,
-              dataSource: value,
-            },
-          })
-          setColumns(result.columns.map((c) => c.name))
+    if (!queries.length) {
+      return toast.error('No queries found')
+    }
+    const result = lodashResult(lodashKeyBy(queries, 'name'), value) as
+      | {
+          data: unknown[]
+          columns: Column[]
         }
-      }
-    } catch {}
+      | undefined
+
+    if (result) {
+      updateElement(element.id, {
+        ...element,
+        props: {
+          ...element.props,
+          data: result.data,
+          columns: result.columns,
+          dataKey: value,
+        },
+      })
+      setColumns(result.columns.map((c) => c.name))
+    }
   }
 
   function handleValueChange(value: string) {
-    setTableHeaderValue(value)
     updateElement(element.id, {
       ...element,
       props: {
         ...element.props,
-        tableHeader: value,
+        title: value,
       },
     })
   }
 
   function handlePageSizeChange(value: number) {
-    setPageSizeValue(value)
     updateElement(element.id, {
       ...element,
       props: {
@@ -130,6 +117,16 @@ export function TableElementProperties({ element }: { element: TableElement }) {
       props: {
         ...element.props,
         enableSorting: value,
+      },
+    })
+  }
+
+  function handleEnableGrouping(value: boolean) {
+    updateElement(element.id, {
+      ...element,
+      props: {
+        ...element.props,
+        enableGrouping: value,
       },
     })
   }
@@ -210,45 +207,55 @@ export function TableElementProperties({ element }: { element: TableElement }) {
   // }
 
   return (
-    <div className="flex flex-col gap-1">
-      <div className="flex flex-col gap-2 px-4">
-        <div className="mb-3">
-          <Label htmlFor="header" className="text-xs text-slate-500">
-            Title
-          </Label>
-          <TextInput
-            type="text"
-            autoComplete="off"
-            id="header"
-            value={tableHeaderValue}
-            onValueChange={handleValueChange}
-          />
-        </div>
-        <div>
-          <Label htmlFor="data-source" className="text-xs text-slate-500">
-            Data
-          </Label>
-          <TextInput
-            type="text"
-            autoComplete="off"
-            id="data-source"
-            placeholder="{{ getData }}"
-            className="font-mono text-xs placeholder:font-mono"
-            defaultValue={element.props.dataSource}
-            onValueChange={handleDataChange}
-          />
-        </div>
+    <div className="flex flex-col gap-6 px-4 pb-4">
+      <div>
+        <Label htmlFor="title" className="text-xs text-slate-500">
+          Title
+        </Label>
+        <TextInput
+          type="text"
+          autoComplete="off"
+          id="title"
+          value={element.props.title}
+          onValueChange={handleValueChange}
+        />
       </div>
-      <div className="my-4 bg-gray-200" />
+      <div>
+        <Label htmlFor="data" className="text-xs text-slate-500">
+          Data
+        </Label>
+        <Select
+          defaultValue={element.props.dataKey}
+          onValueChange={handleDataChange}
+        >
+          <SelectTrigger id="data">
+            <SelectValue placeholder="getData" className="font-mono text-xs">
+              {element.props.dataKey}
+            </SelectValue>
+          </SelectTrigger>
+          {queries.length > 0 && (
+            <SelectContent
+              alignOffset={-300}
+              align="start"
+              className="z-10 max-h-60 -translate-x-6"
+            >
+              {queries.map((query) => (
+                <SelectItem key={query.name} value={query.name}>
+                  {query.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          )}
+        </Select>
+      </div>
       <Columns
         columns={columns}
         setCols={setColumns}
         columnVisibility={element.props.state?.columnVisibility}
         handleColumnVisibility={handleColumnVisibility}
       />
-      <div className="my-3 bg-gray-200" />
-      <h3 className="mb-4 px-4 text-sm font-medium text-slate-500">Sorting</h3>
-      <div className="flex items-center justify-between px-4">
+      <h3 className="text-sm font-medium text-slate-500">Sorting</h3>
+      <div className="flex items-center justify-between">
         <label className="block text-sm" htmlFor="enable-sorting">
           Enable sorting
         </label>
@@ -258,22 +265,22 @@ export function TableElementProperties({ element }: { element: TableElement }) {
           onCheckedChange={handleEnableSorting}
         />
       </div>
-      <div className="my-4 bg-gray-200" />
       <Pagination
         defaultEnablePagination={element.props.enablePagination}
         handleEnablePagination={handleEnablePagination}
-        pageSizeValue={pageSizeValue}
+        pageSizeValue={element.props.pageSize}
         handlePageSizeChange={handlePageSizeChange}
       />
-      <div className="my-4 bg-gray-200" />
       <Grouping
         columns={columns}
         groups={element.props.state?.grouping ?? []}
         handleGroupingChange={handleGroupingChange}
-        aggregatedValues={
-          element.props?.aggregatedValues?.map((v) => v.column) ?? []
-        }
-        handleAggregatedValuesChange={(value) => {}}
+        enableGrouping={element.props.enableGrouping}
+        handleEnableGroupingChange={handleEnableGrouping}
+        // aggregatedValues={
+        //   element.props?.aggregatedValues?.map((v) => v.column) ?? []
+        // }
+        // handleAggregatedValuesChange={(value) => {}}
       />
     </div>
   )

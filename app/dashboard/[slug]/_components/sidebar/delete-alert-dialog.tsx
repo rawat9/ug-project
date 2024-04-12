@@ -12,7 +12,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Delete } from '@/icons'
 
-export function DeleteAlertDialog() {
+export function DeleteAlertDialog({ onDelete }: { onDelete: () => void }) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -31,7 +31,7 @@ export function DeleteAlertDialog() {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction>Continue</AlertDialogAction>
+          <AlertDialogAction onClick={onDelete}>Continue</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

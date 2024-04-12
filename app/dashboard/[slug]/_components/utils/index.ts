@@ -25,11 +25,12 @@ export function getElementProps(type: Element['type']): Element['props'] {
       return {}
     case 'table':
       return {
-        tableHeader: '',
-        dataSource: '',
+        title: '',
+        dataKey: '',
         data: [],
         columns: [],
         enablePagination: true,
+        enableGrouping: true,
         pageSize: 10,
         enableSorting: true,
         aggregatedValues: [],

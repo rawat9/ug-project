@@ -12,14 +12,6 @@ import type {
   LineChartProps,
 } from '@tremor/react'
 
-type ElementTypes =
-  | 'text'
-  | 'table'
-  | 'area-chart'
-  | 'card'
-  | 'line-chart'
-  | 'bar-chart'
-
 interface TextElementProps {
   type: 'plaintext' | 'markdown'
   rawValue: string
@@ -33,11 +25,12 @@ interface TextElementProps {
 }
 
 interface TableElementProps {
-  tableHeader: string
-  dataSource: string
+  title: string
+  dataKey: string
   enablePagination: boolean
   pageSize: number
   enableSorting: boolean
+  enableGrouping: boolean
   data: unknown[]
   columns: Column[]
   state: Partial<TableState>

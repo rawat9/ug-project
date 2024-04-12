@@ -14,14 +14,27 @@ import {
 import { CodeEditor, Settings, Widget, State, Delete } from '@/icons'
 import { cn } from '@/lib/utils'
 import { DropdownMenu } from '@radix-ui/react-dropdown-menu'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation'
 import { DeleteAlertDialog } from './delete-alert-dialog'
+import { deleteDashboard } from '@/lib/data/server/dashboard'
 
 export function Sidebar() {
   const { replace } = useRouter()
   const searchParams = useSearchParams()
   const pathname = usePathname()
   const params = new URLSearchParams(searchParams)
+  const { slug } = useParams()
+
+  const handleDashboardDelete = async () => {
+    if (!slug) return
+    await deleteDashboard(slug as string)
+    replace('/')
+  }
 
   return (
     <aside className="fixed z-20 flex">
@@ -133,7 +146,7 @@ export function Sidebar() {
                       className="cursor-pointer font-medium text-red-500"
                       asChild
                     >
-                      <DeleteAlertDialog />
+                      <DeleteAlertDialog onDelete={handleDashboardDelete} />
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

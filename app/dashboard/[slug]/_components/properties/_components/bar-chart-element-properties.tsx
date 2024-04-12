@@ -90,7 +90,7 @@ export function BarChartElementProperties({
 
   function handleDataChange(value: string) {
     if (!queries.length) {
-      return
+      return toast.error('No queries found')
     }
     const result = lodashResult(lodashKeyBy(queries, 'name'), value) as
       | {
@@ -234,13 +234,6 @@ export function BarChartElementProperties({
         })),
       },
     })
-  }
-
-  function handleCategoryNameChange(
-    e: React.ChangeEvent<HTMLInputElement>,
-    index: number,
-  ) {
-    return
   }
 
   function handleGroupByChange(value: string) {
@@ -459,7 +452,11 @@ export function BarChartElementProperties({
                       >
                         Category
                       </Label>
-                      <Input id="category-name" defaultValue={category.name} />
+                      <Input
+                        id="category-name"
+                        value={category.name}
+                        disabled
+                      />
                     </div>
                     <div className="grid items-center gap-2">
                       <Label

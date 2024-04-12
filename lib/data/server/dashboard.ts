@@ -246,3 +246,16 @@ export const fetchCanvas = async (id: string) => {
   // FIX ME - This is a hack to get around the type system
   return data.content as unknown as Canvas
 }
+
+export const deleteDashboard = async (id: string) => {
+  const supabase = await createSupabaseServerClient()
+
+  const { error } = await supabase.from('dashboard').delete().eq('id', id)
+
+  if (error) {
+    console.error(error.message)
+    throw new Error('Error deleting dashboard')
+  }
+
+  revalidatePath('/dashboard')
+}

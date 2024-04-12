@@ -5,9 +5,6 @@ import { EmptyDataState } from './empty-state'
 import Markdown from 'react-markdown'
 import upperFirst from 'lodash/upperFirst'
 
-// const dataFormatter = (number: number) =>
-//   Intl.NumberFormat('us').format(number).toString()
-
 const BarListElement = memo(({ element }: { element: BarListElement }) => {
   return (
     <Card className="h-full w-full overflow-hidden">
