@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { AddCircle } from '@/icons'
-import { createQuery } from '@/lib/data/queries'
+import { createQuery } from '@/lib/data/client/queries'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useSetAtom } from 'jotai'
 import { activeQueryAtom, queriesAtom } from '../state'
@@ -40,16 +40,23 @@ export function CreateNewQuery() {
           PostgrestSingleResponse<Tables<'query'>[]>
         >(['queries'])
 
-        let startsWithDefault = 0
+        let index = 0
         if (queries && queries.data?.length) {
-          startsWithDefault = Math.max(
-            ...queries.data
-              .filter((query) => query.name.startsWith(defaultName))
-              .map((query) => Number(query.name[query.name.length - 1])),
+          const startsWithDefault = queries.data.filter((query) =>
+            query.name.startsWith(defaultName),
           )
+
+          if (startsWithDefault.length) {
+            const latest = Math.max(
+              ...startsWithDefault.map((query) =>
+                Number(query.name[query.name.length - 1]),
+              ),
+            )
+            index = latest
+          }
         }
 
-        mutation.mutate(`query${startsWithDefault + 1}`)
+        mutation.mutate(`query${index + 1}`)
       }}
     >
       <AddCircle className="mr-1 h-5 w-5" />

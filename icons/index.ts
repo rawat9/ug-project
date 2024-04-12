@@ -14,7 +14,7 @@ export * from './Add'
 export * from './AddCircle'
 export * from './Spinner'
 export * from './Pencil'
-export * from './Share'
+export * from './Publish'
 export * from './Cross'
 export * from './Copy'
 export * from './DragHandle'
@@ -39,13 +39,17 @@ export * from './PanelLeftOpen'
 export * from './PanelLeftClose'
 export * from './ExpandLeft'
 export * from './ExpandRight'
+export * from './Preview'
 
 // Icons for widgets library
 export * from './widgets/Text'
 export * from './widgets/Button'
 export * from './widgets/Table'
-export * from './widgets/Chart'
+export * from './widgets/LineChart'
+export * from './widgets/AreaChart'
+export * from './widgets/BarChart'
 export * from './widgets/Card'
+export * from './widgets/BarList'
 
 // Icons for editor
 export * from './Run'
@@ -69,3 +73,6 @@ export * from './Selection'
 
 // Table element properties
 export * from './Sigma'
+
+// App Logo
+export * from './Logo'

@@ -8,7 +8,7 @@ import {
   TableRow,
 } from '@tremor/react'
 import React, { memo } from 'react'
-import { type TableElement as TableElementType } from '../../../types'
+import type { TableElement } from '../../../types'
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -26,7 +26,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
-import { Filters } from './filters'
+// import { Filters } from './filters'
 import {
   CaretDown,
   CaretSort,
@@ -34,45 +34,52 @@ import {
   ChevronDown,
   ChevronRight,
 } from '@/icons'
+import { EmptyDataState } from '../empty-state'
 
-const TableElement = memo(({ element }: { element: TableElementType }) => {
+const TableElement = memo(({ element }: { element: TableElement }) => {
   const data = element.props.data
   const columns = element.props.columns
 
   const columnDef: ColumnDef<unknown>[] = React.useMemo(
     () =>
-      columns.map(
-        (col) =>
-          ({
-            id: col.name,
-            accessorKey: col.name,
-            header: ({ column }) => {
-              return (
-                <Button
-                  variant="ghost"
-                  className="p-0"
-                  onClick={column.getToggleSortingHandler()}
-                >
-                  <p className="font-semibold">{col.name}</p>
-                  {column.getCanSort() &&
-                    (column.getIsSorted() ? (
-                      column.getIsSorted() === 'asc' ? (
-                        <CaretUp className="ml-1 h-5 w-5" />
-                      ) : (
-                        <CaretDown className="ml-1 h-5 w-5" />
-                      )
-                    ) : (
-                      <CaretSort className="ml-1 h-5 w-5" />
-                    ))}
-                </Button>
-              )
-            },
-            aggregationFn: 'auto',
-            cell: ({ row }) => (
-              <div className="capitalize">{row.getValue(col.name)}</div>
-            ),
-          }) satisfies ColumnDef<unknown>,
-      ),
+      columns.map((col) => ({
+        id: col.name,
+        accessorKey: col.name,
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              className="p-0"
+              onClick={column.getToggleSortingHandler()}
+            >
+              <p className="font-semibold">{col.name}</p>
+              {column.getCanSort() &&
+                (column.getIsSorted() ? (
+                  column.getIsSorted() === 'asc' ? (
+                    <CaretUp className="ml-1 h-5 w-5" />
+                  ) : (
+                    <CaretDown className="ml-1 h-5 w-5" />
+                  )
+                ) : (
+                  <CaretSort className="ml-1 h-5 w-5" />
+                ))}
+            </Button>
+          )
+        },
+        aggregationFn: () => col.aggregationFn,
+        // aggregationFn: (columnId) => {
+        //   const values = element.props.aggregatedValues
+        //   const value = values.find((v) => v.column.name === columnId)
+        //   console.log(value?.aggFn)
+        //   return value?.aggFn
+        // },
+        aggregatedCell: ({ row }) => (
+          <div className="font-medium">{row.getValue(col.name)}</div>
+        ),
+        cell: ({ row }) => (
+          <div className="capitalize">{row.getValue(col.name)}</div>
+        ),
+      })),
     [columns],
   )
 
@@ -86,6 +93,29 @@ const TableElement = memo(({ element }: { element: TableElementType }) => {
     pageIndex: 0,
     pageSize: 10,
   })
+
+  React.useEffect(() => {
+    if (element.props.pageSize) {
+      setPagination((prev) => ({
+        ...prev,
+        pageSize: element.props.pageSize,
+      }))
+    }
+  }, [element.props.pageSize])
+
+  React.useEffect(() => {
+    if (!element.props.enablePagination) {
+      setPagination((prev) => ({
+        ...prev,
+        pageSize: data.length,
+      }))
+    } else {
+      setPagination((prev) => ({
+        ...prev,
+        pageSize: 10,
+      }))
+    }
+  }, [element.props.enablePagination, data.length])
 
   const table = useReactTable({
     data,
@@ -113,23 +143,22 @@ const TableElement = memo(({ element }: { element: TableElementType }) => {
     onColumnFiltersChange: setColumnFilters,
     onPaginationChange: setPagination,
     onSortingChange: setSorting,
-    rowCount: data && data.length,
+    // rowCount: data && data.length,
     enableSorting: element.props.enableSorting,
+    enableGrouping: element.props.enableGrouping,
   }))
 
   return (
     <Card className="flex h-full w-full flex-col gap-6">
       <div className="flex items-center">
         <h3 className="flex-1 font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong">
-          {element.props.tableHeader}
+          {element.props.title}
         </h3>
-        <Filters />
+        {/* <Filters /> */}
       </div>
 
       {!table || !data.length || !columns.length ? (
-        <div className="flex h-full items-center justify-center">
-          <p className="text-slate-500">No data to display</p>
-        </div>
+        <EmptyDataState />
       ) : (
         <>
           <Table
@@ -215,39 +244,41 @@ const TableElement = memo(({ element }: { element: TableElementType }) => {
               ))}
             </TableBody>
           </Table>
-          <div className="flex h-[4%] items-center justify-end space-x-2 px-2">
-            <div className="flex-1 text-sm text-slate-500">
-              {'Showing ' +
-                table?.getPaginationRowModel().rows.length +
-                ' of ' +
-                data.length +
-                ' rows'}
+          {element.props.enablePagination && (
+            <div className="flex h-[4%] items-center justify-end space-x-2">
+              <div className="flex-1 text-xs text-slate-600">
+                {'Showing ' +
+                  table?.getPaginationRowModel().rows.length +
+                  ' of ' +
+                  data.length +
+                  ' rows'}
+              </div>
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-6"
+                  onClick={() => table.previousPage()}
+                  disabled={!table.getCanPreviousPage()}
+                >
+                  Previous
+                </Button>
+                <p className="text-xs text-slate-600">
+                  Page {table.getState().pagination.pageIndex + 1} of{' '}
+                  {table.getPageCount()}
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-6"
+                  onClick={() => table.nextPage()}
+                  disabled={!table.getCanNextPage()}
+                >
+                  Next
+                </Button>
+              </div>
             </div>
-            <div className="flex items-center space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-6"
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-              >
-                Previous
-              </Button>
-              <p className="text-xs">
-                Page {table.getState().pagination.pageIndex + 1} of{' '}
-                {table.getPageCount()}
-              </p>
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-6"
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-              >
-                Next
-              </Button>
-            </div>
-          </div>
+          )}
         </>
       )}
     </Card>

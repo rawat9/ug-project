@@ -38,7 +38,7 @@ import { createSQLTableQuery, insertSQLTableQuery } from './queries'
 import { InputSelect } from './input-select'
 import { useAtomValue } from 'jotai'
 import { dataImportAtom } from './state'
-import { executeSqlite } from '@/lib/data'
+import { executeSqlite } from '@/lib/data/server/queries'
 import { formSchema, defaultValues } from './form-schema'
 
 export function ColumnsForm({

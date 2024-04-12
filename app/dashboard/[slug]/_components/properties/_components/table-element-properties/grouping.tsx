@@ -1,34 +1,41 @@
 import { Switch } from '@/components/ui/switch'
-import { Add, Check, Sigma } from '@/icons'
+import { Add, Check } from '@/icons'
+import { Column } from '@/types'
 import { Listbox, Transition } from '@headlessui/react'
-import { GroupingState } from '@tanstack/react-table'
+import type { GroupingState } from '@tanstack/react-table'
 import * as React from 'react'
 
 export function Grouping({
   columns,
   groups,
   handleGroupingChange,
+  enableGrouping,
+  handleEnableGroupingChange,
+  // aggregatedValues,
+  // handleAggregatedValuesChange,
 }: {
   columns: string[]
   groups: GroupingState
-  handleGroupingChange: (value: string[]) => void
+  handleGroupingChange: (value: GroupingState) => void
+  enableGrouping: boolean
+  handleEnableGroupingChange: (value: boolean) => void
+  // aggregatedValues: Column[]
+  // handleAggregatedValuesChange: (value: Column[]) => void
 }) {
-  const [aggregatedValues, setAggegatedValues] = React.useState<string[]>([])
-
   return (
     <>
-      <h3 className="mb-4 px-4 text-sm font-medium text-slate-500">Grouping</h3>
-      <div className="mb-6 flex items-center justify-between px-4">
+      <h3 className="text-sm font-medium text-slate-500">Grouping</h3>
+      <div className="mb-1 flex items-center justify-between">
         <label className="text-sm" htmlFor="enable-grouping">
           Enable grouping
         </label>
         <Switch
           id="enable-grouping"
-          defaultChecked={false}
-          onCheckedChange={() => {}}
+          defaultChecked={enableGrouping}
+          onCheckedChange={handleEnableGroupingChange}
         />
       </div>
-      <div className="mb-4 flex flex-col gap-2 px-4">
+      <div className="mb-1 flex flex-col gap-2">
         <div className="flex items-center">
           <h3 className="flex-1 text-sm font-medium text-slate-500">
             Row groups
@@ -89,7 +96,7 @@ export function Grouping({
             groups.map((group) => (
               <div
                 key={group}
-                className="flex w-full items-center rounded-md border bg-neutral-100 px-2 py-1"
+                className="flex w-full items-center rounded-md border bg-neutral-100 py-1"
               >
                 <p className="flex-1 text-sm text-slate-500">{group}</p>
               </div>
@@ -97,13 +104,13 @@ export function Grouping({
           )}
         </div>
       </div>
-      <div className="mb-6 flex flex-col gap-2 px-4">
+      {/* <div className="mb-6 flex flex-col gap-2">
         <div className="flex items-center gap-1">
           <Sigma className="h-4 w-4 text-slate-400" />
           <h3 className="flex-1 text-sm font-medium text-slate-500">Values</h3>
           <Listbox
             value={aggregatedValues}
-            onChange={setAggegatedValues}
+            onChange={handleAggregatedValuesChange}
             multiple
           >
             <div className="mt-1">
@@ -158,16 +165,16 @@ export function Grouping({
               Add fields here to aggregate
             </p>
           )}
-          {aggregatedValues.map((group) => (
+          {aggregatedValues.map((value, index) => (
             <div
-              key={group}
+              key={index}
               className="flex items-center rounded-md border bg-neutral-100 px-2 py-1 group-hover:opacity-20"
             >
-              <p className="flex-1 text-sm text-slate-500">sum({group})</p>
+              <p className="flex-1 text-sm text-slate-500">sum({value.name})</p>
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
     </>
   )
 }

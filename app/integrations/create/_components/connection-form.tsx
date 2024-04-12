@@ -10,10 +10,12 @@ import { SheetFooter } from '@/components/ui/sheet'
 import { ChevronRight } from '@/icons'
 import { formSchema } from './form-schema'
 import toast from 'react-hot-toast'
-import { createIntegration, testConnection } from '@/lib/data/integrations'
+import {
+  createIntegration,
+  testConnection,
+} from '@/lib/data/server/integrations'
 import { DevTool } from '@hookform/devtools'
 import { TextInput, NumberInput } from '@tremor/react'
-import { redirect } from 'next/navigation'
 
 export function ConnectionForm() {
   const [connString, toggleConnString] = React.useState(false)

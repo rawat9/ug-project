@@ -1,9 +1,18 @@
+import type { AggregationFn } from '@tanstack/react-table'
+
 export interface ConnectionObject {
   host: string
   port: number
   database: string
   username: string
   password: string
+}
+
+export interface TableSchema {
+  table_schema: string
+  table_name: string
+  column_name: string
+  udt_name: string
 }
 
 export interface PostgresError {
@@ -16,10 +25,22 @@ export interface PostgresError {
 export type Column = {
   id: number
   name: string
-  type: string
+  dtype: string
+  aggregationFn?: AggregationFn<any>
 }
 
 export interface Result {
+  'fetch-schema': {
+    data: TableSchema[]
+    error: PostgresError | null
+    executionTime: number
+  }
+  'execute-pg': {
+    data: unknown[]
+    columns: Column[]
+    error: PostgresError | null
+    executionTime: number
+  }
   'execute-query': {
     data: unknown[]
     columns: Column[]

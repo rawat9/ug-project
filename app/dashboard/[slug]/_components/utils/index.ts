@@ -9,11 +9,15 @@ export function getElementProps(type: Element['type']): Element['props'] {
   switch (type) {
     case 'text':
       return {
-        value: 'Dummy text',
+        type: 'plaintext',
+        rawValue: 'Text',
+        displayValue: 'Text',
         alignment: {
           justify: 'start',
           items: 'center',
         },
+        color: 'gray',
+        fontSize: 16,
       }
     case 'card':
       return {}
@@ -21,13 +25,35 @@ export function getElementProps(type: Element['type']): Element['props'] {
       return {}
     case 'table':
       return {
-        tableHeader: '',
-        dataSource: '',
+        title: '',
+        dataKey: '',
         data: [],
         columns: [],
         enablePagination: true,
+        enableGrouping: true,
         pageSize: 10,
         enableSorting: true,
+        aggregatedValues: [],
+      }
+    case 'line-chart':
+      return {
+        data: [],
+        columns: [],
+        categories: [],
+        groupedCategories: [],
+        curveType: 'linear',
+      }
+    case 'bar-chart':
+      return {
+        data: [],
+        columns: [],
+        categories: [],
+        groupedCategories: [],
+      }
+    case 'bar-list':
+      return {
+        data: [],
+        color: 'blue',
       }
     default:
       throw new Error(`Invalid type: ${type}`)

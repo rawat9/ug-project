@@ -1,7 +1,7 @@
 'use client'
 import { AreaChart, Card } from '@tremor/react'
 import { memo } from 'react'
-import { Element } from '../../types'
+import type { AreaChartElement } from '../../types'
 
 const chartdata3 = [
   {
@@ -54,7 +54,7 @@ const chartdata3 = [
   },
 ]
 
-const AreaChartElement = memo(({ element }: { element: Element }) => {
+const AreaChartElement = memo(({ element }: { element: AreaChartElement }) => {
   return (
     <Card className="h-full w-full">
       <AreaChart

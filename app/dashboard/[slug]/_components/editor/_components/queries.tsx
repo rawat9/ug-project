@@ -5,7 +5,7 @@ import { TabGroup, Tab, TabList } from '@tremor/react'
 import { useAtom } from 'jotai'
 import { activeQueryAtom, queriesAtom, queryAtom } from '../state'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { updateQuery } from '@/lib/data/queries'
+import { updateQuery } from '@/lib/data/client/queries'
 
 export function Queries() {
   const [active, setActive] = useAtom(activeQueryAtom)

@@ -10,10 +10,10 @@ function GridLayout(props: ReactGridLayoutProps) {
   return (
     <ReactGridLayout
       style={{ height: '100%', width: '100%' }}
-      containerPadding={[10, 20]}
+      containerPadding={[10, 10]}
       cols={12}
       rowHeight={30}
-      resizeHandles={['s', 'w', 'e', 'n', 'sw', 'nw', 'se', 'ne']}
+      resizeHandles={['sw', 'nw', 'se', 'ne']}
       isDroppable={true}
       preventCollision={true}
       compactType={null}

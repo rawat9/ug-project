@@ -5,7 +5,6 @@ import { useAtom, useSetAtom } from 'jotai'
 import CodeEditor from './code-editor'
 import { activeQueryAtom, editorAtom, queriesAtom, queryAtom } from '../state'
 import { QueryResultTable } from './query-result-table'
-import { ImperativePanelHandle } from 'react-resizable-panels'
 import { SchemaViewer } from './schema-viewer'
 import { Delete, Format } from '@/icons'
 import { Button } from '@/components/ui/button'
@@ -13,7 +12,8 @@ import { Sources } from './sources'
 import { Run } from './run'
 import { ReactCodeMirrorRef } from '@uiw/react-codemirror'
 import { format } from 'sql-formatter'
-import { executeQuery } from '@/lib/data'
+import { executeQuery } from '@/lib/data/server/queries'
+import { fetchSchema } from '@/lib/data/server/integrations'
 
 import * as React from 'react'
 import {
@@ -22,26 +22,37 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query'
 import { QueryName } from './query-name'
-import { deleteQuery, updateQuery } from '@/lib/data/queries'
-import { Tables } from '@/types/database'
+import { deleteQuery, updateQuery } from '@/lib/data/client/queries'
+import type { Tables } from '@/types/database'
+import type { TableSchema } from '@/types'
 import toast from 'react-hot-toast'
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@tremor/react'
+import { fetchIntegrations } from '@/lib/data/client/integrations'
 
 export function EditorPanel() {
   const queryClient = useQueryClient()
   const [queryResult, set] = useAtom(editorAtom)
-  const { data, error, columns, executionTime } = queryResult
-  const resultPanelRef = React.useRef<ImperativePanelHandle>(null)
+  const { data, error, columns } = queryResult
   const codeEditorRef = React.useRef<ReactCodeMirrorRef>(null)
   const [queries, setQueries] = useAtom(queriesAtom)
   const [activeQuery, setActiveQuery] = useAtom(activeQueryAtom)
   const setQuery = useSetAtom(queryAtom(activeQuery?.name ?? ''))
+  const [currentIndex, setCurrentIndex] = React.useState(0)
+  const [schema, setSchema] = React.useState<TableSchema[]>([])
+
+  const { data: integrations } = useQuery({
+    queryKey: ['integrations'],
+    queryFn: fetchIntegrations,
+    select: (it) => it.data,
+    retry: 3,
+  })
 
   const deleteMutation = useMutation({
     mutationFn: deleteQuery,
     onSuccess: (_, id) => {
+      // update state
       setQueries((prev) => prev.filter((query) => query.id !== id))
       const activeIndex = queries.findIndex((query) => query.id === id)
 
@@ -63,15 +74,17 @@ export function EditorPanel() {
   const updateMutation = useMutation({
     mutationFn: updateQuery,
     onSuccess: (_, variables) => {
+      // update state
       setQueries((prev) =>
         prev.map((query) =>
           query.id === variables.id
-            ? { ...query, name: variables.value }
+            ? { ...query, [variables.key]: variables.value }
             : query,
         ),
       )
       setActiveQuery(
-        (prev) => ({ ...prev, name: variables.value }) as Tables<'query'>,
+        (prev) =>
+          ({ ...prev, [variables.key]: variables.value }) as Tables<'query'>,
       )
       queryClient.invalidateQueries({ queryKey: ['queries'] })
     },
@@ -93,19 +106,54 @@ export function EditorPanel() {
     const query = codeEditorRef.current?.view?.state.doc.toString()
     if (!query || query.trim() === '') return
 
-    const formattedQuery = format(query, {
-      language: 'postgresql',
-      tabWidth: 2,
-      keywordCase: 'upper',
-      paramTypes: { custom: [{ regex: String.raw`\{\{\s*[\w\.,]+\s*\}\}` }] }, // TODO: complete this
-    })
+    try {
+      const formattedQuery = format(query, {
+        language: 'postgresql',
+        tabWidth: 2,
+        keywordCase: 'upper',
+        paramTypes: { custom: [{ regex: String.raw`\{\{\s*[\w\.,]+\s*\}\}` }] }, // TODO: complete this
+      })
 
-    setQuery(formattedQuery)
+      setQuery(formattedQuery)
+    } catch {}
+
+    // // save the query before running
+    // updateMutation.mutate({
+    //   id: activeQuery?.id,
+    //   key: 'sql_query',
+    //   value: query,
+    // })
   }
 
   const handleRename = (name: string) => {
     if (!activeQuery) return
     updateMutation.mutate({ id: activeQuery.id, key: 'name', value: name })
+  }
+
+  const handleSetIntegration = async (integrationId: string) => {
+    if (!activeQuery) return
+    updateMutation.mutate({
+      id: activeQuery.id,
+      key: 'integration_id',
+      value: integrationId,
+    })
+
+    const integration = integrations?.find(
+      (integration) => integration.id === integrationId,
+    )
+
+    if (!integration) {
+      toast.error('Failed to update the schema. No connection string found', {
+        position: 'top-center',
+      })
+      return
+    }
+
+    const { data } = await fetchSchema(
+      integration.conn_string,
+      integration.is_default,
+    )
+    setSchema(data)
   }
 
   const handleDelete = () => {
@@ -116,15 +164,71 @@ export function EditorPanel() {
   const execute = async () => {
     const query = codeEditorRef.current?.view?.state.doc.toString()
     if (!query || query.trim() === '') return
+    if (!activeQuery) return
+    if (!integrations?.length) {
+      toast.error('No integrations found', {
+        position: 'top-center',
+      })
+      return
+    }
+
+    const integration = integrations.find(
+      (integration) => integration.id === activeQuery.integration_id,
+    )
+
+    if (!integration) {
+      toast.error('Please select an integration', {
+        position: 'top-center',
+      })
+      return
+    }
+
+    // save the query before running
+    updateMutation.mutate({
+      id: activeQuery?.id,
+      key: 'sql_query',
+      value: query,
+    })
+
     const { data, error, columns, executionTime } = await executeQuery(
       query.trim(),
+      integration.conn_string,
+      integration.is_default,
     )
     set({ query, data, error, columns, executionTime })
+
+    // switch to the result panel
+    setCurrentIndex(1)
   }
+
+  React.useEffect(() => {
+    async function loadSchema() {
+      const integrationId = activeQuery?.integration_id
+
+      if (!integrationId) {
+        return
+      }
+
+      const integration = integrations?.find(
+        (integration) => integration.id === activeQuery.integration_id,
+      )
+
+      if (!integration) {
+        return
+      }
+
+      const { data } = await fetchSchema(
+        integration.conn_string,
+        integration.is_default,
+      )
+      setSchema(data)
+    }
+    loadSchema() // better way to do this
+  }, [integrations, activeQuery?.integration_id])
 
   return (
     <>
-      <ResizablePanel id="editor" order={2} defaultSize={60}>
+      <ResizablePanel id="editor" order={2} defaultSize={55}>
         <div className="flex p-5">
           <div className="flex flex-1 items-center">
             {activeQuery && (
@@ -164,7 +268,11 @@ export function EditorPanel() {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-            <Sources />
+            <Sources
+              selectedIntegrationId={activeQuery?.integration_id}
+              integrations={integrations ?? []}
+              handleSelectChange={handleSetIntegration}
+            />
             <Run executionHandler={execute} />
           </div>
         </div>
@@ -177,10 +285,14 @@ export function EditorPanel() {
         id="schema-viewer"
         minSize={20}
         maxSize={40}
-        defaultSize={20}
+        defaultSize={30}
         order={3}
       >
-        <TabGroup className="h-full">
+        <TabGroup
+          className="h-full"
+          index={currentIndex}
+          onIndexChange={setCurrentIndex}
+        >
           <TabList variant="line">
             <Tab className="ui-selected:border-slate-600 ui-selected:text-slate-800">
               Schema
@@ -190,10 +302,10 @@ export function EditorPanel() {
             </Tab>
           </TabList>
           <TabPanels className="h-full">
-            <TabPanel className="p-2">
-              <SchemaViewer />
+            <TabPanel className="h-full p-2">
+              <SchemaViewer schema={schema} />
             </TabPanel>
-            <TabPanel className="mt-0 h-full overflow-auto">
+            <TabPanel className="mt-0 h-full w-full">
               {error ? (
                 <div className="flex flex-col gap-1 p-4">
                   <h1 className="text-sm text-slate-600">

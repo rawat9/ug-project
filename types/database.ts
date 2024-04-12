@@ -17,6 +17,8 @@ export type Database = {
           id: string
           title: string
           user_id: string | null
+          is_published: boolean
+          description: string | null
         }
         Insert: {
           content?: Json | null
@@ -24,6 +26,8 @@ export type Database = {
           id?: string
           title?: string
           user_id?: string | null
+          is_published?: boolean
+          description?: string | null
         }
         Update: {
           content?: Json | null
@@ -31,6 +35,8 @@ export type Database = {
           id?: string
           title?: string
           user_id?: string | null
+          is_published?: boolean
+          description?: string | null
         }
         Relationships: []
       }
@@ -41,7 +47,8 @@ export type Database = {
           title: string
           description: string
           user_id: string | null
-          encrypted_conn_string: Json | null
+          conn_string: { type: 'Buffer'; data: number[] } | null
+          is_default: boolean
         }
         Insert: {
           created_at?: string
@@ -49,7 +56,8 @@ export type Database = {
           title?: string
           user_id?: string | null
           description?: string
-          encrypted_conn_string?: Json | null
+          conn_string?: { type: 'Buffer'; data: number[] } | null
+          is_default?: boolean
         }
         Update: {
           created_at?: string
@@ -57,7 +65,8 @@ export type Database = {
           title?: string
           user_id?: string | null
           description?: string
-          encrypted_conn_string?: Json | null
+          conn_string?: { type: 'Buffer'; data: number[] } | null
+          is_default?: boolean
         }
         Relationships: []
       }

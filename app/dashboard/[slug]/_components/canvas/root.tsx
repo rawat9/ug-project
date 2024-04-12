@@ -17,10 +17,11 @@ import {
   useClickOutsideSelectedElementButInsideCanvas,
 } from '@/hooks'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { fetchCanvas, saveCanvas } from '@/lib/data'
+import { fetchCanvas, saveCanvas } from '@/lib/data/server/dashboard'
 import { draggedWidget } from '../widgets/state'
+import { queriesAtom } from '../editor/state'
 
-export function Canvas() {
+export function Canvas({ isPreview = false }: { isPreview?: boolean }) {
   const { replace } = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -39,12 +40,14 @@ export function Canvas() {
   const activeWidget = useAtomValue(draggedWidget)
 
   const set = useSetAtom(elementsAtom)
+  // const setQueries = useSetAtom(queriesAtom)
 
   useEffect(() => {
     async function fetch() {
       const id = pathname.split('/')[2] ?? ''
       const { elements } = await fetchCanvas(id)
       set(elements)
+      // setQueries([])
       setLayout(elements.map(addNewLayoutItem))
     }
     fetch()
@@ -57,10 +60,11 @@ export function Canvas() {
     await saveCanvas(id, elements)
   }
 
-  // useAutosave({
-  //   data: elements,
-  //   onSave: handleSave,
-  // })
+  useAutosave({
+    data: elements,
+    onSave: handleSave,
+    interval: 10000,
+  })
 
   function onDrop(_layout: Layout[], item: Layout, e: DragEvent) {
     const w = e.dataTransfer?.getData('width')
@@ -161,15 +165,13 @@ export function Canvas() {
   }
 
   function onDropDragOver() {
-    switch (activeWidget?.i) {
-      case 'table':
-        return { w: activeWidget.w, h: activeWidget.h }
-      case 'card':
-        return { w: activeWidget.w, h: activeWidget.h }
-      case 'text':
-        return { w: activeWidget.w, h: activeWidget.h }
-      default:
-        return { w: 1, h: 1 }
+    if (!activeWidget) {
+      return { w: 1, h: 1 }
+    }
+
+    return {
+      w: activeWidget.w,
+      h: activeWidget.h,
     }
   }
 
@@ -192,15 +194,19 @@ export function Canvas() {
           onResizeStop={onResizeStop}
           innerRef={canvasRef}
           onDropDragOver={onDropDragOver}
+          isResizable={!isPreview}
+          isDraggable={!isPreview}
         >
           {elements.map((element) => (
             <div
               key={element.id}
               className={cn(
-                'flex h-full w-full cursor-pointer select-none items-center rounded-md p-1 hover:ring-1 hover:ring-inset hover:ring-blue-400',
+                'flex h-full w-full cursor-pointer select-none items-center p-1',
+                !isPreview &&
+                  'hover:rounded-tremor-default hover:ring-1 hover:ring-inset hover:ring-blue-500',
                 selectedElement?.id === element?.id &&
                   resizableId &&
-                  'border border-dashed border-blue-500 ring-1 ring-inset',
+                  'ring-1 ring-inset ring-blue-500 hover:rounded-none',
                 resizableId !== element.id && 'react-resizable-hide',
                 !selectedElement && 'react-resizable-hide',
               )}
@@ -208,7 +214,7 @@ export function Canvas() {
               {selectedElement?.id === element.id && resizableId && (
                 <Badge
                   size="sm"
-                  className="fixed -left-[1px] -top-[30px] block shadow-sm"
+                  className="fixed -left-[1px] -top-[30px] shadow-sm"
                 >
                   {element.name}
                 </Badge>

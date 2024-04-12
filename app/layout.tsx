@@ -12,7 +12,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import { ClerkAuthProvider, ReactQueryClientProvider } from '@/providers'
 
 export const metadata: Metadata = {
-  title: 'dashgen - A better way to build data driven dashboards',
+  title: 'Dashgen - A better way to build data driven dashboards',
   description: 'A better way to build data driven dashboards',
 }
 
@@ -42,7 +42,7 @@ export default function RootLayout({
         <ClerkAuthProvider>
           <ReactQueryClientProvider>{children}</ReactQueryClientProvider>
         </ClerkAuthProvider>
-        <Toaster position="top-right" />
+        <Toaster position="top-center" />
         <Analytics />
         <SpeedInsights />
       </body>

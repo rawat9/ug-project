@@ -1,4 +1,4 @@
-import { fetchDashboards } from '@/lib/data'
+import { fetchDashboards } from '@/lib/data/server/dashboard'
 import Link from 'next/link'
 import { EmptyState } from './empty-state'
 
@@ -19,7 +19,7 @@ export async function DashboardsList({ query }: { query: string }) {
         <div className="grid gap-4 py-10 md:grid-cols-2 lg:grid-cols-3">
           {filteredDashboards.map((dashboard, index) => (
             <Link
-              href={`/dashboard/${dashboard.id}`}
+              href={`/dashboard/${dashboard.id}/edit`}
               key={index}
               aria-label="Open dashboard"
               scroll={false}
@@ -29,7 +29,9 @@ export async function DashboardsList({ query }: { query: string }) {
                 data-testid="dashboard"
               >
                 <h4 className="py-2 font-semibold">{dashboard.title}</h4>
-                <p className="text-sm">Description</p>
+                <p className="text-sm text-slate-500">
+                  {dashboard.description}
+                </p>
               </div>
             </Link>
           ))}

@@ -14,10 +14,8 @@ export function Pagination({
 }) {
   return (
     <>
-      <h3 className="mb-4 px-4 text-sm font-medium text-slate-500">
-        Pagination
-      </h3>
-      <div className="flex items-center justify-between px-4">
+      <h3 className="text-sm font-medium text-slate-500">Pagination</h3>
+      <div className="flex items-center justify-between">
         <label className="text-sm" htmlFor="enable-pagination">
           Enable pagination
         </label>
@@ -27,7 +25,7 @@ export function Pagination({
           onCheckedChange={handleEnablePagination}
         />
       </div>
-      <div className="mt-3 grid grid-cols-3 items-center gap-4 px-4">
+      <div className="mt-1 grid grid-cols-3 items-center gap-4">
         <label htmlFor="pageSize" className="text-sm">
           Page Size
         </label>

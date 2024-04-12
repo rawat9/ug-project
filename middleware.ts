@@ -3,7 +3,7 @@ import { redirectToSignIn } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 
 export default authMiddleware({
-  publicRoutes: ['/'],
+  publicRoutes: ['/', '/dashboard/([^/]+)/preview'],
   afterAuth(auth, req) {
     // Handle users who aren't authenticated
     if (!auth.userId && !auth.isPublicRoute) {
@@ -11,9 +11,9 @@ export default authMiddleware({
     }
 
     // If the user is logged in, navigate them to the dashboard
-    // if (auth.userId && auth.isPublicRoute) {
-    //   return NextResponse.redirect(new URL('/dashboard', req.url))
-    // }
+    if (auth.userId && req.nextUrl.pathname === '/') {
+      return NextResponse.redirect(new URL('/dashboard', req.url))
+    }
 
     // Allow users visiting public routes to access them
     return NextResponse.next()

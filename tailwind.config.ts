@@ -21,8 +21,6 @@ const config = {
         '2xl': '1400px',
       },
     },
-    transparent: 'transparent',
-    current: 'currentColor',
     fontFamily: {
       canvas: ['Inter', 'sans-serif'],
       mono: ['var(--font-jetbrains-mono)'],
