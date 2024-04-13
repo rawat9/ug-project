@@ -127,6 +127,7 @@ export const fetchIntegrations = async (): Promise<Integration[]> => {
     const { data, error } = await supabase
       .from('integration')
       .select()
+      .eq('is_default', false)
       .order('created_at', { ascending: false })
 
     if (error) {

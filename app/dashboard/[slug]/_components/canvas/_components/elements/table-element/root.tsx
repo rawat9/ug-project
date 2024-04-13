@@ -66,13 +66,7 @@ const TableElement = memo(({ element }: { element: TableElement }) => {
             </Button>
           )
         },
-        aggregationFn: () => col.aggregationFn,
-        // aggregationFn: (columnId) => {
-        //   const values = element.props.aggregatedValues
-        //   const value = values.find((v) => v.column.name === columnId)
-        //   console.log(value?.aggFn)
-        //   return value?.aggFn
-        // },
+        aggregationFn: 'auto',
         aggregatedCell: ({ row }) => (
           <div className="font-medium">{row.getValue(col.name)}</div>
         ),

@@ -8,11 +8,9 @@ import { activeQueryAtom, queryAtom } from '../state'
 import ReactCodeMirror, {
   ReactCodeMirrorRef,
   ReactCodeMirrorProps,
-  keymap,
 } from '@uiw/react-codemirror'
 import { getExtension } from './sql'
 import { disableGrammarly } from '@/lib/utils'
-import { acceptCompletion, completionStatus } from '@codemirror/autocomplete'
 
 const CodeEditor = React.forwardRef<ReactCodeMirrorRef, ReactCodeMirrorProps>(
   (_, ref) => {
@@ -33,24 +31,11 @@ const CodeEditor = React.forwardRef<ReactCodeMirrorRef, ReactCodeMirrorProps>(
           }}
           width="100%"
           height="100%"
-          placeholder="Write your query here"
+          placeholder="Write your SQL query here"
           className="w-full rounded-md border shadow-sm"
           value={activeQuery?.sql_query ?? ''}
           ref={ref}
-          extensions={[
-            // keymap.of([
-            //   {
-            //     key: 'Tab',
-            //     preventDefault: true,
-            //     shift: indentLess,
-            //     run: (editor) => {
-            //       if (!completionStatus(editor.state)) return indentMore(e);
-            //       return acceptCompletion(editor)
-            //     },
-            //   },
-            // ]),
-            getExtension(),
-          ]}
+          extensions={[getExtension()]}
           onChange={handleOnChange}
           onCreateEditor={() => {
             disableGrammarly()
