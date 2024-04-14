@@ -65,46 +65,19 @@ export const testConnection = cache(
   ['connectionString'],
 )
 
-export const fetchSchema = cache(
-  async (
-    conn_string: { type: 'Buffer'; data: number[] } | null,
-    is_default: boolean,
-  ) => {
-    const supabase = await createSupabaseServerClient()
+export const fetchSchema = async (
+  conn_string: { type: 'Buffer'; data: number[] } | null,
+  is_default: boolean,
+) => {
+  const supabase = await createSupabaseServerClient()
 
-    if (is_default || !conn_string) {
-      const { data, error } = await supabase.functions.invoke<
-        Result['fetch-schema']
-      >('fetch-schema', {
-        method: 'POST',
-        body: {
-          conn_string: null,
-        },
-      })
-
-      if (error) {
-        throw error
-      }
-
-      if (!data) {
-        throw new Error('No data returned')
-      }
-
-      return data
-    }
-
-    const decrypted = await decryptData(Buffer.from(conn_string.data))
-
-    if (!decrypted) {
-      throw new Error('Error decrypting connection string')
-    }
-
+  if (is_default || !conn_string) {
     const { data, error } = await supabase.functions.invoke<
       Result['fetch-schema']
     >('fetch-schema', {
       method: 'POST',
       body: {
-        conn_string: decrypted,
+        conn_string: null,
       },
     })
 
@@ -117,9 +90,33 @@ export const fetchSchema = cache(
     }
 
     return data
-  },
-  ['schema'],
-)
+  }
+
+  const decrypted = await decryptData(Buffer.from(conn_string.data))
+
+  if (!decrypted) {
+    throw new Error('Error decrypting connection string')
+  }
+
+  const { data, error } = await supabase.functions.invoke<
+    Result['fetch-schema']
+  >('fetch-schema', {
+    method: 'POST',
+    body: {
+      conn_string: decrypted,
+    },
+  })
+
+  if (error) {
+    throw error
+  }
+
+  if (!data) {
+    throw new Error('No data returned')
+  }
+
+  return data
+}
 
 export const fetchIntegrations = async (): Promise<Integration[]> => {
   try {

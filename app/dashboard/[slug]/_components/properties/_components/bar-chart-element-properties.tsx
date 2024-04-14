@@ -47,7 +47,7 @@ import { Listbox, Transition } from '@headlessui/react'
 import * as React from 'react'
 import { Button } from '@/components/ui/button'
 import toast from 'react-hot-toast'
-import { colors } from '@/lib/utils'
+import { colors, isTextType } from '@/lib/utils'
 
 export function BarChartElementProperties({
   element,
@@ -355,11 +355,13 @@ export function BarChartElementProperties({
             align="start"
             className="z-10 max-h-60 -translate-x-6"
           >
-            {element.props.columns.map((column) => (
-              <SelectItem key={column.name} value={column.name}>
-                {column.name}
-              </SelectItem>
-            ))}
+            {element.props.columns
+              .filter((c) => isTextType(c.dtype))
+              .map((column) => (
+                <SelectItem key={column.name} value={column.name}>
+                  {column.name}
+                </SelectItem>
+              ))}
           </SelectContent>
         </Select>
       </div>
