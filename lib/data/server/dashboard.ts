@@ -7,6 +7,7 @@ import type { Tables } from '@/types/database'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
+import { currentUser } from '@clerk/nextjs/server'
 
 type Dashboard = Tables<'dashboard'>
 
@@ -54,12 +55,18 @@ type Dashboard = Tables<'dashboard'>
 //   // revalidatePath('/dashboard')
 // }
 
-export const fetchDashboards = async (): Promise<Dashboard[]> => {
+export const fetchDashboards = async () => {
+  const user = await currentUser()
+  if (!user) {
+    throw new Error('User not found')
+  }
+
   try {
     const supabase = await createSupabaseServerClient()
     const { data, error } = await supabase
       .from('dashboard')
       .select()
+      .eq('user_id', user.id)
       .order('created_at', { ascending: false })
 
     if (error) {

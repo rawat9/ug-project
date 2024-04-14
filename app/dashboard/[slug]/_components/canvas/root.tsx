@@ -20,6 +20,7 @@ import { useAtomValue, useSetAtom } from 'jotai'
 import { fetchCanvas, saveCanvas } from '@/lib/data/server/dashboard'
 import { draggedWidget } from '../widgets/state'
 import { queriesAtom } from '../editor/state'
+import { fetchQueries } from '@/lib/data/client/queries'
 
 export function Canvas({ isPreview = false }: { isPreview?: boolean }) {
   const { replace } = useRouter()
@@ -40,21 +41,23 @@ export function Canvas({ isPreview = false }: { isPreview?: boolean }) {
   const activeWidget = useAtomValue(draggedWidget)
 
   const set = useSetAtom(elementsAtom)
-  // const setQueries = useSetAtom(queriesAtom)
+  const setQueries = useSetAtom(queriesAtom)
 
   useEffect(() => {
-    async function fetch() {
+    async function initialiseCanvas() {
       const id = pathname.split('/')[2] ?? ''
       const { elements } = await fetchCanvas(id)
+      const { data } = await fetchQueries()
       set(elements)
-      // setQueries([])
+      setQueries(data ?? [])
       setLayout(elements.map(addNewLayoutItem))
     }
-    fetch()
+    initialiseCanvas()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSave = async () => {
     if (!elements.length) return
+    if (isPreview) return
 
     const id = pathname.split('/')[2] ?? ''
     await saveCanvas(id, elements)
@@ -63,7 +66,7 @@ export function Canvas({ isPreview = false }: { isPreview?: boolean }) {
   useAutosave({
     data: elements,
     onSave: handleSave,
-    interval: 10000,
+    interval: 2000,
   })
 
   function onDrop(_layout: Layout[], item: Layout, e: DragEvent) {

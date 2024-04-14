@@ -27,19 +27,19 @@ import { getDefaultExtensions } from '@uiw/react-codemirror'
 export function getExtension() {
   const config = {
     dialect: PostgreSQL,
-    schema: {
-      users: ['id', 'name', 'age'],
-      posts: ['id', 'title', 'content'],
-    },
-    tables: [
-      {
-        label: 'users',
-        type: 'class',
-        info: 'User table',
-        apply: 'users',
-      },
-      { label: 'posts', type: 'class', info: 'Post table' },
-    ],
+    // schema: {
+    //   users: ['id', 'name', 'age'],
+    //   posts: ['id', 'title', 'content'],
+    // },
+    // tables: [
+    //   {
+    //     label: 'users',
+    //     type: 'class',
+    //     info: 'User table',
+    //     apply: 'users',
+    //   },
+    //   { label: 'posts', type: 'class', info: 'Post table' },
+    // ],
   } satisfies SQLConfig
 
   try {
