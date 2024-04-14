@@ -3,9 +3,14 @@ import { IntegrationsList } from './_components/integrations-list'
 import { Header } from '@/components/shared/header'
 import { Suspense } from 'react'
 import Link from 'next/link'
-import { Add, Sqlite } from '@/icons'
+import { Add, Postgres } from '@/icons'
 import { Button } from '@/components/ui/button'
 import { IntegrationsListSkeleton } from './_components/integrations-list-skeleton'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Integrations | Dashgen',
+}
 
 export default async function Page({
   searchParams,
@@ -45,9 +50,9 @@ export default async function Page({
                     data using CSV or Excel
                   </p>
                 </div>
-                <div className="flex items-center gap-1">
-                  <Sqlite className="h-7 w-7" />
-                  <p className="font-medium">SQLite</p>
+                <div className="flex items-center gap-2">
+                  <Postgres className="h-6 w-6" />
+                  <p className="font-medium">PostgreSQL</p>
                 </div>
               </div>
             </div>

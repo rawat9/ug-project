@@ -2,8 +2,10 @@
 
 import * as React from 'react'
 import {
+  CellContext,
   ColumnDef,
   ColumnFiltersState,
+  HeaderContext,
   SortingState,
   VisibilityState,
   flexRender,
@@ -15,7 +17,6 @@ import {
 } from '@tanstack/react-table'
 
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -30,82 +31,15 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Add, EyeOff, CaretSort, Filter } from '@/icons'
-import { Payment, data } from './data'
-
-const columns: ColumnDef<Payment>[] = [
-  {
-    id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: 'status',
-    header: 'Status',
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue('status')}</div>
-    ),
-  },
-  {
-    accessorKey: 'email',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="p-0"
-        >
-          Email
-          <CaretSort className="ml-1 h-4 w-4" />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div className="lowercase">{row.getValue('email')}</div>,
-  },
-  {
-    accessorKey: 'amount',
-    header: () => <div>Amount</div>,
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue('amount'))
-
-      // Format the amount as a dollar amount
-      const formatted = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-      }).format(amount)
-
-      return <div className="font-medium">{formatted}</div>
-    },
-  },
-  {
-    id: 'add-new-col',
-    enableHiding: false,
-    header: () => (
-      <Button variant="ghost" className="w-full justify-start">
-        <Add />
-      </Button>
-    ),
-  },
-]
+import { EyeOff, CaretSort, CaretUp, CaretDown } from '@/icons'
+import { useAtomValue } from 'jotai'
+import { selectedTableAtom } from './state'
+import { useQuery } from '@tanstack/react-query'
+import { fetchTable } from '@/lib/data/server/demo'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export function DataTable() {
+  const selectedTableName = useAtomValue(selectedTableAtom)
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -114,9 +48,61 @@ export function DataTable() {
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
 
+  const { data, isLoading } = useQuery({
+    queryKey: ['table', selectedTableName],
+    queryFn: () => fetchTable(selectedTableName),
+  })
+
+  const columns = React.useMemo(
+    () =>
+      data?.length
+        ? Object.keys(data[0]).map((col) => ({
+            accessorKey: col,
+            cell: ({ row }: CellContext<any, any>) => row.getValue(col),
+            header: ({ column }: HeaderContext<any, any>) => {
+              return (
+                <Button
+                  variant="ghost"
+                  className="p-0"
+                  onClick={column.getToggleSortingHandler()}
+                >
+                  <p className="font-semibold">{col}</p>
+                  {column.getCanSort() &&
+                    (column.getIsSorted() ? (
+                      column.getIsSorted() === 'asc' ? (
+                        <CaretUp className="ml-1 h-5 w-5" />
+                      ) : (
+                        <CaretDown className="ml-1 h-5 w-5" />
+                      )
+                    ) : (
+                      <CaretSort className="ml-1 h-5 w-5" />
+                    ))}
+                </Button>
+              )
+            },
+          }))
+        : [],
+    [data],
+  )
+
+  const tableData = React.useMemo(
+    () => (isLoading ? Array.from({ length: 50 }).fill({}) : data ?? []),
+    [isLoading, data],
+  )
+  const tableColumns = React.useMemo(
+    () =>
+      isLoading
+        ? Array.from({ length: 12 }).map((_, index) => ({
+            id: index.toString(),
+            cell: () => <Skeleton className="h-full w-full" />,
+          }))
+        : columns,
+    [isLoading, columns],
+  )
+
   const table = useReactTable({
-    data,
-    columns,
+    data: tableData,
+    columns: tableColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -143,13 +129,13 @@ export function DataTable() {
     <div className="h-[calc(100vh_-_6rem)] w-full">
       <div className="flex h-[4%] items-center justify-between bg-white px-4">
         <div className="flex items-center gap-2">
-          <Button variant="outline" className="h-6" size="sm">
+          {/* <Button variant="outline" className="h-6" size="sm">
             Insert
           </Button>
           <Button variant="ghost" size="sm">
             <Filter className="mr-1 h-4 w-4" />
             Filter
-          </Button>
+          </Button> */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="sm">
@@ -157,7 +143,7 @@ export function DataTable() {
                 Fields
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="start">
               {table
                 .getAllColumns()
                 .filter((column) => column.getCanHide())
@@ -178,13 +164,10 @@ export function DataTable() {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        <p className="text-xs font-medium">
-          {table.getRowModel().rows.length} rows
-        </p>
       </div>
 
-      <div className="relative h-[92%] bg-white">
-        <Table>
+      <div className="relative h-[92%] overflow-auto bg-white">
+        <Table className="h-full">
           <TableHeader className="sticky top-0 z-30 bg-slate-100">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -222,10 +205,7 @@ export function DataTable() {
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={12} className="h-24 text-center">
                   No results.
                 </TableCell>
               </TableRow>
@@ -233,16 +213,15 @@ export function DataTable() {
           </TableBody>
         </Table>
       </div>
-      <div className="flex h-[4%] items-center justify-end space-x-2 px-2">
+      <div className="sticky bottom-0 flex h-9 items-center justify-end space-x-2 px-2">
         <div className="flex-1 text-sm text-slate-500">
-          {table.getFilteredSelectedRowModel().rows.length} of{' '}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {tableData?.length} rows
         </div>
         <div className="flex items-center space-x-2">
           <Button
             variant="outline"
             size="sm"
-            className="h-6"
+            className="h-6 bg-white"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
@@ -255,12 +234,26 @@ export function DataTable() {
           <Button
             variant="outline"
             size="sm"
-            className="h-6"
+            className="h-6 bg-white"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
             Next
           </Button>
+          <select
+            id="page-size"
+            value={table.getState().pagination.pageSize}
+            onChange={(e) => {
+              table.setPageSize(Number(e.target.value))
+            }}
+            className="bg-slate-50 text-xs text-slate-500 focus:outline-none"
+          >
+            {[10, 20, 30, 40, 50].map((pageSize) => (
+              <option key={pageSize} value={pageSize}>
+                Show {pageSize}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
     </div>

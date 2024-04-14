@@ -5,9 +5,11 @@ import { ToolbarTitle } from './toolbar-title'
 import { getDashboardById } from '@/lib/data/server/dashboard'
 import { notFound } from 'next/navigation'
 import { Preview } from './preview'
+import { currentUser } from '@clerk/nextjs'
 
 export async function Toolbar({ id }: { id: string }) {
   const dashboard = await getDashboardById(id)
+  const user = await currentUser()
 
   if (!dashboard) {
     notFound()
@@ -27,13 +29,15 @@ export async function Toolbar({ id }: { id: string }) {
             <p className="text-xs text-gray-400">{dashboard.description}</p>
           </div>
         </div>
-        <div className="flex items-center justify-end gap-2">
-          <Preview />
-          <Publish
-            id={dashboard.id}
-            isDashboardPublished={dashboard.is_published}
-          />
-        </div>
+        {user?.id === dashboard.user_id && (
+          <div className="flex items-center justify-end gap-2">
+            <Preview />
+            <Publish
+              id={dashboard.id}
+              isDashboardPublished={dashboard.is_published}
+            />
+          </div>
+        )}
       </div>
     </header>
   )

@@ -5,6 +5,13 @@ import { DashboardsList } from './_components/dashboards-list'
 import { DashboardsListSkeleton } from './_components/dashboards-list-skeleton'
 import { Suspense } from 'react'
 
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Dashboard | Dashgen',
+  description: 'Create and manage your dashboards',
+}
+
 export default function Page({
   searchParams,
 }: {

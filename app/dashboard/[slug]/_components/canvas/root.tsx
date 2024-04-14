@@ -20,7 +20,6 @@ import { useAtomValue, useSetAtom } from 'jotai'
 import { fetchCanvas, saveCanvas } from '@/lib/data/server/dashboard'
 import { draggedWidget } from '../widgets/state'
 import { queriesAtom } from '../editor/state'
-import { fetchQueries } from '@/lib/data/client/queries'
 
 export function Canvas({ isPreview = false }: { isPreview?: boolean }) {
   const { replace } = useRouter()
@@ -41,15 +40,12 @@ export function Canvas({ isPreview = false }: { isPreview?: boolean }) {
   const activeWidget = useAtomValue(draggedWidget)
 
   const set = useSetAtom(elementsAtom)
-  const setQueries = useSetAtom(queriesAtom)
 
   useEffect(() => {
     async function initialiseCanvas() {
       const id = pathname.split('/')[2] ?? ''
       const { elements } = await fetchCanvas(id)
-      const { data } = await fetchQueries()
       set(elements)
-      setQueries(data ?? [])
       setLayout(elements.map(addNewLayoutItem))
     }
     initialiseCanvas()

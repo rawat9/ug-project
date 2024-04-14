@@ -1,20 +1,19 @@
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DataTable } from './_components/data-table'
 import { CreateTable as CreateNewTable } from './_components/create-table'
+import { fetchTables } from '@/lib/data/server/demo'
+import { Tables } from './_components/tables'
+import { Provider } from 'jotai'
 
-export default function Page() {
+export default async function Page() {
+  const tables = await fetchTables()
+
   return (
-    <>
+    <Provider>
       <div className="flex h-12 items-center gap-2 pl-4 pt-2">
-        <Tabs defaultValue="sales">
-          <TabsList className="rounded-b-none bg-slate-100 py-2">
-            <TabsTrigger value="users">users</TabsTrigger>
-            <TabsTrigger value="sales">sales</TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <Tables tables={tables} />
         <CreateNewTable />
       </div>
       <DataTable />
-    </>
+    </Provider>
   )
 }
