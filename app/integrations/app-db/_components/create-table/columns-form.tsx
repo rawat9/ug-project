@@ -1,5 +1,3 @@
-'use client'
-
 import { Input } from '@/components/ui/input'
 import {
   Select,
@@ -36,10 +34,13 @@ import { Table } from './types'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { createSQLTableQuery, insertSQLTableQuery } from './queries'
 import { InputSelect } from './input-select'
-import { useAtomValue } from 'jotai'
+import { useAtom } from 'jotai'
 import { dataImportAtom } from './state'
-import { executeSqlite } from '@/lib/data/server/queries'
-import { formSchema, defaultValues } from './form-schema'
+import { executeQuery } from '@/lib/data/server/queries'
+import { formSchema } from './form-schema'
+import { RESET } from 'jotai/utils'
+import { insertTable } from '@/lib/data/server/demo'
+import { revalidatePath } from 'next/cache'
 
 export function ColumnsForm({
   onOpenChange,
@@ -47,23 +48,20 @@ export function ColumnsForm({
   onOpenChange: (open: boolean) => void
 }) {
   const { register, setValue, handleSubmit, control, watch, reset } =
-    useForm<Table>({
-      defaultValues,
-    })
+    useForm<Table>()
 
-  const { fields, append, remove, insert } = useFieldArray({
+  const { fields, remove, insert } = useFieldArray({
     control,
     name: 'columns',
   })
 
-  const valuesFromDataImport = useAtomValue(dataImportAtom)
+  const [valuesFromDataImport, set] = useAtom(dataImportAtom)
 
   React.useEffect(() => {
     if (valuesFromDataImport.columns.length) {
       setValue('name', valuesFromDataImport.name)
 
       // remove uuid field
-      remove(0)
       insert(0, valuesFromDataImport.columns)
     }
   }, [valuesFromDataImport, insert, remove, setValue])
@@ -98,19 +96,13 @@ export function ColumnsForm({
     }
 
     // create table
-    toast.promise(executeSqlite(createQuery), {
-      loading: 'Creating your table',
-      success: () => {
-        if (!valuesFromDataImport.data.length) {
-          // close the sheet
-          onOpenChange(false)
-          // reset form
-          reset()
-        }
-        return `Table ${tableData.name} created`
-      },
-      error: 'Table could not be created',
-    })
+    const { error } = await executeQuery(createQuery, null, true)
+
+    if (error) {
+      return toast.error(error.message)
+    }
+
+    toast.success(`Created table "${tableData.name}"`)
 
     if (valuesFromDataImport.data.length) {
       const insertQuery = insertSQLTableQuery(
@@ -122,15 +114,18 @@ export function ColumnsForm({
         return toast.error('Something went wrong')
       }
 
-      toast.promise(executeSqlite(insertQuery), {
-        loading: 'Inserting data into table',
-        success: () => {
-          onOpenChange(false)
-          reset()
-          return `Data inserted into "${tableData.name}"`
-        },
-        error: 'Data could not be inserted',
-      })
+      // insert data into table
+      const { error } = await executeQuery(insertQuery, null, true)
+
+      if (error) {
+        return toast.error(error.message)
+      }
+
+      await insertTable(tableData.name)
+      set(RESET)
+      reset()
+      onOpenChange(false)
+      toast.success(`Created table ${tableData.name}`)
     }
   }
 
@@ -328,7 +323,7 @@ export function ColumnsForm({
             </div>
           ))}
         </div>
-        <Button
+        {/* <Button
           variant="outline"
           size="sm"
           className="m-4 h-6"
@@ -348,7 +343,7 @@ export function ColumnsForm({
           }}
         >
           Add column
-        </Button>
+        </Button> */}
       </div>
       <SheetFooter className="h-[5%] items-center border-t px-4 py-2">
         <Button type="submit" className="h-8">

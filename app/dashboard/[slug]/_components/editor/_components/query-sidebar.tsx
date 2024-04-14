@@ -6,7 +6,7 @@ import { Data } from '@/icons'
 import { useAtom, useSetAtom } from 'jotai'
 import { activeQueryAtom, queriesAtom } from '../state'
 import { fetchQueries } from '@/lib/data/client/queries'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 export function QuerySidebar({
   activeQuery,
@@ -15,6 +15,7 @@ export function QuerySidebar({
 }) {
   const [openedQueries, setQueries] = useAtom(queriesAtom)
   const setActive = useSetAtom(activeQueryAtom)
+  const queryClient = useQueryClient()
 
   const { data: queries } = useQuery({
     queryKey: ['queries'],
@@ -24,14 +25,24 @@ export function QuerySidebar({
     retryDelay: 2000,
   })
 
+  const handleRefresh = () => {
+    return queryClient.invalidateQueries({ queryKey: ['queries'] })
+  }
+
   return (
     <>
       {!queries?.length ? (
         <div className="flex h-full w-full justify-center p-4">
-          <div className="flex h-[80%] w-[90%] items-center justify-center rounded-md border-2 border-dashed">
+          <div className="flex h-[80%] w-[90%] flex-col items-center justify-center gap-4 rounded-md border-2 border-dashed">
             <p className="text-sm text-gray-500">
               You don&apos;t have any queries
             </p>
+            <button
+              className="text-xs underline underline-offset-4"
+              onClick={handleRefresh}
+            >
+              Refresh
+            </button>
           </div>
         </div>
       ) : (

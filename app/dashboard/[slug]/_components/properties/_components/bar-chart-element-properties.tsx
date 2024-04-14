@@ -100,6 +100,10 @@ export function BarChartElementProperties({
       | undefined
 
     if (result) {
+      if (!result.data) {
+        return toast.error('No data found. Please execute the query first.')
+      }
+
       const guessXAxis = result.columns.find((c) => c.dtype === 'text')?.name
 
       if (!guessXAxis) {

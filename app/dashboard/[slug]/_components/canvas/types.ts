@@ -43,7 +43,9 @@ interface CardElementProps {}
 interface AreaChartElementProps {}
 
 interface BarListElementProps extends BarListProps {
+  title: string
   dataKey: string
+  columns: Column[]
   name: string
   value: string
 }

@@ -1,5 +1,5 @@
-import { atom } from 'jotai'
 import type { Table } from './types'
+import { atomWithReset } from 'jotai/utils'
 
 type DataImportAtom = {
   name: string
@@ -8,7 +8,7 @@ type DataImportAtom = {
   data: Record<string, unknown>[]
 }
 
-export const dataImportAtom = atom<DataImportAtom>({
+export const dataImportAtom = atomWithReset<DataImportAtom>({
   name: '',
   description: '',
   columns: [],
