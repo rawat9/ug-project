@@ -6,10 +6,10 @@ export function createSQLTableQuery(table: Table) {
   try {
     const cols = columns.map((column) => {
       if (!column.default) {
-        return `\`${column.name}\` ${column.type.toUpperCase()} ${parseColumnOptions(column.options)}`.trim()
+        return `${column.name} ${column.type} ${parseColumnOptions(column.options)}`.trim()
       }
 
-      return `\`${column.name}\` ${column.type.toUpperCase()} ${parseColumnOptions(column.options)} DEFAULT ${column.default}`.trim()
+      return `${column.name} ${column.type} ${parseColumnOptions(column.options)} default ${column.default}`.trim()
     })
 
     return `CREATE TABLE ${name} ( ${cols.join(', ')} )`
@@ -25,15 +25,15 @@ function parseColumnOptions(
   const opts = []
 
   if (primary) {
-    opts.push('PRIMARY KEY')
+    opts.push('primary key')
   }
 
   if (!nullable) {
-    opts.push('NOT NULL')
+    opts.push('not null')
   }
 
   if (unique) {
-    opts.push('UNIQUE')
+    opts.push('unique')
   }
 
   return opts.join(' ')
@@ -47,14 +47,16 @@ export function insertSQLTableQuery(
 
   try {
     const cols = columns.map((column) => {
-      return `\`${column.name}\``.trim()
+      return column.name.trim()
     })
 
     return `INSERT INTO ${name} ( ${cols.join(', ')} ) VALUES
       ${data.map(
         (row) =>
           `(${Object.values(row)
-            .map((v) => `\"${v}\"`)
+            .map((v) => {
+              return typeof v === 'string' ? `\'${v}\'` : v
+            })
             .join(',')})`,
       )}`
   } catch (error) {

@@ -19,6 +19,8 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { ColorPicker } from './color-picker'
+import { Select } from '@/components/ui/select'
+import toast from 'react-hot-toast'
 
 export function BarListElementProperties({
   element,
@@ -28,7 +30,7 @@ export function BarListElementProperties({
   const { updateElement } = useCanvasAtom()
   const queries = useAtomValue(queriesAtom)
 
-  function handleHeaderChange(value: string) {
+  function handleTitleChange(value: string) {
     updateElement(element.id, {
       ...element,
       props: {
@@ -39,58 +41,47 @@ export function BarListElementProperties({
   }
 
   function handleDataChange(value: string) {
-    updateElement(element.id, {
-      ...element,
-      props: {
-        ...element.props,
-        dataKey: value,
-      },
-    })
-    try {
-      const interpolate = /{{\s*([^{}]+?)\s*}}/g
-      const match = value.match(interpolate)
-
-      if (match) {
-        const result = lodashResult(
-          lodashKeyBy(queries, 'name'),
-          match[0].replace(/{{\s*|\s*}}/g, ''),
-        ) as
-          | {
-              data: Record<string, string | number>[]
-              columns: Column[]
-            }
-          | undefined
-
-        if (result) {
-          const guessName =
-            result.columns.find((col) => col.dtype === 'text')?.name ?? ''
-          const guessValue =
-            result.columns.find(
-              (col) =>
-                col.dtype.startsWith('int') || col.dtype.startsWith('float'),
-            )?.name ?? ''
-
-          const data = result.data.map((d) => ({
-            name: lodashResult(d, guessName),
-            value: lodashResult(d, guessValue),
-          }))
-
-          updateElement(element.id, {
-            ...element,
-            props: {
-              ...element.props,
-              data,
-              dataKey: value,
-              name: guessName,
-              value: guessValue,
-            },
-          })
+    if (!queries.length) {
+      return toast.error('No queries found')
+    }
+    const result = lodashResult(lodashKeyBy(queries, 'name'), value) as
+      | {
+          data: unknown[]
+          columns: Column[]
         }
+      | undefined
+
+    if (result) {
+      if (!result.data) {
+        return toast.error('No data found. Please execute the query first.')
       }
-    } catch {}
+      const guessName =
+        result.columns.find((col) => col.dtype === 'text')?.name ?? ''
+
+      const guessValue =
+        result.columns.find(
+          (col) => col.dtype.startsWith('int') || col.dtype.startsWith('float'),
+        )?.name ?? ''
+
+      const data = result.data.map((d) => ({
+        name: lodashResult(d, guessName),
+        value: lodashResult(d, guessValue),
+      }))
+
+      updateElement(element.id, {
+        ...element,
+        props: {
+          ...element.props,
+          data,
+          dataKey: value,
+          name: guessName,
+          value: guessValue,
+        },
+      })
+    }
   }
 
-  function handleNameLabelChange(value: string) {
+  function handleNameChange(value: string) {
     updateElement(element.id, {
       ...element,
       props: {
@@ -100,7 +91,7 @@ export function BarListElementProperties({
     })
   }
 
-  function handleValueLabelChange(value: string) {
+  function handleValueChange(value: string) {
     updateElement(element.id, {
       ...element,
       props: {
@@ -135,9 +126,7 @@ export function BarListElementProperties({
                   <Help className="ml-1 h-3 w-3 cursor-pointer text-slate-500" />
                 </button>
               </TooltipTrigger>
-              <TooltipContent side="left">
-                Supports Markdown.
-              </TooltipContent>
+              <TooltipContent side="left">Supports Markdown.</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </Label>
@@ -146,45 +135,70 @@ export function BarListElementProperties({
           autoComplete="off"
           id="title"
           defaultValue={element.props.title}
-          onValueChange={handleHeaderChange}
+          onValueChange={handleTitleChange}
         />
       </div>
       <div>
         <Label htmlFor="data" className="text-xs text-slate-500">
           Data
         </Label>
-        <TextInput
-          type="text"
-          autoComplete="off"
-          id="data"
-          placeholder="{{ getChartData }}"
-          className="font-mono text-xs"
+        <Select
           defaultValue={element.props.dataKey}
           onValueChange={handleDataChange}
         />
       </div>
       <div>
-        <Label htmlFor="name" className="text-xs text-slate-500">
+        <Label
+          htmlFor="name"
+          className="inline-flex items-center text-xs text-slate-500"
+        >
           Name
+          <TooltipProvider delayDuration={0}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button>
+                  <Help className="ml-1 h-3 w-3 cursor-pointer text-slate-500" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="left">
+                Must be a string value
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </Label>
         <TextInput
           type="text"
           autoComplete="off"
           id="name"
           defaultValue={element.props.name}
-          onValueChange={handleNameLabelChange}
+          onValueChange={handleNameChange}
         />
       </div>
       <div>
-        <Label htmlFor="value" className="text-xs text-slate-500">
+        <Label
+          htmlFor="value"
+          className="inline-flex items-center text-xs text-slate-500"
+        >
           Value
+          <TooltipProvider delayDuration={0}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button>
+                  <Help className="ml-1 h-3 w-3 cursor-pointer text-slate-500" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="left">
+                Must be an integer value
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </Label>
         <TextInput
           type="text"
           autoComplete="off"
           id="value"
           defaultValue={element.props.value}
-          onValueChange={handleValueLabelChange}
+          onValueChange={handleValueChange}
         />
       </div>
       <ColorPicker

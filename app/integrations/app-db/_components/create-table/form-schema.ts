@@ -19,6 +19,7 @@ export const formSchema = z.object({
             z.literal('integer'),
             z.literal('text'),
             z.literal('date'),
+            z.literal('boolean'),
             z.literal('timestamp'),
           ],
           { required_error: 'Please select column type' },

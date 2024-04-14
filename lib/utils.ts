@@ -69,6 +69,12 @@ export function isTextType(type: string) {
   return type === 'text' || type === 'varchar'
 }
 
+export function isNumberType(type: string) {
+  return (
+    type.startsWith('int') || type === 'numeric' || type.startsWith('float')
+  )
+}
+
 export const monthNames = [
   'Jan',
   'Feb',

@@ -78,6 +78,10 @@ export function TableElementProperties({ element }: { element: TableElement }) {
       | undefined
 
     if (result) {
+      if (!result.data) {
+        return toast.error('No data found. Please execute the query first.')
+      }
+
       updateElement(element.id, {
         ...element,
         props: {

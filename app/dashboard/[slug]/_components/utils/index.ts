@@ -19,10 +19,6 @@ export function getElementProps(type: Element['type']): Element['props'] {
         color: 'gray',
         fontSize: 16,
       }
-    case 'card':
-      return {}
-    case 'area-chart':
-      return {}
     case 'table':
       return {
         title: '',
@@ -53,6 +49,7 @@ export function getElementProps(type: Element['type']): Element['props'] {
     case 'bar-list':
       return {
         data: [],
+        columns: [],
         color: 'blue',
       }
     default:
