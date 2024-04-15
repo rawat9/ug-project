@@ -40,7 +40,6 @@ import { executeQuery } from '@/lib/data/server/queries'
 import { formSchema } from './form-schema'
 import { RESET } from 'jotai/utils'
 import { insertTable } from '@/lib/data/server/demo'
-import { revalidatePath } from 'next/cache'
 
 export function ColumnsForm({
   onOpenChange,

@@ -178,7 +178,16 @@ export function LineChartElementProperties({
 
     const results = lodashMap(group, (g, key) => {
       const cols = categories.reduce((acc, category) => {
-        return { ...acc, [category.name]: lodashSumBy(g, category.name) }
+        const aggFn = category.aggFn
+
+        switch (aggFn) {
+          case 'count':
+            return { ...acc, [category.name]: g.length }
+          case 'sum':
+            return { ...acc, [category.name]: lodashSumBy(g, category.name) }
+          case 'mean':
+            return { ...acc, [category.name]: lodashMeanBy(g, category.name) }
+        }
       }, {})
 
       return {
@@ -199,14 +208,7 @@ export function LineChartElementProperties({
   }
 
   function handleIndexTimeGranularity(value: 'Daily' | 'Monthly' | 'Yearly') {
-    const {
-      originalData,
-      categories,
-      groupBy,
-      groupedCategories,
-      data: currentData,
-      index,
-    } = element.props
+    const { originalData, categories, groupBy, index } = element.props
 
     const group = lodashGroupBy(
       lodashSortBy(originalData, index),
@@ -229,7 +231,16 @@ export function LineChartElementProperties({
 
     const results = lodashMap(group, (g, key) => {
       const cols = categories.reduce((acc, category) => {
-        return { ...acc, [category.name]: lodashSumBy(g, category.name) }
+        const aggFn = category.aggFn
+
+        switch (aggFn) {
+          case 'count':
+            return { ...acc, [category.name]: g.length }
+          case 'sum':
+            return { ...acc, [category.name]: lodashSumBy(g, category.name) }
+          case 'mean':
+            return { ...acc, [category.name]: lodashMeanBy(g, category.name) }
+        }
       }, {})
 
       if (groupBy) {
@@ -458,7 +469,9 @@ export function LineChartElementProperties({
         </Label>
         <Select value={element.props.dataKey} onValueChange={handleDataChange}>
           <SelectTrigger id="data" placeholder="getData">
-            <SelectValue className="font-mono text-xs" />
+            <SelectValue className="font-mono text-xs">
+              {element.props.dataKey}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent
             alignOffset={-300}
@@ -598,7 +611,11 @@ export function LineChartElementProperties({
                       >
                         Category
                       </Label>
-                      <Input id="category-name" defaultValue={category.name} />
+                      <Input
+                        id="category-name"
+                        defaultValue={category.name}
+                        disabled
+                      />
                     </div>
                     <div className="grid items-center gap-2">
                       <Label
@@ -619,7 +636,7 @@ export function LineChartElementProperties({
                         <SelectContent>
                           <SelectItem value="sum">Sum</SelectItem>
                           <SelectItem value="count">Count</SelectItem>
-                          <SelectItem value="mean">Average</SelectItem>
+                          <SelectItem value="mean">Mean</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>

@@ -18,11 +18,7 @@ export function CreateTable() {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button
-          variant="outline"
-          className="ml-auto mr-2 h-6 bg-white"
-          size="sm"
-        >
+        <Button variant="outline" className="mr-2 h-6 bg-white" size="sm">
           <Add className="mr-1 h-3 w-3" />
           New table
         </Button>

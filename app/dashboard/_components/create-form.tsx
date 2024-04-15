@@ -1,7 +1,7 @@
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { createDashboard } from '@/lib/data/server/dashboard'
+import { SubmitButton } from './submit-button'
 
 export function CreateForm() {
   return (
@@ -26,9 +26,7 @@ export function CreateForm() {
             className="placeholder:text-muted-foreground flex min-h-[60px] w-full resize-none rounded-md border bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950"
           />
         </div>
-        <Button type="submit" className="col-span-1 mt-2 justify-self-end">
-          Save changes
-        </Button>
+        <SubmitButton />
       </div>
     </form>
   )

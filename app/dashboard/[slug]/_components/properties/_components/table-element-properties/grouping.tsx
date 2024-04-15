@@ -11,16 +11,12 @@ export function Grouping({
   handleGroupingChange,
   enableGrouping,
   handleEnableGroupingChange,
-  // aggregatedValues,
-  // handleAggregatedValuesChange,
 }: {
   columns: string[]
   groups: GroupingState
   handleGroupingChange: (value: GroupingState) => void
   enableGrouping: boolean
   handleEnableGroupingChange: (value: boolean) => void
-  // aggregatedValues: Column[]
-  // handleAggregatedValuesChange: (value: Column[]) => void
 }) {
   return (
     <>
@@ -96,7 +92,7 @@ export function Grouping({
             groups.map((group) => (
               <div
                 key={group}
-                className="flex w-full items-center rounded-md border bg-neutral-100 py-1"
+                className="flex w-full items-center rounded-md border bg-neutral-100 px-2 py-1"
               >
                 <p className="flex-1 text-sm text-slate-500">{group}</p>
               </div>
@@ -104,77 +100,6 @@ export function Grouping({
           )}
         </div>
       </div>
-      {/* <div className="mb-6 flex flex-col gap-2">
-        <div className="flex items-center gap-1">
-          <Sigma className="h-4 w-4 text-slate-400" />
-          <h3 className="flex-1 text-sm font-medium text-slate-500">Values</h3>
-          <Listbox
-            value={aggregatedValues}
-            onChange={handleAggregatedValuesChange}
-            multiple
-          >
-            <div className="mt-1">
-              <Listbox.Button>
-                <Add className="h-4 w-4" />
-              </Listbox.Button>
-              <Transition
-                as={React.Fragment}
-                leave="transition ease-in duration-100"
-                leaveFrom="opacity-100"
-                leaveTo="opacity-0"
-              >
-                <Listbox.Options className="absolute -left-2 top-[24rem] z-10 mt-1 max-h-60 w-auto -translate-x-full overflow-auto rounded-lg bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
-                  {columns.map((col, i) => (
-                    <Listbox.Option
-                      key={i}
-                      className={({ active }) =>
-                        `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                          active
-                            ? 'bg-amber-100 text-amber-900'
-                            : 'text-gray-900'
-                        }`
-                      }
-                      value={col}
-                    >
-                      {({ selected }) => (
-                        <>
-                          <span
-                            className={`block truncate ${
-                              selected ? 'font-medium' : 'font-normal'
-                            }`}
-                          >
-                            {col}
-                          </span>
-                          {selected ? (
-                            <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
-                              <Check className="h-5 w-5" aria-hidden="true" />
-                            </span>
-                          ) : null}
-                        </>
-                      )}
-                    </Listbox.Option>
-                  ))}
-                </Listbox.Options>
-              </Transition>
-            </div>
-          </Listbox>
-        </div>
-        <div className="flex cursor-pointer flex-col gap-1 rounded-lg border border-dashed bg-neutral-50 p-2">
-          {aggregatedValues.length === 0 && (
-            <p className="text-center text-sm text-slate-400 group-hover:opacity-20">
-              Add fields here to aggregate
-            </p>
-          )}
-          {aggregatedValues.map((value, index) => (
-            <div
-              key={index}
-              className="flex items-center rounded-md border bg-neutral-100 px-2 py-1 group-hover:opacity-20"
-            >
-              <p className="flex-1 text-sm text-slate-500">sum({value.name})</p>
-            </div>
-          ))}
-        </div>
-      </div> */}
     </>
   )
 }

@@ -12,6 +12,7 @@ import { SheetClose, SheetFooter } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 import { Cross } from '@/icons'
 import type { Table } from './types'
+import toast from 'react-hot-toast'
 
 /**
  * Reads a CSV (uses Papaparse) or Excel (uses Sheetjs) file and returns the data
@@ -29,22 +30,27 @@ export function DataImport() {
       if (!file) return
 
       setFile(file)
-      if (file.type === 'text/csv') {
-        readCSV(file, (results) => {
-          const columns = results.meta.fields ?? []
+      try {
+        if (file.type === 'text/csv') {
+          readCSV(file, (results) => {
+            const columns = results.meta.fields ?? []
 
-          if (!columns.length) {
-            throw new Error('Headers not found')
-          }
+            if (!columns.length) {
+              throw new Error('Headers not found')
+            }
 
-          // TODO: handle errors
-          setData(results.data)
+            setData(results.data)
+            setHeaders(columns)
+          })
+        } else {
+          const { data, columns } = await readExcel(file)
           setHeaders(columns)
-        })
-      } else {
-        const { data, columns } = await readExcel(file)
-        setHeaders(columns)
-        setData(data)
+          setData(data)
+        }
+      } catch {
+        toast.error(
+          'Error reading file. Please make sure the headers are in the first row.',
+        )
       }
     }, []),
     maxFiles: 1,
@@ -88,7 +94,7 @@ export function DataImport() {
 
   return (
     <>
-      <div className="h-[90%] px-6 py-4">
+      <div className="h-[90%] overflow-y-auto px-6 py-4">
         <p className="py-2 text-sm text-slate-600">
           The first row must be the headers of the table*
         </p>

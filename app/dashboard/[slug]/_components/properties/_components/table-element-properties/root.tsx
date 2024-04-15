@@ -7,7 +7,6 @@ import lodashKeyBy from 'lodash/keyBy'
 import lodashResult from 'lodash/result'
 
 import { type TableElement } from '../../../canvas/types'
-import { VisibilityState } from '@tanstack/react-table'
 import { Grouping } from './grouping'
 import { Columns } from './columns'
 import { Pagination } from './pagination'
@@ -40,6 +39,7 @@ export function TableElementProperties({ element }: { element: TableElement }) {
         state: {
           columnOrder: columns,
           columnSizing: {},
+          grouping: element.props.state?.grouping || [],
           columnSizingInfo: {
             startOffset: null,
             startSize: null,
@@ -57,16 +57,13 @@ export function TableElementProperties({ element }: { element: TableElement }) {
             top: [],
             bottom: [],
           },
-          columnVisibility: columns.reduce<VisibilityState>((acc, column) => {
-            acc[column] = true
-            return acc
-          }, {}),
+          columnVisibility: element.props.state?.columnVisibility,
         },
       },
     })
-  }, [columns]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [element.props.columns]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  function handleDataChange(value: string) {
+  const handleDataChange = (value: string) => {
     if (!queries.length) {
       return toast.error('No queries found')
     }
@@ -89,6 +86,16 @@ export function TableElementProperties({ element }: { element: TableElement }) {
           data: result.data,
           columns: result.columns,
           dataKey: value,
+          state: {
+            ...element.props.state,
+            columnVisibility: result.columns.reduce(
+              (acc, column) => ({
+                ...acc,
+                [column.name]: true,
+              }),
+              {},
+            ),
+          },
         },
       })
       setColumns(result.columns.map((c) => c.name))
@@ -174,42 +181,6 @@ export function TableElementProperties({ element }: { element: TableElement }) {
     })
   }
 
-  // function handleAggregatedValuesChange(value: Column[]) {
-  //   setColumns((prev) => {
-  //     return prev.map((col) => {
-  //       if (value.find((v) => v.name === col)) {
-  //         return {
-  //           aggregationFn: value.find((v) => v.name === col)?.aggregationFn,
-  //         }
-  //       }
-  //       return col
-  //     })
-  //   })
-
-  // updateElement(element.id, {
-  //   ...element,
-  //   props: {
-  //     ...element.props,
-  //     columns:
-  //     // aggregatedValues: value.map((v) => {
-  //     //   return {
-  //     //     column: v,
-  //     //     aggFn: () => {
-  //     //       if (v.dtype === 'text') {
-  //     //         return aggregationFns['count']
-  //     //       }
-  //     //       if (v.dtype.startsWith('int')) {
-  //     //         return aggregationFns['sum']
-  //     //       }
-  //     //       return 0
-  //     //       // return aggregationFns['count']
-  //     //     },
-  //     //   }
-  //     // }),
-  //   },
-  // })
-  // }
-
   return (
     <div className="flex flex-col gap-6 px-4 pb-4">
       <div>
@@ -281,10 +252,6 @@ export function TableElementProperties({ element }: { element: TableElement }) {
         handleGroupingChange={handleGroupingChange}
         enableGrouping={element.props.enableGrouping}
         handleEnableGroupingChange={handleEnableGrouping}
-        // aggregatedValues={
-        //   element.props?.aggregatedValues?.map((v) => v.column) ?? []
-        // }
-        // handleAggregatedValuesChange={(value) => {}}
       />
     </div>
   )

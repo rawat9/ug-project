@@ -1,5 +1,3 @@
-'use client'
-
 import { Button } from '@/components/ui/button'
 import { Run as RunIcon, Spinner } from '@/icons'
 import * as React from 'react'
