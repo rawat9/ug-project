@@ -5,21 +5,20 @@ import {
   TableCell,
   TableHead,
   TableHeaderCell,
+  TableFoot,
+  TableFooterCell,
   TableRow,
 } from '@tremor/react'
 import React, { memo } from 'react'
 import type { TableElement } from '../../../types'
 import {
   ColumnDef,
-  ColumnFiltersState,
   ExpandedState,
-  GroupingState,
   PaginationState,
   SortingState,
   flexRender,
   getCoreRowModel,
   getExpandedRowModel,
-  getFilteredRowModel,
   getGroupedRowModel,
   getPaginationRowModel,
   getSortedRowModel,
@@ -35,6 +34,7 @@ import {
   ChevronRight,
 } from '@/icons'
 import { EmptyDataState } from '../empty-state'
+import { cn, isNumberType } from '@/lib/utils'
 
 const TableElement = memo(({ element }: { element: TableElement }) => {
   const data = element.props.data
@@ -71,17 +71,38 @@ const TableElement = memo(({ element }: { element: TableElement }) => {
           <div className="font-medium">{row.getValue(col.name)}</div>
         ),
         cell: ({ row }) => (
-          <div className="capitalize">{row.getValue(col.name)}</div>
+          <div
+            className={cn(
+              'capitalize',
+              isNumberType(col.dtype) ? 'text-right' : 'text-left',
+            )}
+          >
+            {row.getValue(col.name)}
+          </div>
         ),
+        footer: ({ table }) => {
+          if (!isNumberType(col.dtype)) {
+            return null
+          }
+
+          const total = table
+            .getFilteredRowModel()
+            .rows.reduce((total, row) => {
+              return total + Number(row.getValue(col.name))
+            }, 0)
+
+          return (
+            <div className="flex justify-between">
+              Total:
+              <span>{Math.round(total * 100) / 100}</span>
+            </div>
+          )
+        },
       })),
     [columns],
   )
 
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
-  )
   const [expanded, setExpanded] = React.useState<ExpandedState>({})
-  const [grouping, setGrouping] = React.useState<GroupingState>([])
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [pagination, setPagination] = React.useState<PaginationState>({
     pageIndex: 0,
@@ -117,7 +138,6 @@ const TableElement = memo(({ element }: { element: TableElement }) => {
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
     getGroupedRowModel: getGroupedRowModel(),
   })
@@ -127,17 +147,12 @@ const TableElement = memo(({ element }: { element: TableElement }) => {
     state: {
       sorting,
       pagination,
-      columnFilters,
-      grouping,
       expanded,
       ...element.props.state,
     },
     onExpandedChange: setExpanded,
-    onGroupingChange: setGrouping,
-    onColumnFiltersChange: setColumnFilters,
     onPaginationChange: setPagination,
     onSortingChange: setSorting,
-    // rowCount: data && data.length,
     enableSorting: element.props.enableSorting,
     enableGrouping: element.props.enableGrouping,
   }))
@@ -156,7 +171,9 @@ const TableElement = memo(({ element }: { element: TableElement }) => {
       ) : (
         <>
           <Table
-            style={{ height: '100%' }}
+            style={{
+              height: '100%',
+            }}
             className="h-full overflow-auto rounded-md border bg-white"
           >
             <TableHead className="sticky top-0 z-30 bg-slate-100">
@@ -237,6 +254,28 @@ const TableElement = memo(({ element }: { element: TableElement }) => {
                 </TableRow>
               ))}
             </TableBody>
+            <TableFoot className="sticky bottom-0 z-30 border-t">
+              {table.getFooterGroups().map((footerGroups) => (
+                <TableRow className="bg-neutral-50" key={footerGroups.id}>
+                  {footerGroups.headers.map((footer) => (
+                    <TableFooterCell
+                      key={footer.id}
+                      className="px-2 py-1"
+                      style={{
+                        minWidth: footer.column.getSize(),
+                      }}
+                    >
+                      {footer.isPlaceholder
+                        ? null
+                        : flexRender(
+                            footer.column.columnDef.footer,
+                            footer.getContext(),
+                          )}
+                    </TableFooterCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableFoot>
           </Table>
           {element.props.enablePagination && (
             <div className="flex h-[4%] items-center justify-end space-x-2">

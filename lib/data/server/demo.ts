@@ -83,3 +83,15 @@ export const insertTable = async (tableName: string) => {
 
   revalidatePath('/integrations/app-db')
 }
+
+export const deleteTable = async (tableName: string) => {
+  const supabase = await createSupabaseServerClient()
+  const { error } = await supabase.from('tables').delete().eq('name', tableName)
+
+  if (error) {
+    console.error(error.message)
+    throw new Error('Error deleting data')
+  }
+
+  revalidatePath('/integrations/app-db')
+}

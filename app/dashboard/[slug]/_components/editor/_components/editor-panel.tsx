@@ -116,13 +116,6 @@ export function EditorPanel() {
 
       setQuery(formattedQuery)
     } catch {}
-
-    // // save the query before running
-    // updateMutation.mutate({
-    //   id: activeQuery?.id,
-    //   key: 'sql_query',
-    //   value: query,
-    // })
   }
 
   const handleRename = (name: string) => {

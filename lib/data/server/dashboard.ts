@@ -116,7 +116,7 @@ export const createDashboard = async (body: FormData) => {
   }
 
   revalidatePath('/dashboard')
-  redirect(`/dashboard/${data?.id}/edit`)
+  redirect(`/dashboard/${data?.id}/edit?widgets=true`)
 }
 
 export const getDashboardById = async (

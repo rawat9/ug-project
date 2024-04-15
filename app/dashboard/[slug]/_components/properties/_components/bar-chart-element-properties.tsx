@@ -25,7 +25,7 @@ import lodashFlatMap from 'lodash/flatMap'
 import lodashMerge from 'lodash/merge'
 import lodashOmit from 'lodash/omit'
 
-import { Help } from '@/icons'
+import { Delete, Help } from '@/icons'
 import { useAtomValue } from 'jotai'
 import { queriesAtom } from '../../editor/state'
 import { Column } from '@/types'
@@ -45,7 +45,6 @@ import { Add, Check } from '@/icons'
 import { Switch } from '@/components/ui/switch'
 import { Listbox, Transition } from '@headlessui/react'
 import * as React from 'react'
-import { Button } from '@/components/ui/button'
 import toast from 'react-hot-toast'
 import { colors, isTextType } from '@/lib/utils'
 
@@ -148,7 +147,16 @@ export function BarChartElementProperties({
     const group = lodashGroupBy(originalData, value)
     const results = lodashMap(group, (g, key) => {
       const cols = categories.reduce((acc, category) => {
-        return { ...acc, [category.name]: lodashSumBy(g, category.name) }
+        const aggFn = category.aggFn
+
+        switch (aggFn) {
+          case 'count':
+            return { ...acc, [category.name]: g.length }
+          case 'sum':
+            return { ...acc, [category.name]: lodashSumBy(g, category.name) }
+          case 'mean':
+            return { ...acc, [category.name]: lodashMeanBy(g, category.name) }
+        }
       }, {})
 
       return {
@@ -440,9 +448,22 @@ export function BarChartElementProperties({
                 <PopoverTrigger asChild>
                   <div
                     key={index}
-                    className="flex h-8 w-full cursor-pointer items-center gap-2 rounded-md border border-slate-100 bg-gray-50 p-2"
+                    aria-disabled="true"
+                    className="flex h-8 w-full cursor-pointer items-center gap-2 rounded-md border border-slate-100 bg-gray-50 p-2 disabled:bg-gray-100"
                   >
-                    <p className="text-sm text-slate-700">{category.name}</p>
+                    <p className="flex-1 text-sm text-slate-700">
+                      {category.name}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <p className="rounded-md border bg-neutral-50 px-1 text-xs text-slate-700">
+                        {category.aggFn}
+                      </p>
+                      <button
+                        onClick={() => handleRemoveCategory(category.name)}
+                      >
+                        <Delete className="h-4 w-4 text-slate-500" />
+                      </button>
+                    </div>
                   </div>
                 </PopoverTrigger>
                 <PopoverContent
@@ -483,17 +504,10 @@ export function BarChartElementProperties({
                         <SelectContent>
                           <SelectItem value="sum">Sum</SelectItem>
                           <SelectItem value="count">Count</SelectItem>
-                          <SelectItem value="mean">Average</SelectItem>
+                          <SelectItem value="mean">Mean</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => handleRemoveCategory(category.name)}
-                    >
-                      Remove
-                    </Button>
                   </div>
                 </PopoverContent>
               </Popover>

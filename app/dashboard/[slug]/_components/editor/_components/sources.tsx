@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/popover'
 import { Add, CaretSort, Check, Postgres } from '@/icons'
 import { Tables } from '@/types/database'
+import Link from 'next/link'
 
 export function Sources({
   selectedIntegrationId,
@@ -41,7 +42,7 @@ export function Sources({
         >
           <span className="truncate">
             {selectedIntegrationId && (
-              <Postgres className="inline-flex mr-2 h-4 w-4" />
+              <Postgres className="mr-2 inline-flex h-4 w-4" />
             )}
             {selectedIntegrationId
               ? integrations.find(
@@ -79,10 +80,12 @@ export function Sources({
               </CommandItem>
             ))}
             <CommandItem className="w-full p-0 pt-2">
-              <Button size="sm" className="w-full">
-                <Add className="mr-1 h-4 w-4" />
-                Create new integration
-              </Button>
+              <Link href="/integrations" className="w-full">
+                <Button size="sm" className="w-full">
+                  <Add className="mr-1 h-4 w-4" />
+                  Create new integration
+                </Button>
+              </Link>
             </CommandItem>
           </CommandGroup>
         </Command>
