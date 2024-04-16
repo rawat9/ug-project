@@ -34,7 +34,7 @@ const LineChartElement = memo(({ element }: { element: LineChartElement }) => {
               }
               showGridLines={true}
               curveType={element.props.curveType}
-              // startEndOnly={true} // this!!
+              enableLegendSlider={true}
               onValueChange={(v) => console.log(v)}
             />
             {element.props.xAxisTitle && (

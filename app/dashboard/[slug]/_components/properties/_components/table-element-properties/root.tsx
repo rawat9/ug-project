@@ -5,6 +5,7 @@ import { TextInput } from '@tremor/react'
 import { Switch } from '@/components/ui/switch'
 import lodashKeyBy from 'lodash/keyBy'
 import lodashResult from 'lodash/result'
+import lodashIsEqual from 'lodash/isEqual'
 
 import { type TableElement } from '../../../canvas/types'
 import { Grouping } from './grouping'
@@ -30,6 +31,46 @@ export function TableElementProperties({ element }: { element: TableElement }) {
   const [columns, setColumns] = React.useState(
     element.props.columns.map((c) => c.name),
   )
+
+  React.useEffect(() => {
+    const query = queries.find((query) => query.name === element.props.dataKey)
+
+    if (query) {
+      if (!query.data) {
+        return
+      }
+
+      if (!query.columns) {
+        return
+      }
+
+      // check if query data is equal to the current data
+      if (lodashIsEqual(element.props.data, query.data)) {
+        return
+      }
+
+      updateElement(element.id, {
+        ...element,
+        props: {
+          ...element.props,
+          data: query.data,
+          columns: query.columns,
+          dataKey: query.name,
+          state: {
+            ...element.props.state,
+            columnVisibility: query.columns.reduce(
+              (acc, column) => ({
+                ...acc,
+                [column.name]: true,
+              }),
+              {},
+            ),
+          },
+        },
+      })
+      setColumns(query.columns.map((c) => c.name))
+    }
+  }, [queries]) // eslint-disable-line react-hooks/exhaustive-deps
 
   React.useEffect(() => {
     updateElement(element.id, {

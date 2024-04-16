@@ -24,6 +24,7 @@ import lodashKeys from 'lodash/keys'
 import lodashFlatMap from 'lodash/flatMap'
 import lodashMerge from 'lodash/merge'
 import lodashOmit from 'lodash/omit'
+import lodashIsEqual from 'lodash/isEqual'
 
 import { Delete, Help } from '@/icons'
 import { useAtomValue } from 'jotai'
@@ -57,6 +58,36 @@ export function BarChartElementProperties({
 
   const queries = useAtomValue(queriesAtom)
 
+  React.useEffect(() => {
+    debugger
+    const query = queries.find((query) => query.name === element.props.dataKey)
+
+    if (query) {
+      if (!query.data) {
+        return
+      }
+
+      if (!query.columns) {
+        return
+      }
+
+      // check if query data is equal to the current data
+      if (lodashIsEqual(element.props.data, query.data)) {
+        return
+      }
+
+      updateElement(element.id, {
+        ...element,
+        props: {
+          ...element.props,
+          data: query.data,
+          columns: query.columns,
+          dataKey: query.name,
+        },
+      })
+    }
+  }, [queries]) // eslint-disable-line react-hooks/exhaustive-deps
+
   function handleTitleChange(value: string) {
     updateElement(element.id, {
       ...element,
@@ -88,6 +119,7 @@ export function BarChartElementProperties({
   }
 
   function handleDataChange(value: string) {
+    debugger
     if (!queries.length) {
       return toast.error('No queries found')
     }

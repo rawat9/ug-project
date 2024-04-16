@@ -16,6 +16,7 @@ import lodashKeys from 'lodash/keys'
 import lodashFlatMap from 'lodash/flatMap'
 import lodashMerge from 'lodash/merge'
 import lodashMeanBy from 'lodash/meanBy'
+import lodashIsEqual from 'lodash/isEqual'
 
 import { CurveType, Tab, TabGroup, TabList, TextInput } from '@tremor/react'
 
@@ -53,6 +54,35 @@ export function LineChartElementProperties({
     [],
   )
   const queries = useAtomValue(queriesAtom)
+
+  React.useEffect(() => {
+    const query = queries.find((query) => query.name === element.props.dataKey)
+
+    if (query) {
+      if (!query.data) {
+        return
+      }
+
+      if (!query.columns) {
+        return
+      }
+
+      // check if query data is equal to the current data
+      if (lodashIsEqual(element.props.data, query.data)) {
+        return
+      }
+
+      updateElement(element.id, {
+        ...element,
+        props: {
+          ...element.props,
+          data: query.data,
+          columns: query.columns,
+          dataKey: query.name,
+        },
+      })
+    }
+  }, [queries]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleTitleChange(value: string) {
     updateElement(element.id, {

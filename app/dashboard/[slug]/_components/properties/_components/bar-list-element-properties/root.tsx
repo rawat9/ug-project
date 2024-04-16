@@ -19,7 +19,13 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { ColorPicker } from './color-picker'
-import { Select } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import toast from 'react-hot-toast'
 
 export function BarListElementProperties({
@@ -145,7 +151,26 @@ export function BarListElementProperties({
         <Select
           defaultValue={element.props.dataKey}
           onValueChange={handleDataChange}
-        />
+        >
+          <SelectTrigger id="data">
+            <SelectValue placeholder="getData" className="font-mono text-xs">
+              {element.props.dataKey}
+            </SelectValue>
+          </SelectTrigger>
+          {queries.length > 0 && (
+            <SelectContent
+              alignOffset={-300}
+              align="start"
+              className="z-10 max-h-60 -translate-x-6"
+            >
+              {queries.map((query) => (
+                <SelectItem key={query.id} value={query.name}>
+                  {query.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          )}
+        </Select>
       </div>
       <div>
         <Label
