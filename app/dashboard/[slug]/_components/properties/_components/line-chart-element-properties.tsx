@@ -498,7 +498,7 @@ export function LineChartElementProperties({
           Data
         </Label>
         <Select value={element.props.dataKey} onValueChange={handleDataChange}>
-          <SelectTrigger id="data" placeholder="getData">
+          <SelectTrigger id="data">
             <SelectValue className="font-mono text-xs">
               {element.props.dataKey}
             </SelectValue>

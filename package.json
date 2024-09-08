@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "private": true,
   "author": "Anurag Rawat",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/rawat9/ug-project"
@@ -53,8 +54,8 @@
     "@radix-ui/react-toggle": "1.0.3",
     "@radix-ui/react-toggle-group": "1.0.4",
     "@radix-ui/react-tooltip": "1.0.7",
-    "@supabase/ssr": "0.5.1",
-    "@supabase/supabase-js": "2.45.3",
+    "@supabase/ssr": "0.1.0",
+    "@supabase/supabase-js": "2.39.8",
     "@tanstack/react-query": "5.55.2",
     "@tanstack/react-table": "8.20.5",
     "@tremor/react": "3.18.1",
