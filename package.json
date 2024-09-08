@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "private": true,
   "author": "Anurag Rawat",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/rawat9/ug-project"
